@@ -1,6 +1,13 @@
 #include "Lyra.h"
 
-int main()
+class SandboxApp : public Lyra::Application
 {
-	PrintHelloWorld();
+public:
+	SandboxApp() {}
+	~SandboxApp() {}
+};
+
+Lyra::Application* CreateApplication()
+{
+	return new SandboxApp();
 }

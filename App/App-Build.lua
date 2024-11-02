@@ -1,8 +1,6 @@
 project "App"
    kind "ConsoleApp"
    language "C++"
-   cppdialect "C++20"
-   targetdir "Binaries/%{cfg.buildcfg}"
    staticruntime "off"
 
    files { "Source/**.h", "Source/**.cpp" }
@@ -11,17 +9,26 @@ project "App"
    {
       "Source",
 
-	  -- Include LyraEngine
-	  "../LyraEngine/Source"
+	  -- Include Lyra
+	  "../Lyra/Source"
    }
 
    links
    {
-      "LyraEngine"
+      "Lyra"
    }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
-   objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
+   objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
+
+   filter "system:windows"
+   cppdialect "C++20"
+   staticruntime "On"
+   systemversion "latest"
+   defines
+   {
+      "LR_PLATFORM_WINDOWS"
+   }
 
    filter "system:windows"
        systemversion "latest"
@@ -39,7 +46,6 @@ project "App"
        symbols "On"
 
    filter "configurations:Dist"
-       defines { "DIST" }
+       defines { "HZ_DIST" }
        runtime "Release"
        optimize "On"
-       symbols "Off"

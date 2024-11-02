@@ -12,6 +12,7 @@
 
 # Build results
 [Bb]inaries/
+[Ii]ntermediates/
 
 # Exclude vendor binaries
 !Vendor/Binaries

@@ -1,9 +1,6 @@
-project "LyraEngine"
-   kind "StaticLib"
+project "Lyra"
+   kind "SharedLib"
    language "C++"
-   cppdialect "C++20"
-   targetdir "Binaries/%{cfg.buildcfg}"
-   staticruntime "off"
 
    files { "Source/**.h", "Source/**.hpp", "Source/**.cpp", "Source/**.c" }
 
@@ -13,25 +10,35 @@ project "LyraEngine"
    }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
-   objdir ("../Binaries/Intermediates/" .. OutputDir .. "/%{prj.name}")
+   objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
 
    filter "system:windows"
+       cppdialect "C++20"
+       staticruntime "On"
        systemversion "latest"
-       defines { }
+       defines
+       {
+          "LR_PLATFORM_WINDOWS",
+          "LR_BUILD_DLL"
+       }
+
+       postbuildcommands
+       {
+        ("{COPY} %{cfg.buildtarget.relpath} ../Binaries/" .. OutputDir ..  "/App")
+       }
 
    filter "configurations:Debug"
-       defines { "DEBUG" }
+       defines { "LR_DEBUG" }
        runtime "Debug"
        symbols "On"
 
    filter "configurations:Release"
-       defines { "RELEASE" }
+       defines { "LR_RELEASE" }
        runtime "Release"
        optimize "On"
        symbols "On"
 
    filter "configurations:Dist"
-       defines { "DIST" }
+       defines { "HZ_DIST" }
        runtime "Release"
        optimize "On"
-       symbols "Off"
