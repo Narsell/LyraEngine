@@ -7,7 +7,7 @@ public:
 	~SandboxApp() {}
 };
 
-Lyra::Application* CreateApplication()
+Lyra::Application* Lyra::CreateApplication()
 {
 	return new SandboxApp();
 }

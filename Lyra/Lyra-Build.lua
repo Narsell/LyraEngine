@@ -39,6 +39,6 @@ project "Lyra"
        symbols "On"
 
    filter "configurations:Dist"
-       defines { "HZ_DIST" }
+       defines { "LR_DIST" }
        runtime "Release"
        optimize "On"
