@@ -18,7 +18,7 @@ namespace Lyra
 	};
 
 	//To be defined by client.
-	Application* CreateApplication();
+	extern Application* CreateApplication();
 
 }
 

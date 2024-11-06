@@ -1,8 +1,8 @@
 #pragma once
 
-#ifdef LR_PLATFORM_WINDOWS
+#include "Application.h"
 
-extern Lyra::Application* Lyra::CreateApplication();
+#ifdef LR_PLATFORM_WINDOWS
 
 int main(int argc, char** argv)
 {
