@@ -9,13 +9,16 @@ project "App"
       "Source",
 
 	  -- Include Lyra
-	  "../Lyra/Source"
+	  "../Lyra/Source",
+      "../Lyra/Vendor/spdlog/include"
    }
 
    links
    {
       "Lyra"
    }
+
+   buildoptions { "/utf-8" }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
    objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")

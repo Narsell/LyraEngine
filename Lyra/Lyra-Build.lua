@@ -6,8 +6,11 @@ project "Lyra"
 
    includedirs
    {
-      "Source"
+      "Source",
+      "Vendor/spdlog/include"
    }
+
+   buildoptions { "/utf-8" }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
    objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
