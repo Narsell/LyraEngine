@@ -15,6 +15,9 @@ project "Lyra"
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
    objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
 
+   pchheader "lrpch.h"
+   pchsource "Source/lrpch.cpp"
+
    filter "system:windows"
        cppdialect "C++20"
        staticruntime "On"
