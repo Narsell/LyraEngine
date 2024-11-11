@@ -10,13 +10,13 @@ namespace Lyra
 	class LYRA_API WindowResizeEvent : public Event
 	{
 	public:
-		WindowResizeEvent(uint8_t width, uint8_t height)
+		WindowResizeEvent(uint16_t width, uint16_t height)
 			: m_Width(width), m_Height(height) {}
 
-		inline uint8_t GetWidth() const { return m_Width; }
-		inline uint8_t GetHeight() const { return m_Height; }
+		inline uint16_t GetWidth() const { return m_Width; }
+		inline uint16_t GetHeight() const { return m_Height; }
 
-		std::string ToString()
+		std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
@@ -27,7 +27,7 @@ namespace Lyra
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 
 	private:
-		uint8_t m_Width, m_Height;
+		uint16_t m_Width, m_Height;
 			
 	};
 
