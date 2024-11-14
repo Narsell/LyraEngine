@@ -13,7 +13,6 @@ namespace Lyra
 		inline static std::shared_ptr<spdlog::logger>& GetClientLogger() { return s_ClientLogger; }
 
 	private:
-
 		static std::shared_ptr<spdlog::logger> s_CoreLogger;
 		static std::shared_ptr<spdlog::logger> s_ClientLogger;
 	};
@@ -32,4 +31,3 @@ namespace Lyra
 #define LR_WARN(...)         ::Lyra::Log::GetClientLogger()->warn(__VA_ARGS__)
 #define LR_ERROR(...)        ::Lyra::Log::GetClientLogger()->error(__VA_ARGS__)
 #define LR_FATAL(...)        ::Lyra::Log::GetClientLogger()->critical(__VA_ARGS__)
-

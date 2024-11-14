@@ -5,6 +5,13 @@ workspace "Lyra"
 
 OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
+IncludeDir = {}
+IncludeDir["GLFW"] = "Lyra/Vendor/GLFW/include"
+
+group "Dependencies"
+   include "Lyra/Vendor/GLFW"
+group ""
+
 group "Engine"
 	include "Lyra/Lyra-Build.lua"
 group ""

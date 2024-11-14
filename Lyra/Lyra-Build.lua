@@ -7,7 +7,14 @@ project "Lyra"
    includedirs
    {
       "Source",
-      "Vendor/spdlog/include"
+      "Vendor/spdlog/include",
+      "%{IncludeDir.GLFW}"
+   }
+
+   links
+   {
+      "GLFW",
+      "opengl32.lib"
    }
 
    buildoptions { "/utf-8" }

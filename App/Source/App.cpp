@@ -1,5 +1,4 @@
 #include "Lyra.h"
-#include "spdlog/spdlog.h"
 
 class SandboxApp : public Lyra::Application
 {
