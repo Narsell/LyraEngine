@@ -1,5 +1,6 @@
 #pragma once
-#include "Core.h"
+
+#include "Lyra/Core.h"
 #include "spdlog/spdlog.h"
 
 namespace Lyra

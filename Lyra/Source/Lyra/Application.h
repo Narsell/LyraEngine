@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Core.h"
+#include "Lyra/Core.h"
+#include "Lyra/Window.h"
 
 namespace Lyra
 {
@@ -14,6 +15,9 @@ namespace Lyra
 		virtual ~Application();
 
 		void Run();
+	private:
+		std::unique_ptr<Window> m_Window;
+		bool m_Running = true;
 
 	};
 

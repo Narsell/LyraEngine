@@ -6,7 +6,9 @@ workspace "Lyra"
 OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
 IncludeDir = {}
-IncludeDir["GLFW"] = "Lyra/Vendor/GLFW/include"
+
+-- This path is relative to Lyra
+IncludeDir["GLFW"] = "Vendor/GLFW/include"
 
 group "Dependencies"
    include "Lyra/Vendor/GLFW"

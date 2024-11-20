@@ -41,7 +41,11 @@ project "Lyra"
        }
 
    filter "configurations:Debug"
-       defines { "LR_DEBUG" }
+       defines
+       {
+        "LR_DEBUG",
+        "LR_ENABLE_ASSERTS"
+       }
        runtime "Debug"
        symbols "On"
 

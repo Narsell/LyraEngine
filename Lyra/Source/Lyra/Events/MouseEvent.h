@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Lyra/Core.h"
 #include "Event.h"
 
 namespace Lyra

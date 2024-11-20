@@ -2,13 +2,10 @@
 
 #include "Application.h"
 
-#include "Events/MouseEvent.h"
-#include "Log.h"
-
-
 namespace Lyra
 {
 	Application::Application()
+		: m_Window(std::unique_ptr<Window>(Window::Create()))
 	{
 	}
 
@@ -18,20 +15,9 @@ namespace Lyra
 
 	void Application::Run()
 	{
-		Lyra::MouseButtonPressedEvent ButtonPressedEvent(16);
-
-		if (ButtonPressedEvent.IsInCategory(Lyra::EventCategoryMouse))
+		while (m_Running)
 		{
-			LR_TRACE(ButtonPressedEvent.ToString());
-		}
-
-		if (ButtonPressedEvent.IsInCategory(Lyra::EventCategoryMouseButton))
-		{
-			LR_TRACE(ButtonPressedEvent.ToString());
-		}
-
-		while (true)
-		{
+			m_Window->OnUpdate();
 		}
 	}
 }

@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Lyra/Core.h"
 #include "Event.h"
 
 namespace Lyra
@@ -20,13 +20,13 @@ namespace Lyra
 			ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
 			return ss.str();
 		}
-		
+
 		EVENT_CLASS_TYPE(WindowResize);
 		EVENT_CLASS_CATEGORY(EventCategoryApplication);
 
 	private:
 		uint16_t m_Width, m_Height;
-			
+
 	};
 
 }
