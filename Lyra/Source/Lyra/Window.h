@@ -1,4 +1,5 @@
 #pragma once
+//TODO: Need to include this pch here or project won't compile, figure out a better solution later
 #include "lrpch.h"
 
 #include "Lyra/Core.h"

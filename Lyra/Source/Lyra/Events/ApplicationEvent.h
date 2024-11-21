@@ -29,4 +29,12 @@ namespace Lyra
 
 	};
 
+	class LYRA_API WindowCloseEvent : public Event
+	{
+	public:
+
+		EVENT_CLASS_TYPE(WindowClose);
+		EVENT_CLASS_CATEGORY(EventCategoryApplication);
+	};
+
 }

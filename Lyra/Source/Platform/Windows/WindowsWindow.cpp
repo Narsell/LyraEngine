@@ -2,6 +2,8 @@
 
 #include "Lyra/Core.h"
 #include "WindowsWindow.h"
+#include "Lyra/Events/ApplicationEvent.h"
+#include "Lyra/Events/MouseEvent.h"
 
 namespace Lyra
 {
@@ -45,6 +47,30 @@ namespace Lyra
         glfwMakeContextCurrent(m_Window);
         glfwSetWindowUserPointer(m_Window, &m_Data);
         SetVSync(true);
+
+        // Set GLFW callbacks
+        glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
+        {
+            WindowData* data = reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            if (data)
+            {
+                data->Height;
+                data->Width;
+
+                WindowResizeEvent event(width, height);
+                data->EventCallback(event);
+            }
+        });
+
+        glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) 
+        {
+            WindowData* data = reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            if (data)
+            {
+                WindowCloseEvent event;
+                data->EventCallback(event);
+            }
+        });
     }
 
     void WindowsWindow::Shutdown()

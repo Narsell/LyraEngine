@@ -45,9 +45,13 @@ namespace Lyra
 		{
 			return GetCategoryFlags() & category;
 		}
+
 	protected:
 		bool m_Handled = false;
 	};
 
-
+	inline std::string format_as(const Event& e)
+	{
+		return e.ToString();
+	}
 }

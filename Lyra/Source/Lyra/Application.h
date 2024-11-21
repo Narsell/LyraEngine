@@ -15,6 +15,8 @@ namespace Lyra
 		virtual ~Application();
 
 		void Run();
+
+		void OnEvent(const Event& e);
 	private:
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
