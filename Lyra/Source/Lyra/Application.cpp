@@ -27,6 +27,6 @@ namespace Lyra
 	}
 	void Application::OnEvent(const Event& e)
 	{
-		LR_CORE_INFO(e);
+		LR_CORE_TRACE(e);
 	}
 }

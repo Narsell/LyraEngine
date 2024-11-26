@@ -4,10 +4,16 @@
 #include "WindowsWindow.h"
 #include "Lyra/Events/ApplicationEvent.h"
 #include "Lyra/Events/MouseEvent.h"
+#include "Lyra/Events/KeyEvent.h"
 
 namespace Lyra
 {
     static bool s_isGLFWInitialized = false;
+
+    static void GLFWErrorCallback(int error_code, const char* description)
+    {
+        LR_CORE_FATAL("GLFW ERROR [{0}]: {1}", error_code, description);
+    }
 
     Window* Window::Create(const WindowProps& props)
     {
@@ -36,7 +42,7 @@ namespace Lyra
         {
             int success = glfwInit();
             LR_CORE_ASSERT(success, "Unable to initialize GLFW.");
-
+            glfwSetErrorCallback(GLFWErrorCallback);
             s_isGLFWInitialized = true;
         }
 
@@ -52,24 +58,90 @@ namespace Lyra
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
         {
             WindowData* data = reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
-            if (data)
-            {
-                data->Height;
-                data->Width;
+            if (!data) return;
 
-                WindowResizeEvent event(width, height);
-                data->EventCallback(event);
-            }
+            data->Height;
+            data->Width;
+            WindowResizeEvent event(width, height);
+            data->EventCallback(event);
         });
 
         glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) 
         {
             WindowData* data = reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
-            if (data)
+            if (!data) return;
+
+            WindowCloseEvent event;
+            data->EventCallback(event);
+        });
+
+        glfwSetKeyCallback(m_Window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+        {
+            WindowData* data = reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            if (!data) return;
+
+            switch (action)
             {
-                WindowCloseEvent event;
-                data->EventCallback(event);
+                case GLFW_PRESS:
+                {
+                    KeyPressedEvent event(key, 0);
+                    data->EventCallback(event);
+                    break;
+                }
+                case GLFW_RELEASE:
+                {
+                    KeyReleasedEvent event(key);
+                    data->EventCallback(event);
+                    break;
+                }
+                case  GLFW_REPEAT:
+                {
+                    //TODO: Get actual repeat count because GLFW doesn't provide one
+                    KeyPressedEvent event(key, 1);
+                    data->EventCallback(event);
+                    break;
+                }
             }
+        });
+
+        glfwSetMouseButtonCallback(m_Window, [](GLFWwindow* window, int button, int action, int mods)
+        {
+            WindowData* data = reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            if (!data) return;
+
+            switch (action)
+            {
+            case GLFW_PRESS:
+            {
+                MouseButtonPressedEvent event(button);
+                data->EventCallback(event);
+                break;
+            }
+            case GLFW_RELEASE:
+            {
+                MouseButtonReleasedEvent event(button);
+                data->EventCallback(event);
+                break;
+            }
+            }
+        });
+
+        glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
+        {
+            WindowData* data = reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            if (!data) return;
+
+            MouseScrolledEvent event(xOffset, yOffset);
+            data->EventCallback(event);
+        });
+
+        glfwSetCursorPosCallback(m_Window, [](GLFWwindow* window, double xPos, double yPos)
+        {
+            WindowData* data = reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));
+            if (!data) return;
+
+            MouseMovedEvent event(xPos, yPos);
+            data->EventCallback(event);
         });
     }
 
