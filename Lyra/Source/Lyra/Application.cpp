@@ -25,8 +25,21 @@ namespace Lyra
 			m_Window->OnUpdate();
 		}
 	}
-	void Application::OnEvent(const Event& e)
+
+	void Application::OnEvent(Event& e)
 	{
+		EventDispatcher dispatcher(e);
+		if (dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(&Application::OnWindowClose)))
+		{
+			LR_CORE_TRACE("Dispatched WindowCloseEvent to Application::OnWindowClose");
+		}
+
 		LR_CORE_TRACE(e);
+	}
+
+	bool Application::OnWindowClose(WindowCloseEvent& e)
+	{
+		m_Running = false;
+		return true;
 	}
 }

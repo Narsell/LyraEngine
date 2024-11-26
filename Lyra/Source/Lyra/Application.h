@@ -2,6 +2,7 @@
 
 #include "Lyra/Core.h"
 #include "Lyra/Window.h"
+#include "Events/ApplicationEvent.h"
 
 namespace Lyra
 {
@@ -16,8 +17,10 @@ namespace Lyra
 
 		void Run();
 
-		void OnEvent(const Event& e);
+		void OnEvent(Event& e);
 	private:
+		bool OnWindowClose(WindowCloseEvent& e);
+
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 
