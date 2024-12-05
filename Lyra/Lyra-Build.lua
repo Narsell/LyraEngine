@@ -1,6 +1,7 @@
 project "Lyra"
    kind "SharedLib"
    language "C++"
+   staticruntime "Off"
 
    files { "Source/**.h", "Source/**.hpp", "Source/**.cpp", "Source/**.c" }
 
@@ -27,7 +28,6 @@ project "Lyra"
 
    filter "system:windows"
        cppdialect "C++20"
-       staticruntime "On"
        systemversion "latest"
        defines
        {

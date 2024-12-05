@@ -1,6 +1,7 @@
 project "App"
    kind "ConsoleApp"
    language "C++"
+   staticruntime "Off"
 
    files { "Source/**.h", "Source/**.cpp" }
 
@@ -25,7 +26,6 @@ project "App"
 
    filter "system:windows"
         cppdialect "C++20"
-        staticruntime "On"
         systemversion "latest"
         defines
         {
