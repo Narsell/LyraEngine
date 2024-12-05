@@ -1,5 +1,8 @@
 #pragma once
 
+#include <sstream>
+#include <string>
+
 #include "Lyra/Core.h"
 #include "Event.h"
 

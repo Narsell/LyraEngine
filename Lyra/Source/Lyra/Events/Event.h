@@ -1,5 +1,8 @@
 #pragma once
 
+#include <functional>
+#include <cstdint>
+
 #include "Lyra/Core.h"
 
 namespace Lyra

@@ -1,6 +1,8 @@
 #pragma once
-//TODO: Need to include this pch here or project won't compile, figure out a better solution later
-#include "lrpch.h"
+
+#include <cstdint>
+#include <functional>
+#include <string>
 
 #include "Lyra/Core.h"
 #include "Lyra/Events/Event.h"

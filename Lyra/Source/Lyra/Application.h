@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "Lyra/Core.h"
 #include "Lyra/Window.h"
 #include "Events/ApplicationEvent.h"

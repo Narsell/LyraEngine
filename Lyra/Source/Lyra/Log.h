@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 
 #include "Lyra/Core.h"
 #include "spdlog/spdlog.h"

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstdint>
+#include <string>
+
 #include "Lyra/Core.h"
 #include "Lyra/Window.h"
 
