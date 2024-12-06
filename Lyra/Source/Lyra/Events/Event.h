@@ -43,6 +43,8 @@ namespace Lyra
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
 		virtual std::string ToString() const { return GetName(); }
+		bool IsHandled() const { return m_Handled; }
+		void SetHandled() { m_Handled = true; }
 
 		// Works by using bitwise AND operator
 		inline bool IsInCategory(EventCategory category)

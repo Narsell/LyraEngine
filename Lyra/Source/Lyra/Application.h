@@ -4,7 +4,8 @@
 
 #include "Lyra/Core.h"
 #include "Lyra/Window.h"
-#include "Events/ApplicationEvent.h"
+#include "Lyra/Events/ApplicationEvent.h"
+#include "Lyra/LayerStack.h"
 
 namespace Lyra
 {
@@ -20,11 +21,16 @@ namespace Lyra
 		void Run();
 
 		void OnEvent(Event& e);
+
+		void PushLayer(Layer* layer);
+		void PushOverlay(Layer* overlay);
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
+		LayerStack m_LayerStack;
 
 	};
 

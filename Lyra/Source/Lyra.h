@@ -6,3 +6,6 @@
 #include "Lyra/Log.h"
 
 #include "Lyra/EntryPoint.h"
+
+#include "Lyra/Layer.h"
+
