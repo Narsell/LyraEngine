@@ -1,5 +1,8 @@
 #include "lrpch.h"
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "Lyra/Core.h"
 #include "WindowsWindow.h"
 #include "Lyra/Events/ApplicationEvent.h"
@@ -53,6 +56,10 @@ namespace Lyra
         glfwMakeContextCurrent(m_Window);
         glfwSetWindowUserPointer(m_Window, &m_Data);
         SetVSync(true);
+
+        // Initialize Glad
+        int gladInitStatus = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+        LR_CORE_ASSERT(gladInitStatus, "Failed to initialize Glad.");
 
         // Set GLFW callbacks
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
@@ -126,6 +133,7 @@ namespace Lyra
             }
         });
 
+        //TODO: Fix these narrowing conversion warnings.
         glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
         {
             WindowData* data = reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));

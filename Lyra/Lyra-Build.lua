@@ -9,13 +9,15 @@ project "Lyra"
    {
       "Source",
       "Vendor/spdlog/include",
-      "%{IncludeDir.GLFW}"
+      "%{IncludeDir.GLFW}",
+      "%{IncludeDir.Glad}",
    }
 
    links
    {
       "GLFW",
-      "opengl32.lib"
+      "Glad",
+      "opengl32.lib",
    }
 
    buildoptions { "/utf-8" }

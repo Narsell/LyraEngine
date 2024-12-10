@@ -12,12 +12,12 @@ namespace Lyra
 	class LYRA_API MouseMovedEvent : public Event
 	{
 	public:
-		MouseMovedEvent(float mouseX, float mouseY)
+		MouseMovedEvent(double mouseX, double mouseY)
 			: m_MouseX(mouseX), m_MouseY(mouseY)
 		{}
 
-		inline float GetMouseX() const { return m_MouseX; }
-		inline float GetMouseY() const { return m_MouseY; }
+		inline double GetMouseX() const { return m_MouseX; }
+		inline double GetMouseY() const { return m_MouseY; }
 
 		std::string ToString() const override
 		{
@@ -30,13 +30,13 @@ namespace Lyra
 		EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryMouse);
 
 	private:
-		float m_MouseX, m_MouseY;
+		double m_MouseX, m_MouseY;
 	};
 
 	class LYRA_API MouseScrolledEvent : public Event
 	{
 	public:
-		MouseScrolledEvent(float offsetX, float offsetY)
+		MouseScrolledEvent(double offsetX, double offsetY)
 			: m_OffsetX(offsetX), m_OffsetY(offsetY) {}
 
 		std::string ToString() const override
@@ -50,7 +50,7 @@ namespace Lyra
 		EVENT_CLASS_CATEGORY(EventCategoryInput | EventCategoryMouse)
 
 	private:
-		float m_OffsetX, m_OffsetY;
+		double m_OffsetX, m_OffsetY;
 	};
 
 	class LYRA_API MouseButtonEvent : public Event

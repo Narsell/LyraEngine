@@ -6,7 +6,7 @@
 #include "Lyra/Core.h"
 #include "Lyra/Window.h"
 
-#include <GLFW/glfw3.h>
+struct GLFWwindow;
 
 namespace Lyra
 {
