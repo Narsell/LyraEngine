@@ -5,14 +5,22 @@
 #include "Application.h"
 #include "Events/Event.h"
 
+// TODO: Remove this temporary include, the renderer should take care of rendering but for now this works.
+#include <glad/glad.h>
+
 namespace Lyra
 {
 
 #define BIND_EVENT_FN(x) std::bind(x, this, std::placeholders::_1)
 
+	Application* Application::s_Instance = nullptr;
+
 	Application::Application()
 		: m_Window(std::unique_ptr<Window>(Window::Create()))
 	{
+		LR_CORE_ASSERT(!s_Instance, "There's already an application instance!");
+		s_Instance = this;
+
 		m_Window->SetEventCallback(BIND_EVENT_FN(&Application::OnEvent));
 	}
 
@@ -24,6 +32,14 @@ namespace Lyra
 	{
 		while (m_Running)
 		{
+			glClearColor(1, 0, 1, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			for (auto layer : m_LayerStack)
+			{
+				layer->OnUpdate();
+			}
+
 			m_Window->OnUpdate();
 		}
 	}

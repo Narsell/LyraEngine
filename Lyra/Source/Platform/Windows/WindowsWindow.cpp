@@ -133,7 +133,6 @@ namespace Lyra
             }
         });
 
-        //TODO: Fix these narrowing conversion warnings.
         glfwSetScrollCallback(m_Window, [](GLFWwindow* window, double xOffset, double yOffset)
         {
             WindowData* data = reinterpret_cast<WindowData*>(glfwGetWindowUserPointer(window));

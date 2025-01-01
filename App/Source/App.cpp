@@ -50,7 +50,7 @@ public:
 
 	void OnUpdate() override
 	{
-		LR_TRACE("GameLayer::OnUpdate");
+		//LR_TRACE("GameLayer::OnUpdate");
 	};
 
 	void OnEvent(Lyra::Event& event) override
@@ -66,7 +66,7 @@ public:
 	{
 		//TODO: Fix issue where iterator is invalid if we push overlay first.
 		PushLayer(new GameLayer());
-		PushOverlay(new UILayer());
+		PushOverlay(new Lyra::ImGuiLayer());
 	}
 	~SandboxApp() {}
 };

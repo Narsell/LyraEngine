@@ -14,8 +14,6 @@ namespace Lyra
 	{
 
 	public:
-
-		Application();
 		virtual ~Application();
 
 		void Run();
@@ -25,12 +23,20 @@ namespace Lyra
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);
 
+		inline static Application& GetApplication() { return *s_Instance; }
+		inline Window& GetWindow() const { return *m_Window; }
+
+	protected:
+		Application();
+
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 
 		std::unique_ptr<Window> m_Window;
 		bool m_Running = true;
 		LayerStack m_LayerStack;
+
+		static Application* s_Instance;
 
 	};
 

@@ -11,12 +11,14 @@ project "Lyra"
       "Vendor/spdlog/include",
       "%{IncludeDir.GLFW}",
       "%{IncludeDir.Glad}",
+      "%{IncludeDir.ImGui}",
    }
 
    links
    {
       "GLFW",
       "Glad",
+      "ImGui",
       "opengl32.lib",
    }
 

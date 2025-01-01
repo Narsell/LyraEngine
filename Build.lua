@@ -10,10 +10,12 @@ IncludeDir = {}
 -- This path is relative to Lyra
 IncludeDir["GLFW"] = "Vendor/GLFW/include"
 IncludeDir["Glad"] = "Vendor/glad/include"
+IncludeDir["ImGui"] = "Vendor/imgui"
 
 group "Dependencies"
    include "Lyra/Vendor/GLFW"
    include "Lyra/Vendor/Glad"
+   include "Lyra/Vendor/imgui"
 group ""
 
 group "Engine"

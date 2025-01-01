@@ -18,6 +18,7 @@ namespace Lyra
 
 		void OnUpdate() override;
 
+		inline GLFWwindow* GetGLFWwindow() const { return m_Window; }
 		inline uint16_t GetWidth() const override { return m_Data.Width; }
 		inline uint16_t GetHeight() const override { return m_Data.Height; }
 
