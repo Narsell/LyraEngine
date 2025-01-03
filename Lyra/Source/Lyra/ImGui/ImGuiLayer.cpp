@@ -35,11 +35,13 @@ namespace Lyra
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
+		void* nativeWindow = app.GetWindow().GetNativeWindow();
+
 #ifdef LR_PLATFORM_WINDOWS:
-		if (WindowsWindow* window = dynamic_cast<WindowsWindow*>(&app.GetWindow()))
-		{
-			ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWwindow(), true);     // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
-		}
+
+		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(nativeWindow);
+		ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
+
 #endif
 
 		ImGui_ImplOpenGL3_Init("#version 410");

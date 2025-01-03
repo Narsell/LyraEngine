@@ -14,21 +14,21 @@ namespace Lyra
 	{
 	public:
 		WindowsWindow(const WindowProps& props);
-		~WindowsWindow() override;
+		virtual ~WindowsWindow() override;
 
-		void OnUpdate() override;
+		virtual void OnUpdate() override;
 
-		inline GLFWwindow* GetGLFWwindow() const { return m_Window; }
-		inline uint16_t GetWidth() const override { return m_Data.Width; }
-		inline uint16_t GetHeight() const override { return m_Data.Height; }
+		virtual inline uint16_t GetWidth() const override { return m_Data.Width; }
+		virtual inline uint16_t GetHeight() const override { return m_Data.Height; }
+		virtual inline void* GetNativeWindow() const override { return m_Window; }
 
-		inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; };
-		void SetVSync(bool enabled) override;
-		bool IsVSync() const override;
+		virtual inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; };
+		virtual void SetVSync(bool enabled) override;
+		virtual bool IsVSync() const override;
 
 	private:
-		virtual void Init(const WindowProps& props);
-		virtual void Shutdown();
+		void Init(const WindowProps& props);
+		void Shutdown();
 
 	private:
 

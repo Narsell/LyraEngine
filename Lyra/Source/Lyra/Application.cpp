@@ -5,6 +5,7 @@
 #include "Application.h"
 #include "Lyra/Core.h"
 #include "Events/Event.h"
+#include "Lyra/Input.h"
 
 // TODO: Remove this temporary include, the renderer should take care of rendering but for now this works.
 #include <glad/glad.h>
@@ -40,6 +41,7 @@ namespace Lyra
 			}
 
 			m_Window->OnUpdate();
+
 		}
 	}
 
