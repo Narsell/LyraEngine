@@ -1,34 +1,5 @@
 #include "Lyra.h"
 
-class UILayer : public Lyra::Layer
-{
-public:
-	UILayer()
-		:Layer("UILayer")
-	{
-	}
-
-	void OnAttach() override
-	{
-		LR_INFO("UILayer::OnAttach");
-	};
-
-	void OnDetach() override
-	{
-		LR_INFO("UILayer::OnDetach");
-	};
-
-	void OnUpdate() override
-	{
-		LR_TRACE("UILayer::OnUpdate");
-	};
-
-	void OnEvent(Lyra::Event& event) override
-	{
-		LR_TRACE("UILayer::OnEvent: {0}", event);
-		event.SetHandled();
-	};
-};
 
 class GameLayer : public Lyra::Layer
 {

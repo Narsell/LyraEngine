@@ -21,6 +21,8 @@ namespace Lyra
 
 	void ImGuiLayer::OnAttach()
 	{
+		LR_CORE_INFO("ImGuiLayer::OnAttach");
+
 		IMGUI_CHECKVERSION();
 
 		ImGui::CreateContext();
@@ -36,7 +38,7 @@ namespace Lyra
 #ifdef LR_PLATFORM_WINDOWS:
 		if (WindowsWindow* window = dynamic_cast<WindowsWindow*>(&app.GetWindow()))
 		{
-			ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWwindow(), true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+			ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWwindow(), true);     // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
 		}
 #endif
 
@@ -46,6 +48,7 @@ namespace Lyra
 
 	void ImGuiLayer::OnDetach()
 	{
+		LR_CORE_INFO("ImGuiLayer::OnAttach");
 	}
 
 	void ImGuiLayer::OnUpdate()
@@ -63,6 +66,9 @@ namespace Lyra
 
 	void ImGuiLayer::OnEvent(Event& event)
 	{
+		LR_CORE_TRACE("ImGuiLayer::OnEvent: {0}", event);
+
+		event.SetHandled();
 	}
 
 }

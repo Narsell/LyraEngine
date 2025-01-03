@@ -3,6 +3,7 @@
 #include <ranges>
 
 #include "Application.h"
+#include "Lyra/Core.h"
 #include "Events/Event.h"
 
 // TODO: Remove this temporary include, the renderer should take care of rendering but for now this works.
@@ -10,8 +11,6 @@
 
 namespace Lyra
 {
-
-#define BIND_EVENT_FN(x) std::bind(x, this, std::placeholders::_1)
 
 	Application* Application::s_Instance = nullptr;
 
@@ -21,7 +20,7 @@ namespace Lyra
 		LR_CORE_ASSERT(!s_Instance, "There's already an application instance!");
 		s_Instance = this;
 
-		m_Window->SetEventCallback(BIND_EVENT_FN(&Application::OnEvent));
+		m_Window->SetEventCallback(LR_BIND_EVENT_FN(&Application::OnEvent));
 	}
 
 	Application::~Application()
@@ -48,7 +47,7 @@ namespace Lyra
 	{
 		// Dispatch window close event
 		EventDispatcher dispatcher(e);
-		if (dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(&Application::OnWindowClose)))
+		if (dispatcher.Dispatch<WindowCloseEvent>(LR_BIND_EVENT_FN(&Application::OnWindowClose)))
 		{
 			LR_CORE_TRACE("Dispatched WindowCloseEvent to Application::OnWindowClose");
 		}
