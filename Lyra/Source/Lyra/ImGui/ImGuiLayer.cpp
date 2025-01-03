@@ -68,8 +68,7 @@ namespace Lyra
 
 	void ImGuiLayer::OnEvent(Event& event)
 	{
-		LR_CORE_TRACE("ImGuiLayer::OnEvent: {0}", event);
-
+		//LR_CORE_TRACE("ImGuiLayer::OnEvent: {0}", event);
 		event.SetHandled();
 	}
 

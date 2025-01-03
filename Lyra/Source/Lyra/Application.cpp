@@ -41,7 +41,6 @@ namespace Lyra
 			}
 
 			m_Window->OnUpdate();
-
 		}
 	}
 

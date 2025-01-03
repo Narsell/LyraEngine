@@ -22,6 +22,11 @@ public:
 	void OnUpdate() override
 	{
 		//LR_TRACE("GameLayer::OnUpdate");
+
+		if (Lyra::Input::IsKeyPressed(LR_KEY_HOME))
+		{
+			LR_TRACE("Pressing home key!");
+		}
 	};
 
 	void OnEvent(Lyra::Event& event) override

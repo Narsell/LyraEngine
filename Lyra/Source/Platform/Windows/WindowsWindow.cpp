@@ -176,9 +176,4 @@ namespace Lyra
             glfwSwapInterval(0);
         }
     }
-
-    bool WindowsWindow::IsVSync() const
-    {
-        return m_Data.VSync;
-    }
 }

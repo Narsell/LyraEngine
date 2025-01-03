@@ -4,7 +4,7 @@
 
 namespace Lyra
 {
-	class WindowsInput : public Input
+	class WindowsInput final : public Input
 	{
 	protected:
 

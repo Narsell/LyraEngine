@@ -10,21 +10,21 @@ struct GLFWwindow;
 
 namespace Lyra
 {
-	class LYRA_API WindowsWindow : public Window
+	class LYRA_API WindowsWindow final : public Window
 	{
 	public:
 		WindowsWindow(const WindowProps& props);
-		virtual ~WindowsWindow() override;
+		~WindowsWindow() override;
 
 		virtual void OnUpdate() override;
 
 		virtual inline uint16_t GetWidth() const override { return m_Data.Width; }
 		virtual inline uint16_t GetHeight() const override { return m_Data.Height; }
-		virtual inline void* GetNativeWindow() const override { return m_Window; }
+		virtual bool IsVSync() const override { return m_Data.VSync; };
+		virtual void* GetNativeWindow() const override { return m_Window; }
 
-		virtual inline void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; };
+		virtual void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; };
 		virtual void SetVSync(bool enabled) override;
-		virtual bool IsVSync() const override;
 
 	private:
 		void Init(const WindowProps& props);
