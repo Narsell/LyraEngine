@@ -8,3 +8,6 @@
 [submodule "Lyra/Vendor/imgui"]
 	path = Lyra/Vendor/imgui
 	url = https://github.com/Narsell/imgui.git
+[submodule "Lyra/Vendor/glm"]
+	path = Lyra/Vendor/glm
+	url = https://github.com/g-truc/glm

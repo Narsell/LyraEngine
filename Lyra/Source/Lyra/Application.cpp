@@ -1,7 +1,5 @@
 #include "lrpch.h"
 
-#include <ranges>
-
 #include "Application.h"
 #include "Lyra/Core.h"
 #include "Events/Event.h"

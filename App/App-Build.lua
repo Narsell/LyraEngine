@@ -11,7 +11,8 @@ project "App"
 
 	  -- Include Lyra
 	  "../Lyra/Source",
-      "../Lyra/Vendor/spdlog/include"
+      "../Lyra/%{IncludeDir.spdlog}",
+      "../Lyra/%{IncludeDir.glm}",
    }
 
    links

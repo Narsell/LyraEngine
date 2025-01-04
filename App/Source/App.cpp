@@ -1,6 +1,5 @@
 #include "Lyra.h"
 
-
 class GameLayer : public Lyra::Layer
 {
 public:
@@ -38,7 +37,7 @@ public:
 class SandboxApp : public Lyra::Application
 {
 public:
-	SandboxApp() 
+	SandboxApp()
 	{
 		//TODO: Fix issue where iterator is invalid if we push overlay first.
 		PushLayer(new GameLayer());

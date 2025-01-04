@@ -3,15 +3,25 @@ project "Lyra"
    language "C++"
    staticruntime "Off"
 
-   files { "Source/**.h", "Source/**.hpp", "Source/**.cpp", "Source/**.c" }
+   files
+   {
+      "Source/**.h",
+      "Source/**.hpp",
+      "Source/**.cpp",
+      "Source/**.c",
+      -- Include glm files into Lyra project
+      "Vendor/glm/glm/**.hpp",
+      "Vendor/glm/glm/**.inl",
+   }
 
    includedirs
    {
       "Source",
-      "Vendor/spdlog/include",
+      "%{IncludeDir.spdlog}",
       "%{IncludeDir.GLFW}",
       "%{IncludeDir.Glad}",
       "%{IncludeDir.ImGui}",
+      "%{IncludeDir.glm}",
    }
 
    links
