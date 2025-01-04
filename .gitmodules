@@ -1,13 +1,13 @@
 [submodule "Lyra/Vendor/spdlog"]
 	path = Lyra/Vendor/spdlog
 	url = https://github.com/gabime/spdlog
-
 [submodule "Lyra/Vendor/GLFW"]
 	path = Lyra/Vendor/GLFW
 	url = https://github.com/Narsell/glfw
 [submodule "Lyra/Vendor/imgui"]
 	path = Lyra/Vendor/imgui
 	url = https://github.com/Narsell/imgui.git
+	branch = docking
 [submodule "Lyra/Vendor/glm"]
 	path = Lyra/Vendor/glm
 	url = https://github.com/g-truc/glm
