@@ -43,7 +43,7 @@ namespace Lyra
 
 	private:
 		LayerContainer m_Layers;
-		LayerContainer::iterator m_LayerInsert;
+		uint8_t m_LayerInsertIndex = 0;
 	};
 
 }

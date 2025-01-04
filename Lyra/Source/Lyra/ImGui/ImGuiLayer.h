@@ -14,8 +14,10 @@ namespace Lyra
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		void OnUpdate() override;
-		void OnEvent(Event& event) override;
+		virtual void OnImGuiRender() override;
+
+		void Begin();
+		void End();
 
 	private:
 	};

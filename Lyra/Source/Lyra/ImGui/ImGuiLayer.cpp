@@ -1,12 +1,14 @@
 #include "lrpch.h"
 
-#include "imgui.h"
-#include "Platform/OpenGL/imgui_impl_opengl3.h"
-#include "Platform/GLFW/imgui_impl_glfw.h"
-
 #include "ImGuiLayer.h"
 #include "Lyra/Application.h"
 #include "Platform/Windows/WindowsWindow.h"
+
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_glfw.h"
+
+// TODO: Temporary include
+#include "GLFW/glfw3.h"
 
 namespace Lyra
 {
@@ -21,55 +23,67 @@ namespace Lyra
 
 	void ImGuiLayer::OnAttach()
 	{
-		LR_CORE_INFO("ImGuiLayer::OnAttach");
-
 		IMGUI_CHECKVERSION();
-
 		ImGui::CreateContext();
-		ImGui::StyleColorsDark();
-
-		ImGuiIO io = ImGui::GetIO();
-		Application& app = Application::GetApplication();
-
-		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight()); // Set display size
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
 
-		void* nativeWindow = app.GetWindow().GetNativeWindow();
+		ImGui::StyleColorsDark();
 
-#ifdef LR_PLATFORM_WINDOWS:
+		// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+		ImGuiStyle& style = ImGui::GetStyle();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		}
 
-		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(nativeWindow);
+		Application& app = Application::GetApplication();
+		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
+
 		ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
-
-#endif
-
 		ImGui_ImplOpenGL3_Init("#version 410");
-
 	}
 
 	void ImGuiLayer::OnDetach()
 	{
-		LR_CORE_INFO("ImGuiLayer::OnAttach");
+		ImGui_ImplOpenGL3_Shutdown();
+		ImGui_ImplGlfw_Shutdown();
+		ImGui::DestroyContext();
 	}
 
-	void ImGuiLayer::OnUpdate()
+	void ImGuiLayer::OnImGuiRender()
+	{
+		bool showDemoWindow = true;
+		ImGui::ShowDemoWindow(&showDemoWindow); // Show demo window! :)
+	}
+
+	void ImGuiLayer::Begin()
 	{
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+	}
 
-		bool showDemoWindow = true;
-		ImGui::ShowDemoWindow(&showDemoWindow); // Show demo window! :)
+	void ImGuiLayer::End()
+	{
+		Application& app = Application::GetApplication();
+		ImGuiIO io = ImGui::GetIO();
+		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight()); // Set display size
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-	}
 
-	void ImGuiLayer::OnEvent(Event& event)
-	{
-		//LR_CORE_TRACE("ImGuiLayer::OnEvent: {0}", event);
-		event.SetHandled();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			GLFWwindow* currentContextBackup = glfwGetCurrentContext();
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+			glfwMakeContextCurrent(currentContextBackup);
+		}
 	}
 
 }
