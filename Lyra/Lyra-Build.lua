@@ -1,7 +1,8 @@
 project "Lyra"
-   kind "SharedLib"
+   kind "StaticLib"
    language "C++"
-   staticruntime "Off"
+   cppdialect "C++20"
+   staticruntime "On"
 
    files
    {
@@ -32,6 +33,11 @@ project "Lyra"
       "opengl32.lib",
    }
 
+   defines
+   {
+      "_CRT_SECURE_NO_WARNINGS"
+   }
+
    buildoptions { "/utf-8" }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
@@ -41,17 +47,10 @@ project "Lyra"
    pchsource "Source/lrpch.cpp"
 
    filter "system:windows"
-       cppdialect "C++20"
        systemversion "latest"
        defines
        {
-          "LR_PLATFORM_WINDOWS",
-          "LR_BUILD_DLL"
-       }
-
-       postbuildcommands
-       {
-        ("{COPY} %{cfg.buildtarget.relpath} ../Binaries/" .. OutputDir ..  "/App")
+          "LR_PLATFORM_WINDOWS"
        }
 
    filter "configurations:Debug"
@@ -73,3 +72,4 @@ project "Lyra"
        defines { "LR_DIST" }
        runtime "Release"
        optimize "On"
+       symbols "Off"

@@ -1,7 +1,8 @@
 project "App"
    kind "ConsoleApp"
    language "C++"
-   staticruntime "Off"
+   cppdialect "C++20"
+   staticruntime "On"
 
    files { "Source/**.h", "Source/**.cpp" }
 
@@ -13,6 +14,7 @@ project "App"
 	  "../Lyra/Source",
       "../Lyra/%{IncludeDir.spdlog}",
       "../Lyra/%{IncludeDir.glm}",
+      "../Lyra/%{IncludeDir.ImGui}",
    }
 
    links
@@ -26,7 +28,6 @@ project "App"
    objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
 
    filter "system:windows"
-        cppdialect "C++20"
         systemversion "latest"
         defines
         {
@@ -48,3 +49,4 @@ project "App"
        defines { "LR_DIST" }
        runtime "Release"
        optimize "On"
+       symbols "Off"

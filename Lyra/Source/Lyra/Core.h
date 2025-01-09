@@ -3,9 +3,9 @@
 // Compiler intrinsic exports, for now we only support windows 
 #ifdef LR_PLATFORM_WINDOWS
 	#ifdef LR_BUILD_DLL
-		#define LYRA_API __declspec(dllexport)
+		#define LYRA_API //__declspec(dllexport) -- Disabled for now, linking statically
 	#else
-		#define LYRA_API __declspec(dllimport)
+		#define LYRA_API //__declspec(dllimport) -- Disabled for now, linking statically
 	#endif
 #else
 	#error Lyra only supports windows
