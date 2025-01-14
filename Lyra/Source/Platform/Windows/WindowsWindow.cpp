@@ -1,6 +1,5 @@
 #include "lrpch.h"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "Lyra/Core.h"
@@ -8,6 +7,7 @@
 #include "Lyra/Events/ApplicationEvent.h"
 #include "Lyra/Events/MouseEvent.h"
 #include "Lyra/Events/KeyEvent.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Lyra
 {
@@ -41,6 +41,7 @@ namespace Lyra
 
         LR_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
 
+
         if (!s_isGLFWInitialized)
         {
             int success = glfwInit();
@@ -53,13 +54,12 @@ namespace Lyra
                                     static_cast<int>(m_Data.Height),
                                     m_Data.Title.c_str(),
                                     nullptr, nullptr);
-        glfwMakeContextCurrent(m_Window);
+
+        m_Context = new OpenGLContext(m_Window);
+        m_Context->Init();
+
         glfwSetWindowUserPointer(m_Window, &m_Data);
         SetVSync(true);
-
-        // Initialize Glad
-        int gladInitStatus = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-        LR_CORE_ASSERT(gladInitStatus, "Failed to initialize Glad.");
 
         // Set GLFW callbacks
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
@@ -160,7 +160,7 @@ namespace Lyra
     void WindowsWindow::OnUpdate()
     {
         glfwPollEvents();
-        glfwSwapBuffers(m_Window);
+        m_Context->SwapBuffers();
     }
 
     void WindowsWindow::SetVSync(bool enabled)

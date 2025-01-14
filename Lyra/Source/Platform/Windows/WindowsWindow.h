@@ -10,6 +10,8 @@ struct GLFWwindow;
 
 namespace Lyra
 {
+	class GraphicsContext;
+
 	class LYRA_API WindowsWindow final : public Window
 	{
 	public:
@@ -33,6 +35,7 @@ namespace Lyra
 	private:
 
 		GLFWwindow* m_Window;
+		GraphicsContext* m_Context;
 
 		struct WindowData
 		{
