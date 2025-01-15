@@ -12,12 +12,12 @@ public:
 
 	void OnAttach() override
 	{
-		LR_INFO("GameLayer::OnAttach");
+		//LR_TRACE("GameLayer::OnAttach");
 	}
 
 	void OnDetach() override
 	{
-		LR_INFO("GameLayer::OnDetach");
+		//LR_TRACE("GameLayer::OnDetach");
 	}
 
 	void OnImGuiRender() override
@@ -29,7 +29,7 @@ public:
 
 	void OnEvent(Lyra::Event& event) override
 	{
-		LR_TRACE("GameLayer::OnEvent: {0}", event);
+		//LR_TRACE("GameLayer::OnEvent: {0}", event);
 	}
 };
 

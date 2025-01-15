@@ -39,7 +39,7 @@ namespace Lyra
         m_Data.Width = props.Width;
         m_Data.Height = props.Height;
 
-        LR_CORE_INFO("Creating window {0} ({1}, {2})", props.Title, props.Width, props.Height);
+        LR_CORE_TRACE("Creating window '{0}' with resolution: {1}x{2}", props.Title, props.Width, props.Height);
 
 
         if (!s_isGLFWInitialized)
@@ -49,6 +49,10 @@ namespace Lyra
             glfwSetErrorCallback(GLFWErrorCallback);
             s_isGLFWInitialized = true;
         }
+
+        //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+        //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); Not enabling this yet because I don't have shaders hehe
 
         m_Window = glfwCreateWindow(static_cast<int>(m_Data.Width),
                                     static_cast<int>(m_Data.Height),
