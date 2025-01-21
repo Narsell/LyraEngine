@@ -5,7 +5,8 @@
 #include "Events/Event.h"
 #include "Lyra/Input.h"
 #include "Lyra/ImGui/ImGuiLayer.h"
-
+#include "Lyra/Renderer/Shader.h"
+#include "Lyra/Renderer/Buffer.h"
 
 // TODO: Remove this temporary include, the renderer should take care of rendering but for now this works.
 #include <glad/glad.h>
@@ -29,41 +30,33 @@ namespace Lyra
 		glGenVertexArrays(1, &m_VertexArray);
 		glBindVertexArray(m_VertexArray);
 
-		//Create vertex buffer and bind it to GL_ARRAY_BUFFER
-		glCreateBuffers(1, &m_VertexBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-
 		// 3 vertices in 3D space
 		// Pos x, Pos y, Pos z
-		float bufferData[3 * 3] = {
+		float vertices[3 * 3] = {
 			-0.5f, -0.5f, 0.0f,
 			 0.5f, -0.5f, 0.0f,
 			 0.0f,  0.5f, 0.0f
 		};
 
-		// Setting bufferData to GL_ARRAY_BUFFER that we just bound.
-		glBufferData(GL_ARRAY_BUFFER, sizeof(bufferData), bufferData, GL_STATIC_DRAW);
+		m_VertexBuffer = std::unique_ptr<VertexBuffer>(VertexBuffer::Create(vertices, sizeof(vertices)));
 
 		// Enable and setup vertex atrib for position (index 0)
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
 		// 3 indices that make up a triangle, basically order in wich the vertices are going to be rendered.
-		unsigned int indices[3] =
+		uint32_t indices[3] =
 		{
 			0, 1, 2
 		};
 
-		//Create, bind and set indices to GL_ELEMENT_ARRAY_BUFFER which is the index buffer
-		glCreateBuffers(1, &m_IndexBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+		m_IndexBuffer = std::unique_ptr<IndexBuffer>(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 
+		//Shader source code stored in plain strings for now
 		std::string vertexSrc = R"(
 			#version 330 core
 			
 			layout(location=0) in vec3 a_Position;
-
 			out vec3 v_Position;
 			
 			void main()
@@ -85,7 +78,9 @@ namespace Lyra
 			};
 		)";
 
+		//Creating shader instance stored in a unique ptr
 		m_Shader = std::make_unique<Shader>(vertexSrc, fragmentSrc);
+		//Bind it (optional since we're binding on every frame)
 		m_Shader->Bind();
 	}
 
@@ -102,7 +97,7 @@ namespace Lyra
 
 			m_Shader->Bind();
 			glBindVertexArray(m_VertexArray);
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			m_ImGuiLayer->Begin();
 			for (auto layer : m_LayerStack)
