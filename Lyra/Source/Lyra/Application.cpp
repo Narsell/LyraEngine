@@ -59,6 +59,34 @@ namespace Lyra
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
+		std::string vertexSrc = R"(
+			#version 330 core
+			
+			layout(location=0) in vec3 a_Position;
+
+			out vec3 v_Position;
+			
+			void main()
+			{
+				v_Position = a_Position;
+				gl_Position = vec4(a_Position, 1.0);
+			};
+		)";
+
+		std::string fragmentSrc = R"(
+			#version 330 core
+			
+			out vec4 o_Color;
+			in vec3 v_Position;
+
+			void main()
+			{
+				o_Color = vec4(v_Position * 0.5 + 0.5, 1.0);
+			};
+		)";
+
+		m_Shader = std::make_unique<Shader>(vertexSrc, fragmentSrc);
+		m_Shader->Bind();
 	}
 
 	Application::~Application()
@@ -72,6 +100,7 @@ namespace Lyra
 			glClearColor(0.1, 0.1, 0.1, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			m_Shader->Bind();
 			glBindVertexArray(m_VertexArray);
 			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 

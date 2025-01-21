@@ -7,6 +7,8 @@
 #include "Lyra/Events/ApplicationEvent.h"
 #include "Lyra/LayerStack.h"
 
+#include "Lyra/Renderer/Shader.h"
+
 namespace Lyra
 {
 	class ImGuiLayer;
@@ -39,6 +41,9 @@ namespace Lyra
 		LayerStack m_LayerStack;
 
 		unsigned int m_VertexArray, m_VertexBuffer, m_IndexBuffer;
+		std::unique_ptr<Shader> m_Shader;
+
+	private:
 
 		static Application* s_Instance;
 
