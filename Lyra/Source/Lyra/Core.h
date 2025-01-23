@@ -12,13 +12,12 @@
 #endif
 
 // Assertion macros
-// TODO: Investigate using static asserts here
 #ifdef LR_ENABLE_ASSERTS
-	#define LR_ASSERT(x, ...) { if (!(x)) { LR_FATAL("Assertion failed: {0}", __VA_ARGS__); __debugbreak(); } }
-	#define LR_CORE_ASSERT(x, ...) { if (!(x)) { LR_CORE_FATAL("Assertion failed: {0}", __VA_ARGS__); __debugbreak(); } }
+	#define LR_ASSERT(x, ...) { if (!(x)) { LR_FATAL("Assertion failed: {0}", __VA_ARGS__); assert(false); } } }
+	#define LR_CORE_ASSERT(x, ...) { if (!(x)) { LR_CORE_FATAL("Assertion failed: {0}", __VA_ARGS__); assert(false); } }
 #else
-	#define LR_ASSERT(x, ...)
-	#define LR_CORE_ASSERT(x, ...)
+	#define LR_ASSERT(x, ...) { if (!(x)) { LR_FATAL("{0}", __VA_ARGS__); } }
+	#define LR_CORE_ASSERT(x, ...) { if (!(x)) { LR_CORE_FATAL("{0}", __VA_ARGS__); } }
 #endif
 
 // Left-shift bit operator macro

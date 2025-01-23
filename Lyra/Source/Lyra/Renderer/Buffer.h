@@ -1,5 +1,7 @@
 #pragma once
 
+#include "VertexLayout.h"
+
 namespace Lyra
 {
 	class VertexBuffer
@@ -28,4 +30,19 @@ namespace Lyra
 
 		static IndexBuffer* Create(uint32_t* indices, uint32_t count);
 	};
+
+
+	class VertexArray
+	{
+	public:
+		virtual ~VertexArray() {}
+
+		virtual void Bind() const = 0;
+		virtual void Unbind() const = 0;
+
+		virtual void SetLayout(VertexLayout& layout) const = 0;
+
+		static VertexArray* Create();
+	};
+
 }

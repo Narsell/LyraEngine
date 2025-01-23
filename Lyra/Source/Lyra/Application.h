@@ -10,6 +10,8 @@
 namespace Lyra
 {
 	class ImGuiLayer;
+	class VertexLayout;
+	class VertexArray;
 	class VertexBuffer;
 	class IndexBuffer;
 	class Shader;
@@ -41,7 +43,7 @@ namespace Lyra
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
-		unsigned int m_VertexArray;
+		std::unique_ptr<VertexArray> m_VertexArray;
 		std::unique_ptr<VertexBuffer> m_VertexBuffer;
 		std::unique_ptr<IndexBuffer> m_IndexBuffer;
 		std::unique_ptr<Shader> m_Shader;

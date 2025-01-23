@@ -26,9 +26,8 @@ namespace Lyra
 		PushOverlay(m_ImGuiLayer);
 		m_Window->SetEventCallback(LR_BIND_EVENT_FN(&Application::OnEvent));
 
-		//Create VAO and bind it
-		glGenVertexArrays(1, &m_VertexArray);
-		glBindVertexArray(m_VertexArray);
+		// Create VAO
+		m_VertexArray = std::unique_ptr<VertexArray>(VertexArray::Create());
 
 		// 3 vertices in 3D space
 		// Pos x, Pos y, Pos z
@@ -38,11 +37,13 @@ namespace Lyra
 			 0.0f,  0.5f, 0.0f
 		};
 
+		// Create vertex buffer and upload data
 		m_VertexBuffer = std::unique_ptr<VertexBuffer>(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-		// Enable and setup vertex atrib for position (index 0)
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+		// Set vertex array buffer layout
+		VertexLayout vertexLayout;
+		vertexLayout.AddElement(VertexType_Float, 3);
+		m_VertexArray->SetLayout(vertexLayout);
 
 		// 3 indices that make up a triangle, basically order in wich the vertices are going to be rendered.
 		uint32_t indices[3] =
@@ -96,7 +97,7 @@ namespace Lyra
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			m_Shader->Bind();
-			glBindVertexArray(m_VertexArray);
+			m_VertexArray->Bind();
 			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			m_ImGuiLayer->Begin();

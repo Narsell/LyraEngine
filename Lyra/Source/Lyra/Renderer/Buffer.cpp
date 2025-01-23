@@ -48,4 +48,26 @@ namespace Lyra
 		}
 	}
 
+	VertexArray* VertexArray::Create()
+	{
+		switch (Renderer::GetApi())
+		{
+			case RendererAPI::OpenGL:
+			{
+				return new OpenGLVertexArray();
+			}
+			case RendererAPI::None:
+			{
+				LR_CORE_ASSERT(false, "No Renderer API was selected! (RendererAPI::None)");
+				return nullptr;
+			}
+			default:
+			{
+				LR_CORE_ASSERT(false, "Invalid Renderer API");
+				return nullptr;
+			}
+		}
+	}
+
+
 }
