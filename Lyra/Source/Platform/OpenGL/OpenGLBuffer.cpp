@@ -6,7 +6,27 @@
 
 namespace Lyra
 {
-	/* OPENGL VERTEX BUFFER */
+
+	static int GetOpenGLType(const ShaderData::Type& dataType)
+	{
+		switch (dataType)
+		{
+			case ShaderData::Type::Float:	return GL_FLOAT;
+			case ShaderData::Type::Float2:	return GL_FLOAT;
+			case ShaderData::Type::Float3:	return GL_FLOAT;
+			case ShaderData::Type::Float4:	return GL_FLOAT;
+			case ShaderData::Type::Int:		return GL_INT;
+			case ShaderData::Type::UInt:	return GL_UNSIGNED_INT;
+
+			LR_CORE_ASSERT(false, "Unknown Shader::DataType");
+			return 0;
+		}
+	}
+
+
+	/* ############################# */
+	/* ### OPENGL VERTEX BUFFER #### */
+	/* ############################# */
 
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, size_t size)
 	{
@@ -33,7 +53,10 @@ namespace Lyra
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
 
-	/* OPENGL INDEX BUFFER */
+
+	/* ############################# */
+	/* #### OPENGL INDEX BUFFER #### */
+	/* ############################# */
 
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count)
 		: m_Count(count)
@@ -59,7 +82,10 @@ namespace Lyra
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	/* OPENGL VERTEX ARRAY */
+
+	/* ############################# */
+	/* #### OPENGL VERTEX ARRAY #### */
+	/* ############################# */
 
 	OpenGLVertexArray::OpenGLVertexArray()
 	{
@@ -77,34 +103,22 @@ namespace Lyra
 		glBindVertexArray(0);
 	}
 
-	static int GetOpenGLType(VertexTypeInfo vertexType)
-	{
-		switch (vertexType.type)
-		{
-			case VertexTypeInfo::Type::Float:
-				return GL_FLOAT;
-			case VertexTypeInfo::Type::UInt:
-				return GL_UNSIGNED_INT;
-			default:
-			{
-				LR_CORE_ASSERT(false, "No matching OpenGL type");
-				return 0;
-			}
-		}
-
-	}
-
 	void OpenGLVertexArray::SetLayout(const VertexLayout& layout) const
 	{
 		auto& vertexElements = layout.GetElements();
-		uint32_t offset = 0;
 
 		for (int i = 0; i < vertexElements.size(); i++)
 		{
 			VertexElement vertexElement = vertexElements[i];
 			glEnableVertexAttribArray(i);
-			glVertexAttribPointer(i, vertexElement.count, GetOpenGLType(vertexElement.typeInfo), vertexElement.normalized, layout.GetStride(), (const void*)offset);
-			offset += vertexElement.GetSize();
+			glVertexAttribPointer(
+				i,
+				vertexElement.TypeInfo.Count,
+				GetOpenGLType(vertexElement.TypeInfo.ShaderType),
+				vertexElement.Normalized,
+				layout.GetStride(),
+				(const void*) vertexElement.GetOffset()
+			);
 		}
 	}
 

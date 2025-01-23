@@ -26,24 +26,30 @@ namespace Lyra
 		PushOverlay(m_ImGuiLayer);
 		m_Window->SetEventCallback(LR_BIND_EVENT_FN(&Application::OnEvent));
 
-		// Create VAO
+		// Create VAO and bind it.
 		m_VertexArray = std::unique_ptr<VertexArray>(VertexArray::Create());
 
 		// 3 vertices in 3D space
-		// Pos x, Pos y, Pos z
+		// Posistion (3 Comps xyz), Color (4 Comps: rgba)
 		float vertices[3 * 7] = {
 			-0.5f, -0.5f, 0.0f, 0.8f, 0.3f, 0.2f, 1.0f,
 			 0.5f, -0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f,
 			 0.0f,  0.5f, 0.0f, 0.3f, 0.2f, 0.8f, 1.0f,
 		};
 
-		// Create vertex buffer and upload data
+		// Create vertex buffer and upload data (vertices) to GPU
 		m_VertexBuffer = std::unique_ptr<VertexBuffer>(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-		// Set vertex array buffer layout
-		VertexLayout vertexLayout;
-		vertexLayout.AddElement(VertexType_Float, 3);
-		vertexLayout.AddElement(VertexType_Float, 4);
+		// Declaring vertex buffer layout
+		VertexLayout vertexLayout
+		{
+			{ "a_Position", ShaderData::Float3 },
+			{ "a_Color",	ShaderData::Float4 },
+		};
+
+		vertexLayout.DebugPrint();
+
+		// Sets the layout into GPU
 		m_VertexArray->SetLayout(vertexLayout);
 
 		// 3 indices that make up a triangle, basically order in wich the vertices are going to be rendered.
@@ -76,7 +82,7 @@ namespace Lyra
 			
 			out vec4 o_Color;
 			in vec3 v_Position;
-			in vec4 v_Color;;
+			in vec4 v_Color;
 
 			void main()
 			{
@@ -85,7 +91,7 @@ namespace Lyra
 			};
 		)";
 
-		//Creating shader instance stored in a unique ptr
+		//Creating shader instance - Compiles and links shader source code.
 		m_Shader = std::make_unique<Shader>(vertexSrc, fragmentSrc);
 		//Bind it (optional since we're binding on every frame)
 		m_Shader->Bind();

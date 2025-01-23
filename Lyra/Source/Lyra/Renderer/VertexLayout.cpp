@@ -4,15 +4,48 @@
 
 namespace Lyra
 {
-	VertexLayout::VertexLayout(int count)
+	/* ############################# */
+	/* ####   VERTEX ELEMENT	#### */
+	/* ############################# */
+
+	VertexElement::VertexElement(const std::string& name, const ShaderData::TypeInfo& typeInfo, bool normalized)
+		: Name(name), TypeInfo(typeInfo), Normalized(normalized), Offset(0)
 	{
-		m_Elements.reserve(count);
 	}
 
-	void VertexLayout::AddElement(const VertexTypeInfo& typeInfo, uint8_t count, bool normalized)
+
+	/* ############################# */
+	/* ####   VERTEX LAYOUT 	#### */
+	/* ############################# */
+
+	VertexLayout::VertexLayout(const std::initializer_list<VertexElement>& elements)
+		: m_Elements(elements)
 	{
-		m_Elements.emplace_back(count, typeInfo, normalized);
-		m_Stride += m_Elements.back().GetSize();
+		CalculateStrideAndOffsets();
 	}
 
+	void VertexLayout::CalculateStrideAndOffsets()
+	{
+		m_Stride = 0;
+		uint32_t offset = 0;
+		for (auto& element : m_Elements)
+		{
+			element.Offset = offset;
+			offset += element.GetSize();
+		}
+		m_Stride = offset;
+	}
+
+	void VertexLayout::DebugPrint()
+	{
+		LR_CORE_INFO("VERTEX BUFFER LAYOUT");
+		for (auto& element : m_Elements)
+		{
+			LR_CORE_INFO("  {0}", element.Name);
+			LR_CORE_INFO("    Type: {0}", ShaderTypeAsString(element.TypeInfo.ShaderType));
+			LR_CORE_INFO("    Size: {0}", element.GetSize());
+			LR_CORE_INFO("    Offset: {0}", element.GetOffset());
+		}
+		LR_CORE_INFO("  Total Stride: {0}", GetStride());
+	}
 }
