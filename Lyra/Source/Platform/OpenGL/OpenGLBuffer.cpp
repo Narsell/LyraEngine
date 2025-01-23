@@ -77,13 +77,13 @@ namespace Lyra
 		glBindVertexArray(0);
 	}
 
-	static int GetOpenGLType(VertexType vertexType)
+	static int GetOpenGLType(VertexTypeInfo vertexType)
 	{
 		switch (vertexType.type)
 		{
-			case VertexType::Type::Float:
+			case VertexTypeInfo::Type::Float:
 				return GL_FLOAT;
-			case VertexType::Type::UInt:
+			case VertexTypeInfo::Type::UInt:
 				return GL_UNSIGNED_INT;
 			default:
 			{
@@ -103,7 +103,7 @@ namespace Lyra
 		{
 			VertexElement vertexElement = vertexElements[i];
 			glEnableVertexAttribArray(i);
-			glVertexAttribPointer(i, vertexElement.count, GetOpenGLType(vertexElement.type), vertexElement.normalized, layout.GetStride(), (const void*)offset);
+			glVertexAttribPointer(i, vertexElement.count, GetOpenGLType(vertexElement.typeInfo), vertexElement.normalized, layout.GetStride(), (const void*)offset);
 			offset += vertexElement.GetSize();
 		}
 	}
