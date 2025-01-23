@@ -94,7 +94,7 @@ namespace Lyra
 
 	}
 
-	void OpenGLVertexArray::SetLayout(VertexLayout& layout) const
+	void OpenGLVertexArray::SetLayout(const VertexLayout& layout) const
 	{
 		auto& vertexElements = layout.GetElements();
 		uint32_t offset = 0;

@@ -45,7 +45,7 @@ namespace Lyra
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
-		virtual void SetLayout(VertexLayout& layout) const override;
+		virtual void SetLayout(const VertexLayout& layout) const override;
 
 	private:
 		uint32_t m_RendererId;

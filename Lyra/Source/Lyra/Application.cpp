@@ -31,10 +31,10 @@ namespace Lyra
 
 		// 3 vertices in 3D space
 		// Pos x, Pos y, Pos z
-		float vertices[3 * 3] = {
-			-0.5f, -0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f,
-			 0.0f,  0.5f, 0.0f
+		float vertices[3 * 7] = {
+			-0.5f, -0.5f, 0.0f, 0.8f, 0.3f, 0.2f, 1.0f,
+			 0.5f, -0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f,
+			 0.0f,  0.5f, 0.0f, 0.3f, 0.2f, 0.8f, 1.0f,
 		};
 
 		// Create vertex buffer and upload data
@@ -43,6 +43,7 @@ namespace Lyra
 		// Set vertex array buffer layout
 		VertexLayout vertexLayout;
 		vertexLayout.AddElement(VertexType_Float, 3);
+		vertexLayout.AddElement(VertexType_Float, 4);
 		m_VertexArray->SetLayout(vertexLayout);
 
 		// 3 indices that make up a triangle, basically order in wich the vertices are going to be rendered.
@@ -58,11 +59,14 @@ namespace Lyra
 			#version 330 core
 			
 			layout(location=0) in vec3 a_Position;
+			layout(location=1) in vec4 a_Color;
 			out vec3 v_Position;
+			out vec4 v_Color;
 			
 			void main()
 			{
 				v_Position = a_Position;
+				v_Color = a_Color;
 				gl_Position = vec4(a_Position, 1.0);
 			};
 		)";
@@ -72,10 +76,12 @@ namespace Lyra
 			
 			out vec4 o_Color;
 			in vec3 v_Position;
+			in vec4 v_Color;;
 
 			void main()
 			{
 				o_Color = vec4(v_Position * 0.5 + 0.5, 1.0);
+				o_Color = v_Color;
 			};
 		)";
 
