@@ -36,9 +36,9 @@ namespace Lyra
 		m_Stride = offset;
 	}
 
-	void VertexLayout::DebugPrint()
+	void VertexLayout::DebugPrint(const std::string& layoutName)
 	{
-		LR_CORE_INFO("VERTEX BUFFER LAYOUT");
+		LR_CORE_INFO("[{0}] Vertex Buffer Layout", layoutName);
 		for (auto& element : m_Elements)
 		{
 			LR_CORE_INFO("  {0}", element.Name);

@@ -47,6 +47,7 @@ namespace Lyra
 				PROCESS_VAL(Type::UInt);
 			}
 			#undef PROCESS_VAL
+			return "TYPE_NOT_MAPPED_FOR_DEBUG";
 		}
 	}
 
@@ -69,7 +70,7 @@ namespace Lyra
 	{
 	public:
 
-		VertexLayout() = delete;
+		VertexLayout() = default;
 		VertexLayout(const std::initializer_list<VertexElement>& elements);
 
 		/*
@@ -78,7 +79,7 @@ namespace Lyra
 		uint32_t GetStride() const { return m_Stride; }
 		const std::vector<VertexElement>& GetElements() const { return m_Elements; }
 
-		void DebugPrint();
+		void DebugPrint(const std::string& layoutName);
 
 	private:
 

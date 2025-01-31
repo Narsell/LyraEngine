@@ -6,13 +6,13 @@
 
 namespace Lyra
 {
-	VertexBuffer* VertexBuffer::Create(float* vertices, size_t size)
+	VertexBuffer* VertexBuffer::Create(float* vertices, size_t size, const VertexLayout& layout)
 	{
 		switch (Renderer::GetApi())
 		{
 			case RendererAPI::OpenGL:
 			{
-				return new OpenGLVertexBuffer(vertices, size);
+				return new OpenGLVertexBuffer(vertices, size, layout);
 			}
 			case RendererAPI::None:
 			{

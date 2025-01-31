@@ -27,38 +27,36 @@ namespace Lyra
 		m_Window->SetEventCallback(LR_BIND_EVENT_FN(&Application::OnEvent));
 
 		// Create VAO and bind it.
-		m_VertexArray = std::unique_ptr<VertexArray>(VertexArray::Create());
+		m_VertexArray = std::shared_ptr<VertexArray>((VertexArray::Create()));
 
 		// 3 vertices in 3D space
 		// Posistion (3 Comps xyz), Color (4 Comps: rgba)
-		float vertices[3 * 7] = {
+		float triangleVertices[3 * 7] = {
 			-0.5f, -0.5f, 0.0f, 0.8f, 0.3f, 0.2f, 1.0f,
 			 0.5f, -0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f,
 			 0.0f,  0.5f, 0.0f, 0.3f, 0.2f, 0.8f, 1.0f,
 		};
 
-		// Create vertex buffer and upload data (vertices) to GPU
-		m_VertexBuffer = std::unique_ptr<VertexBuffer>(VertexBuffer::Create(vertices, sizeof(vertices)));
-
 		// Declaring vertex buffer layout
-		VertexLayout vertexLayout
+		VertexLayout triangleVertexLayout
 		{
 			{ "a_Position", ShaderData::Float3 },
 			{ "a_Color",	ShaderData::Float4 },
 		};
 
-		vertexLayout.DebugPrint();
+		// Create vertex buffer and upload data (vertices) to GPU
+		std::shared_ptr<VertexBuffer> m_TriangleVertexBuffer((VertexBuffer::Create(triangleVertices, sizeof(triangleVertices), triangleVertexLayout)));
+		m_VertexArray->AddVertexBuffer(m_TriangleVertexBuffer);
+		triangleVertexLayout.DebugPrint("Triangle");
 
-		// Sets the layout into GPU
-		m_VertexArray->SetLayout(vertexLayout);
-
-		// 3 indices that make up a triangle, basically order in wich the vertices are going to be rendered.
-		uint32_t indices[3] =
+		// 3 indices that make up a triangle, basically the order in wich the vertices are going to be rendered.
+		uint32_t triangleIndices[3] =
 		{
 			0, 1, 2
 		};
 
-		m_IndexBuffer = std::unique_ptr<IndexBuffer>(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+		std::shared_ptr<IndexBuffer> triangleIndexBuffer(IndexBuffer::Create(triangleIndices, sizeof(triangleIndices) / sizeof(uint32_t)));
+		m_VertexArray->AddIndexBuffer(triangleIndexBuffer);
 
 		//Shader source code stored in plain strings for now
 		std::string vertexSrc = R"(
@@ -92,7 +90,7 @@ namespace Lyra
 		)";
 
 		//Creating shader instance - Compiles and links shader source code.
-		m_Shader = std::make_unique<Shader>(vertexSrc, fragmentSrc);
+		m_Shader = std::make_shared<Shader>(vertexSrc, fragmentSrc);
 		//Bind it (optional since we're binding on every frame)
 		m_Shader->Bind();
 	}
@@ -105,12 +103,12 @@ namespace Lyra
 	{
 		while (m_Running)
 		{
-			glClearColor(0.1, 0.1, 0.1, 1);
+			glClearColor(0.1f, 0.1f, 0.1f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			m_Shader->Bind();
 			m_VertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			m_ImGuiLayer->Begin();
 			for (auto layer : m_LayerStack)

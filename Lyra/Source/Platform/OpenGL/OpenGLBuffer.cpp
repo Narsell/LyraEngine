@@ -17,10 +17,9 @@ namespace Lyra
 			case ShaderData::Type::Float4:	return GL_FLOAT;
 			case ShaderData::Type::Int:		return GL_INT;
 			case ShaderData::Type::UInt:	return GL_UNSIGNED_INT;
-
-			LR_CORE_ASSERT(false, "Unknown Shader::DataType");
-			return 0;
 		}
+		LR_CORE_ASSERT(false, "Unknown Shader::DataType");
+		return 0;
 	}
 
 
@@ -28,7 +27,8 @@ namespace Lyra
 	/* ### OPENGL VERTEX BUFFER #### */
 	/* ############################# */
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, size_t size)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, size_t size, const VertexLayout& layout)
+		: m_VertexLayout(layout)
 	{
 		//Create vertex buffer and bind it to GL_ARRAY_BUFFER
 		glCreateBuffers(1, &m_RendererId);
@@ -52,7 +52,6 @@ namespace Lyra
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 	}
-
 
 	/* ############################# */
 	/* #### OPENGL INDEX BUFFER #### */
@@ -93,6 +92,11 @@ namespace Lyra
 		Bind();
 	}
 
+	OpenGLVertexArray::~OpenGLVertexArray()
+	{
+		glDeleteVertexArrays(1, &m_RendererId);
+	}
+
 	void OpenGLVertexArray::Bind() const
 	{
 		glBindVertexArray(m_RendererId);
@@ -103,10 +107,38 @@ namespace Lyra
 		glBindVertexArray(0);
 	}
 
-	void OpenGLVertexArray::SetLayout(const VertexLayout& layout) const
+	void OpenGLVertexArray::AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer)
 	{
-		auto& vertexElements = layout.GetElements();
+		/* 
+			We first bind the VAO and then the actual vertex buffer 
+			That's what links the VAO with the VertexBuffer in OpenGL.
+		*/
+		Bind();
+		vertexBuffer->Bind();
+		m_VertexBuffers.push_back(vertexBuffer);
+		SetupLayout(vertexBuffer->GetLayout());
+	}
 
+	void OpenGLVertexArray::AddIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer)
+	{
+		/*
+			We first bind the VAO and then the actual index buffer
+			That's what links the VAO with the IndexBuffer in OpenGL.
+		*/
+		Bind();
+		indexBuffer->Bind();
+		m_IndexBuffer = indexBuffer;
+	}
+
+	void OpenGLVertexArray::SetupLayout(const VertexLayout& layout) const
+	{
+		LR_CORE_ASSERT(
+			layout.GetElements().size() > 0, 
+			"VertexLayout provided was empty!\n"
+			"Was the VertexBuffer layout set before adding it to the VertexArray?"
+		);
+
+		auto& vertexElements = layout.GetElements();
 		for (int i = 0; i < vertexElements.size(); i++)
 		{
 			VertexElement vertexElement = vertexElements[i];
@@ -117,7 +149,7 @@ namespace Lyra
 				GetOpenGLType(vertexElement.TypeInfo.ShaderType),
 				vertexElement.Normalized,
 				layout.GetStride(),
-				(const void*) vertexElement.GetOffset()
+				reinterpret_cast<void*>(vertexElement.GetOffset())
 			);
 		}
 	}
