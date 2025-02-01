@@ -26,12 +26,15 @@ namespace Lyra
 		PushOverlay(m_ImGuiLayer);
 		m_Window->SetEventCallback(LR_BIND_EVENT_FN(&Application::OnEvent));
 
+		/* TRIANGLE SECTION */
+
 		// Create VAO and bind it.
-		m_VertexArray = std::shared_ptr<VertexArray>((VertexArray::Create()));
+		m_TriangleVertexArray = std::shared_ptr<VertexArray>((VertexArray::Create()));
 
 		// 3 vertices in 3D space
 		// Posistion (3 Comps xyz), Color (4 Comps: rgba)
-		float triangleVertices[3 * 7] = {
+		float triangleVertices[3 * 7] = 
+		{
 			-0.5f, -0.5f, 0.0f, 0.8f, 0.3f, 0.2f, 1.0f,
 			 0.5f, -0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f,
 			 0.0f,  0.5f, 0.0f, 0.3f, 0.2f, 0.8f, 1.0f,
@@ -46,7 +49,7 @@ namespace Lyra
 
 		// Create vertex buffer and upload data (vertices) to GPU
 		std::shared_ptr<VertexBuffer> m_TriangleVertexBuffer((VertexBuffer::Create(triangleVertices, sizeof(triangleVertices), triangleVertexLayout)));
-		m_VertexArray->AddVertexBuffer(m_TriangleVertexBuffer);
+		m_TriangleVertexArray->AddVertexBuffer(m_TriangleVertexBuffer);
 		triangleVertexLayout.DebugPrint("Triangle");
 
 		// 3 indices that make up a triangle, basically the order in wich the vertices are going to be rendered.
@@ -56,10 +59,10 @@ namespace Lyra
 		};
 
 		std::shared_ptr<IndexBuffer> triangleIndexBuffer(IndexBuffer::Create(triangleIndices, sizeof(triangleIndices) / sizeof(uint32_t)));
-		m_VertexArray->AddIndexBuffer(triangleIndexBuffer);
+		m_TriangleVertexArray->AddIndexBuffer(triangleIndexBuffer);
 
 		//Shader source code stored in plain strings for now
-		std::string vertexSrc = R"(
+		std::string triangleVertexSrc = R"(
 			#version 330 core
 			
 			layout(location=0) in vec3 a_Position;
@@ -75,7 +78,7 @@ namespace Lyra
 			};
 		)";
 
-		std::string fragmentSrc = R"(
+		std::string triangleFragmentSrc = R"(
 			#version 330 core
 			
 			out vec4 o_Color;
@@ -90,9 +93,63 @@ namespace Lyra
 		)";
 
 		//Creating shader instance - Compiles and links shader source code.
-		m_Shader = std::make_shared<Shader>(vertexSrc, fragmentSrc);
-		//Bind it (optional since we're binding on every frame)
-		m_Shader->Bind();
+		m_TriangleShader = std::make_shared<Shader>(triangleVertexSrc, triangleFragmentSrc);
+
+		/* SQUARE SECTION */
+
+		m_SquareVertexArray = std::shared_ptr<VertexArray>(VertexArray::Create());
+
+		float squareVertices[3 * 4] =
+		{
+			-0.75f, -0.75f, 0.0f,
+			 0.75f, -0.75f, 0.0f,
+			 0.75f,  0.75f, 0.0f,
+			-0.75f,  0.75f, 0.0f
+		};
+
+		VertexLayout squareVertexLayout
+		{
+			{"a_Position", ShaderData::Float3}
+		};
+		std::shared_ptr<VertexBuffer> squareVertexBuffer(VertexBuffer::Create(squareVertices, sizeof(squareVertices), squareVertexLayout));
+		m_SquareVertexArray->AddVertexBuffer(squareVertexBuffer);
+		squareVertexLayout.DebugPrint("Square");
+
+		uint32_t squareIndices[6] =
+		{
+			0, 1, 2, 2, 3, 0
+		};
+
+		std::shared_ptr<IndexBuffer> squareIndexBuffer(IndexBuffer::Create(squareIndices, sizeof(squareIndices)));
+		m_SquareVertexArray->AddIndexBuffer(squareIndexBuffer);
+
+		std::string squareVertexSrc = R"(
+			#version 330 core
+			
+			layout(location=0) in vec3 a_Position;
+			out vec3 v_Position;
+			
+			void main()
+			{
+				v_Position = a_Position;
+				gl_Position = vec4(a_Position, 1.0);
+			};
+		)";
+
+		std::string squareFragmentSrc = R"(
+			#version 330 core
+			
+			out vec4 o_Color;
+			in vec3 v_Position;
+
+			void main()
+			{
+				o_Color = vec4(0.2, 0.8, 0.3, 1.0);
+			};
+		)";
+
+		m_SquareShader = std::make_shared<Shader>(squareVertexSrc, squareFragmentSrc);
+
 	}
 
 	Application::~Application()
@@ -106,9 +163,13 @@ namespace Lyra
 			glClearColor(0.1f, 0.1f, 0.1f, 1.f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			m_Shader->Bind();
-			m_VertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, m_VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+			m_SquareShader->Bind();
+			m_SquareVertexArray->Bind();
+			glDrawElements(GL_TRIANGLES, m_SquareVertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+
+			m_TriangleShader->Bind();
+			m_TriangleVertexArray->Bind();
+			glDrawElements(GL_TRIANGLES, m_TriangleVertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			m_ImGuiLayer->Begin();
 			for (auto layer : m_LayerStack)
