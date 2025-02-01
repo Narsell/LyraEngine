@@ -11,6 +11,8 @@
 #include <sstream>
 #include <vector>
 
+#include <glm/glm.hpp>
+
 #include "Lyra/Log.h"
 
 #ifdef LR_PLATFORM_WINDOWS

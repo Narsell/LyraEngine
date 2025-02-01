@@ -2,8 +2,6 @@
 
 #include "VertexLayout.h"
 
-#include <memory>
-
 namespace Lyra
 {
 	class VertexBuffer

@@ -8,15 +8,15 @@ namespace Lyra
 {
 	VertexBuffer* VertexBuffer::Create(float* vertices, size_t size, const VertexLayout& layout)
 	{
-		switch (Renderer::GetApi())
+		switch (Renderer::GetAPI())
 		{
-			case RendererAPI::OpenGL:
+			case RendererAPI::API::OpenGL:
 			{
 				return new OpenGLVertexBuffer(vertices, size, layout);
 			}
-			case RendererAPI::None:
+			case RendererAPI::API::None:
 			{
-				LR_CORE_ASSERT(false, "No Renderer API was selected! (RendererAPI::None)");
+				LR_CORE_ASSERT(false, "No Renderer API was selected! (RendererAPI::API::None)");
 				return nullptr;
 			}
 			default:
@@ -29,15 +29,15 @@ namespace Lyra
 
 	IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count)
 	{
-		switch (Renderer::GetApi())
+		switch (Renderer::GetAPI())
 		{
-			case RendererAPI::OpenGL:
+			case RendererAPI::API::OpenGL:
 			{
 				return new OpenGLIndexBuffer(indices, count);
 			}
-			case RendererAPI::None:
+			case RendererAPI::API::None:
 			{
-				LR_CORE_ASSERT(false, "No Renderer API was selected! (RendererAPI::None)");
+				LR_CORE_ASSERT(false, "No Renderer API was selected! (RendererAPI::API::None)");
 				return nullptr;
 			}
 			default:
@@ -50,15 +50,15 @@ namespace Lyra
 
 	VertexArray* VertexArray::Create()
 	{
-		switch (Renderer::GetApi())
+		switch (Renderer::GetAPI())
 		{
-			case RendererAPI::OpenGL:
+			case RendererAPI::API::OpenGL:
 			{
 				return new OpenGLVertexArray();
 			}
-			case RendererAPI::None:
+			case RendererAPI::API::None:
 			{
-				LR_CORE_ASSERT(false, "No Renderer API was selected! (RendererAPI::None)");
+				LR_CORE_ASSERT(false, "No Renderer API was selected! (RendererAPI::API::None)");
 				return nullptr;
 			}
 			default:
