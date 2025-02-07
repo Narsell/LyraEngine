@@ -20,4 +20,15 @@ namespace Lyra
 	{
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	}
+
+	void OpenGLRendererAPI::UploadUniform_Mat4f(uint32_t rendererId, const std::string& name, const glm::mat4& value)
+	{
+		/* TODO: Cache the uniform location in a map */
+		int location = glGetUniformLocation(rendererId, name.c_str());
+		if (location == -1)
+		{
+			LR_CORE_ASSERT(false, "Unable to set shader uniform.");
+		}
+		glUniformMatrix4fv(location, 1, GL_FALSE, &value[0][0]);
+	}
 }

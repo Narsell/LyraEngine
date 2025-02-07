@@ -20,6 +20,7 @@ namespace Lyra
 
 		/* Named after DirectX */
 		virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) = 0;
+		virtual void UploadUniform_Mat4f(uint32_t rendererId, const std::string& name, const glm::mat4& value) = 0;
 
 		inline static API GetAPI() { return s_API; }
 

@@ -9,6 +9,9 @@
 #include "Lyra/Renderer/Buffer.h"
 #include "Lyra/Renderer/Renderer.h"
 #include "Lyra/Renderer/RenderCommand.h"
+/* EXTREMELY TEMPORARY */
+#include "imgui.h"
+/* EXTREMELY TEMPORARY */
 
 namespace Lyra
 {
@@ -34,9 +37,9 @@ namespace Lyra
 		// Posistion (3 Comps xyz), Color (4 Comps: rgba)
 		float triangleVertices[3 * 7] = 
 		{
-			-0.5f, -0.5f, 0.0f, 0.8f, 0.3f, 0.2f, 1.0f,
-			 0.5f, -0.5f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f,
-			 0.0f,  0.5f, 0.0f, 0.3f, 0.2f, 0.8f, 1.0f,
+			 250.0f, 250.0f, 0.0f, 0.8f, 0.3f, 0.2f, 1.0f,
+			 400.0f, 250.0f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f,
+			 325.0f, 400.0f, 0.0f, 0.3f, 0.2f, 0.8f, 1.0f,
 		};
 
 		// Declaring vertex buffer layout
@@ -68,12 +71,14 @@ namespace Lyra
 			layout(location=1) in vec4 a_Color;
 			out vec3 v_Position;
 			out vec4 v_Color;
+
+			uniform mat4 u_MVP;
 			
 			void main()
 			{
 				v_Position = a_Position;
 				v_Color = a_Color;
-				gl_Position = vec4(a_Position, 1.0);
+				gl_Position = u_MVP * vec4(a_Position, 1.0);
 			};
 		)";
 
@@ -100,10 +105,10 @@ namespace Lyra
 
 		float squareVertices[3 * 4] =
 		{
-			-0.75f, -0.75f, 0.0f,
-			 0.75f, -0.75f, 0.0f,
-			 0.75f,  0.75f, 0.0f,
-			-0.75f,  0.75f, 0.0f
+			 0.0f,    0.0f,    0.0f,
+			 150.0f,  0.0f,    0.0f,
+			 150.0f,  150.0f,  0.0f,
+			 0.0f,    150.0f,  0.0f
 		};
 
 		VertexLayout squareVertexLayout
@@ -127,11 +132,13 @@ namespace Lyra
 			
 			layout(location=0) in vec3 a_Position;
 			out vec3 v_Position;
+
+			uniform mat4 u_MVP;
 			
 			void main()
 			{
 				v_Position = a_Position;
-				gl_Position = vec4(a_Position, 1.0);
+				gl_Position = u_MVP * vec4(a_Position, 1.0);
 			};
 		)";
 
@@ -157,12 +164,21 @@ namespace Lyra
 
 	void Application::Run()
 	{
+		glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
+		Camera camera;
+
+		const std::array<std::shared_ptr<Shader>, 2> shaders =
+		{
+			m_SquareShader,
+			m_TriangleShader
+		};
+
 		while (m_Running)
 		{
 			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
 			RenderCommand::Clear();
 
-			Renderer::BeginScene();
+			Renderer::BeginScene(camera, shaders);
 
 			m_SquareShader->Bind();
 			Renderer::Submit(m_SquareVertexArray);
@@ -173,6 +189,15 @@ namespace Lyra
 			Renderer::EndScene();
 
 			m_ImGuiLayer->Begin();
+
+			/* EXTREMELY TEMPORARY */
+			ImGui::Begin("Camera Transform");
+			ImGui::DragFloat3("Translation", &cameraPosition.x);
+			ImGui::End();
+			/* EXTREMELY TEMPORARY  */
+
+			camera.SetPosition(cameraPosition);
+
 			for (auto layer : m_LayerStack)
 			{
 				layer->OnImGuiRender();

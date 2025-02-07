@@ -13,6 +13,8 @@ namespace Lyra
 		Shader(const std::string& vertexSrc, const std::string& fragmentSrc);
 		~Shader();
 
+		std::uint32_t GetRendererID() const { return m_RendererId; }
+
 		void Bind();
 		void Unbind();
 
