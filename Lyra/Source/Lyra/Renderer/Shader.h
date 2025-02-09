@@ -3,6 +3,7 @@
 #include "Lyra/Core.h"
 
 #include <string>
+#include <glm/glm.hpp>
 
 namespace Lyra
 {
@@ -10,17 +11,14 @@ namespace Lyra
 	class LYRA_API Shader
 	{
 	public:
-		Shader(const std::string& vertexSrc, const std::string& fragmentSrc);
-		~Shader();
+		virtual ~Shader() = default;
 
-		std::uint32_t GetRendererID() const { return m_RendererId; }
+		virtual void UploadUniform_Mat4f(const std::string& name, const glm::mat4& matrix) = 0;
 
-		void Bind();
-		void Unbind();
+		virtual void Bind() = 0;
+		virtual void Unbind() = 0;
 
-	private:
-
-		std::uint32_t m_RendererId = 0;
+		static Shader* Create(const std::string& vertexSrc, const std::string& fragmentSrc);
 	};
 
 }

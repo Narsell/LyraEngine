@@ -5,22 +5,13 @@
 
 namespace Lyra
 {
-	void Renderer::BeginScene(const Camera& camera, const std::array<std::shared_ptr<Shader>, 2>& shaders)
+	glm::mat4 Renderer::s_VPmatrix = glm::mat4(1.0f);
+
+	void Renderer::BeginScene(const Camera& camera)
 	{
 		glm::mat4 view = camera.GetTransform();
 		glm::mat4 proj = glm::ortho(0.0f, 1280.0f, 0.0f, 720.0f, -1.0f, 1.0f);
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f));
-		glm::mat4 mvp = proj * view * model;
-
-		/* 
-			For every shader we want to upload the same mvp matrix, at least for now. (I KNOW THIS IS NOT GOOD) 
-			This should probably be the responsibility of the shader.
-		*/
-		for (auto& shader : shaders)
-		{
-			shader->Bind();
-			RenderCommand::UploadUniform_Mat4f(shader->GetRendererID(), "u_MVP", mvp);
-		}
+		s_VPmatrix = proj * view;
 	}
 
 	void Renderer::EndScene()

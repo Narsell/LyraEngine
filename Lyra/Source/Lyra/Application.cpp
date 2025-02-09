@@ -37,9 +37,9 @@ namespace Lyra
 		// Posistion (3 Comps xyz), Color (4 Comps: rgba)
 		float triangleVertices[3 * 7] = 
 		{
-			 250.0f, 250.0f, 0.0f, 0.8f, 0.3f, 0.2f, 1.0f,
-			 400.0f, 250.0f, 0.0f, 0.2f, 0.8f, 0.2f, 1.0f,
-			 325.0f, 400.0f, 0.0f, 0.3f, 0.2f, 0.8f, 1.0f,
+			 0.0f,   0.0f,   0.0f, 0.8f, 0.3f, 0.2f, 1.0f,
+			 250.0f, 0.0f,   0.0f, 0.2f, 0.8f, 0.2f, 1.0f,
+			 250.0f, 250.0f, 0.0f, 0.3f, 0.2f, 0.8f, 1.0f,
 		};
 
 		// Declaring vertex buffer layout
@@ -72,13 +72,14 @@ namespace Lyra
 			out vec3 v_Position;
 			out vec4 v_Color;
 
-			uniform mat4 u_MVP;
+			uniform mat4 u_VP;
+			uniform mat4 u_Model;
 			
 			void main()
 			{
 				v_Position = a_Position;
 				v_Color = a_Color;
-				gl_Position = u_MVP * vec4(a_Position, 1.0);
+				gl_Position = u_VP * u_Model * vec4(a_Position, 1.0);
 			};
 		)";
 
@@ -97,7 +98,7 @@ namespace Lyra
 		)";
 
 		//Creating shader instance - Compiles and links shader source code.
-		m_TriangleShader = std::make_shared<Shader>(triangleVertexSrc, triangleFragmentSrc);
+		m_TriangleShader = std::shared_ptr<Shader>(Shader::Create(triangleVertexSrc, triangleFragmentSrc));
 
 		/* SQUARE SECTION */
 
@@ -133,12 +134,13 @@ namespace Lyra
 			layout(location=0) in vec3 a_Position;
 			out vec3 v_Position;
 
-			uniform mat4 u_MVP;
+			uniform mat4 u_VP;
+			uniform mat4 u_Model;
 			
 			void main()
 			{
 				v_Position = a_Position;
-				gl_Position = u_MVP * vec4(a_Position, 1.0);
+				gl_Position = u_VP * u_Model * vec4(a_Position, 1.0);
 			};
 		)";
 
@@ -154,7 +156,7 @@ namespace Lyra
 			};
 		)";
 
-		m_SquareShader = std::make_shared<Shader>(squareVertexSrc, squareFragmentSrc);
+		m_SquareShader = std::shared_ptr<Shader>(Shader::Create(squareVertexSrc, squareFragmentSrc));
 
 	}
 
@@ -164,26 +166,36 @@ namespace Lyra
 
 	void Application::Run()
 	{
-		glm::vec3 cameraPosition = glm::vec3(0.0f, 0.0f, 0.0f);
 		Camera camera;
+		glm::vec3 cameraTranslation = glm::vec3(0.0f, 0.0f, 0.0f);
+		glm::vec3 squareTranslation = glm::vec3(640.0f, 360.0f, 0.0f);
+		glm::vec3 triangleTranslation = glm::vec3(0.0f, 0.0f, 0.0f);
 
-		const std::array<std::shared_ptr<Shader>, 2> shaders =
-		{
-			m_SquareShader,
-			m_TriangleShader
-		};
+		/* TODO: Ask chatgipiti about this mat4(1.0f) thing */
+		glm::mat4 squareTransform = glm::translate(glm::mat4(1.0f), squareTranslation);
+		glm::mat4 triangleTransform = glm::translate(glm::mat4(1.0f), triangleTranslation);
 
 		while (m_Running)
 		{
 			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
 			RenderCommand::Clear();
 
-			Renderer::BeginScene(camera, shaders);
+			Renderer::BeginScene(camera);
 
 			m_SquareShader->Bind();
+			m_SquareShader->UploadUniform_Mat4f("u_VP", Renderer::GetVPMatrix());
+			squareTransform[3][0] = squareTranslation.x;
+			squareTransform[3][1] = squareTranslation.y;
+			squareTransform[3][2] = squareTranslation.z;
+			m_SquareShader->UploadUniform_Mat4f("u_Model", squareTransform);
 			Renderer::Submit(m_SquareVertexArray);
 
 			m_TriangleShader->Bind();
+			m_TriangleShader->UploadUniform_Mat4f("u_VP", Renderer::GetVPMatrix());
+			triangleTransform[3][0] = triangleTranslation.x;
+			triangleTransform[3][1] = triangleTranslation.y;
+			triangleTransform[3][2] = triangleTranslation.z;
+			m_TriangleShader->UploadUniform_Mat4f("u_Model", triangleTransform);
 			Renderer::Submit(m_TriangleVertexArray);
 
 			Renderer::EndScene();
@@ -191,12 +203,14 @@ namespace Lyra
 			m_ImGuiLayer->Begin();
 
 			/* EXTREMELY TEMPORARY */
-			ImGui::Begin("Camera Transform");
-			ImGui::DragFloat3("Translation", &cameraPosition.x);
+			ImGui::Begin("World Outline");
+			ImGui::DragFloat3("Camera", &cameraTranslation.x);
+			ImGui::DragFloat3("Square", &squareTranslation.x);
+			ImGui::DragFloat3("Triangle", &triangleTranslation.x);
 			ImGui::End();
 			/* EXTREMELY TEMPORARY  */
 
-			camera.SetPosition(cameraPosition);
+			camera.SetPosition(cameraTranslation);
 
 			for (auto layer : m_LayerStack)
 			{
