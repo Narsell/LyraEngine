@@ -220,6 +220,35 @@ namespace Lyra
 
 			m_Window->OnUpdate();
 
+			/* MOVING CAMERA WITH KEYBOARD INPUT */
+			glm::vec3 currentPosition = m_Camera.GetPosition();
+			glm::vec3 offsetPosition = glm::vec3(0.0f);
+
+			if (Input::IsKeyPressed(LR_KEY_W))
+			{
+				offsetPosition.y += 1.0f;
+			}
+			if (Input::IsKeyPressed(LR_KEY_S))
+			{
+				offsetPosition.y -= 1.0f;
+			}
+			if (Input::IsKeyPressed(LR_KEY_A))
+			{
+				offsetPosition.x -= 1.0f;
+			}
+			if (Input::IsKeyPressed(LR_KEY_D))
+			{
+				offsetPosition.x += 1.0f;
+			}
+
+			if (offsetPosition != glm::vec3(0.0f))
+			{
+				offsetPosition = glm::normalize(offsetPosition) * 10.0f; // * deltaTime <- TODO
+				/* TODO: Print camera speed! */
+				LR_CORE_INFO("Offset: {0}, {1}, {2}", offsetPosition.x, offsetPosition.y, offsetPosition.z);
+				m_Camera.SetPosition(currentPosition + offsetPosition);
+			}
+
 		}
 	}
 
@@ -230,34 +259,6 @@ namespace Lyra
 		if (dispatcher.Dispatch<WindowCloseEvent>(LR_BIND_EVENT_FN(&Application::OnWindowClose)))
 		{
 			LR_CORE_TRACE("Dispatched WindowCloseEvent to Application::OnWindowClose");
-		}
-
-		/* MOVING CAMERA WITH KEYBOARD INPUT */
-		glm::vec3 currentPosition = m_Camera.GetPosition();
-		glm::vec3 offsetPosition = glm::vec3(0.0f);
-
-		if (Input::IsKeyPressed(LR_KEY_W))
-		{
-			offsetPosition.y += 1.0f;
-		}
-		if (Input::IsKeyPressed(LR_KEY_S))
-		{
-			offsetPosition.y -= 1.0f;
-		}
-		if (Input::IsKeyPressed(LR_KEY_A))
-		{
-			offsetPosition.x -= 1.0f;
-		}
-		if (Input::IsKeyPressed(LR_KEY_D))
-		{
-			offsetPosition.x += 1.0f;
-		}
-
-		if (offsetPosition != glm::vec3(0.0f))
-		{
-			offsetPosition = glm::normalize(offsetPosition) * 10.0f; // * deltaTime <- TODO
-			LR_CORE_INFO("Offset: {0}, {1}, {2}", offsetPosition.x, offsetPosition.y, offsetPosition.z);
-			m_Camera.SetPosition(currentPosition + offsetPosition);
 		}
 
 		// Traverse to the layers bakwards to propagate events (Top layers get events first)
