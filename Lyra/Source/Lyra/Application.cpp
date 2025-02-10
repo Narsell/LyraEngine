@@ -11,6 +11,7 @@
 #include "Lyra/Renderer/RenderCommand.h"
 /* EXTREMELY TEMPORARY */
 #include "imgui.h"
+#include "Lyra/KeyCodes.h"
 /* EXTREMELY TEMPORARY */
 
 namespace Lyra
@@ -19,8 +20,9 @@ namespace Lyra
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
-		: m_Window(std::unique_ptr<Window>(Window::Create())),
-		  m_ImGuiLayer(new ImGuiLayer())
+		:m_Window(std::unique_ptr<Window>(Window::Create())),
+		 m_ImGuiLayer(new ImGuiLayer()),
+		 m_Camera(0.0f, 1280.0f, 0.0f, 720.0f)
 	{
 		LR_CORE_ASSERT(!s_Instance, "There's already an application instance!");
 		s_Instance = this;
@@ -166,12 +168,9 @@ namespace Lyra
 
 	void Application::Run()
 	{
-		Camera camera;
-		glm::vec3 cameraTranslation = glm::vec3(0.0f, 0.0f, 0.0f);
 		glm::vec3 squareTranslation = glm::vec3(640.0f, 360.0f, 0.0f);
 		glm::vec3 triangleTranslation = glm::vec3(0.0f, 0.0f, 0.0f);
 
-		/* TODO: Ask chatgipiti about this mat4(1.0f) thing */
 		glm::mat4 squareTransform = glm::translate(glm::mat4(1.0f), squareTranslation);
 		glm::mat4 triangleTransform = glm::translate(glm::mat4(1.0f), triangleTranslation);
 
@@ -180,37 +179,38 @@ namespace Lyra
 			RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
 			RenderCommand::Clear();
 
-			Renderer::BeginScene(camera);
+			Renderer::BeginScene(m_Camera);
 
 			m_SquareShader->Bind();
-			m_SquareShader->UploadUniform_Mat4f("u_VP", Renderer::GetVPMatrix());
 			squareTransform[3][0] = squareTranslation.x;
 			squareTransform[3][1] = squareTranslation.y;
 			squareTransform[3][2] = squareTranslation.z;
 			m_SquareShader->UploadUniform_Mat4f("u_Model", squareTransform);
-			Renderer::Submit(m_SquareVertexArray);
+			Renderer::Submit(m_SquareShader, m_SquareVertexArray);
 
 			m_TriangleShader->Bind();
-			m_TriangleShader->UploadUniform_Mat4f("u_VP", Renderer::GetVPMatrix());
 			triangleTransform[3][0] = triangleTranslation.x;
 			triangleTransform[3][1] = triangleTranslation.y;
 			triangleTransform[3][2] = triangleTranslation.z;
 			m_TriangleShader->UploadUniform_Mat4f("u_Model", triangleTransform);
-			Renderer::Submit(m_TriangleVertexArray);
+			Renderer::Submit(m_TriangleShader, m_TriangleVertexArray);
 
 			Renderer::EndScene();
 
 			m_ImGuiLayer->Begin();
 
 			/* EXTREMELY TEMPORARY */
+			glm::vec3 cameraTranslation = m_Camera.GetPosition();
+
 			ImGui::Begin("World Outline");
 			ImGui::DragFloat3("Camera", &cameraTranslation.x);
 			ImGui::DragFloat3("Square", &squareTranslation.x);
 			ImGui::DragFloat3("Triangle", &triangleTranslation.x);
 			ImGui::End();
+
+			m_Camera.SetPosition(cameraTranslation);
 			/* EXTREMELY TEMPORARY  */
 
-			camera.SetPosition(cameraTranslation);
 
 			for (auto layer : m_LayerStack)
 			{
@@ -230,6 +230,34 @@ namespace Lyra
 		if (dispatcher.Dispatch<WindowCloseEvent>(LR_BIND_EVENT_FN(&Application::OnWindowClose)))
 		{
 			LR_CORE_TRACE("Dispatched WindowCloseEvent to Application::OnWindowClose");
+		}
+
+		/* MOVING CAMERA WITH KEYBOARD INPUT */
+		glm::vec3 currentPosition = m_Camera.GetPosition();
+		glm::vec3 offsetPosition = glm::vec3(0.0f);
+
+		if (Input::IsKeyPressed(LR_KEY_W))
+		{
+			offsetPosition.y += 1.0f;
+		}
+		if (Input::IsKeyPressed(LR_KEY_S))
+		{
+			offsetPosition.y -= 1.0f;
+		}
+		if (Input::IsKeyPressed(LR_KEY_A))
+		{
+			offsetPosition.x -= 1.0f;
+		}
+		if (Input::IsKeyPressed(LR_KEY_D))
+		{
+			offsetPosition.x += 1.0f;
+		}
+
+		if (offsetPosition != glm::vec3(0.0f))
+		{
+			offsetPosition = glm::normalize(offsetPosition) * 10.0f; // * deltaTime <- TODO
+			LR_CORE_INFO("Offset: {0}, {1}, {2}", offsetPosition.x, offsetPosition.y, offsetPosition.z);
+			m_Camera.SetPosition(currentPosition + offsetPosition);
 		}
 
 		// Traverse to the layers bakwards to propagate events (Top layers get events first)

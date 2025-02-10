@@ -10,15 +10,13 @@ namespace Lyra
 	class Renderer
 	{
 	public:
-		static void BeginScene(const Camera& camera);
+		static void BeginScene(const OrthographicCamera& camera);
 		static void EndScene();
-		static void Submit(const std::shared_ptr<VertexArray>& vertexArray);
-
-		inline static const glm::mat4& GetVPMatrix() { return s_VPmatrix; }
+		static void Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertexArray);
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 
 	private:
-		static glm::mat4 s_VPmatrix;
+		static glm::mat4 s_ViewProjectionMatrix;
 	};
 }

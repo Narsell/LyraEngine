@@ -6,6 +6,7 @@
 #include "Lyra/Window.h"
 #include "Lyra/Events/ApplicationEvent.h"
 #include "Lyra/LayerStack.h"
+#include "Lyra/Renderer/Camera.h"
 
 namespace Lyra
 {
@@ -47,6 +48,8 @@ namespace Lyra
 		std::shared_ptr<VertexArray> m_SquareVertexArray;
 		std::shared_ptr<Shader> m_TriangleShader;
 		std::shared_ptr<Shader> m_SquareShader;
+
+		OrthographicCamera m_Camera;
 
 	private:
 
