@@ -4,6 +4,7 @@
 
 #include "Lyra/Core.h"
 #include "Lyra/Events/Event.h"
+#include "Lyra/Core/Timestep.h"
 
 namespace Lyra
 {
@@ -18,7 +19,7 @@ namespace Lyra
 
 		virtual void OnAttach() {};
 		virtual void OnDetach() {};
-		virtual void OnUpdate() {};
+		virtual void OnUpdate(Timestep ts) {};
 		virtual void OnImGuiRender() {};
 		virtual void OnEvent(Event& event) {};
 

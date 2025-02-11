@@ -4,6 +4,7 @@
 
 /* CORE SYSTEMS */
 #include "Lyra/Application.h"
+#include "Lyra/Core/Timestep.h"
 #include "Lyra/Log.h"
 
 /* INPUT SYSTEM */

@@ -156,8 +156,9 @@ public:
 		//LR_TRACE("GameLayer::OnDetach");
 	}
 
-	void OnUpdate() override
+	void OnUpdate(Lyra::Timestep ts) override
 	{
+		LR_TRACE("DeltaTime: {0} seconds ({1} miliseconds)", ts.GetSeconds(), ts.GetMiliSeconds());
 		/* Clearing buffers */
 		Lyra::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
 		Lyra::RenderCommand::Clear();
@@ -199,16 +200,16 @@ public:
 		}
 		if (Lyra::Input::IsKeyPressed(LR_KEY_E))
 		{
-			m_Camera.SetRotation(m_Camera.GetRotation() - (m_CameraSpeed / 5.0f));
+			m_Camera.SetRotation(m_Camera.GetRotation() - (m_CameraRotationSpeed * ts));
 		}
 		else if (Lyra::Input::IsKeyPressed(LR_KEY_Q))
 		{
-			m_Camera.SetRotation(m_Camera.GetRotation() + (m_CameraSpeed / 5.0f));
+			m_Camera.SetRotation(m_Camera.GetRotation() + (m_CameraRotationSpeed * ts));
 		}
 
 		if (offsetPosition != glm::vec3(0.0f))
 		{
-			offsetPosition = glm::normalize(offsetPosition) * m_CameraSpeed; // * deltaTime <- TODO
+			offsetPosition = glm::normalize(offsetPosition) * (m_CameraSpeed * ts);
 			m_CameraTranslation = currentPosition + offsetPosition;
 		}
 
@@ -255,7 +256,8 @@ private:
 	glm::mat4 m_SquareTransform;
 	glm::mat4 m_TriangleTransform;
 
-	float m_CameraSpeed = 10.0f;
+	float m_CameraSpeed = 500.0f;
+	float m_CameraRotationSpeed = 50.0f;
 };
 
 class SandboxApp : public Lyra::Application

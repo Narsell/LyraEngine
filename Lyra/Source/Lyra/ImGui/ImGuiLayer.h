@@ -14,7 +14,7 @@ namespace Lyra
 
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnUpdate() override;
+		virtual void OnUpdate(Timestep ts) override;
 		virtual void OnImGuiRender() override;
 
 		void Begin();
