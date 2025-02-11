@@ -3,7 +3,7 @@
 #include "Application.h"
 #include "Lyra/Core.h"
 #include "Events/Event.h"
-#include "Lyra/Input.h"
+#include "Lyra/Input/Input.h"
 #include "Lyra/ImGui/ImGuiLayer.h"
 #include "Lyra/Renderer/Shader.h"
 #include "Lyra/Renderer/Buffer.h"

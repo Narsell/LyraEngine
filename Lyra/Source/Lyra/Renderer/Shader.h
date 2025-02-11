@@ -2,7 +2,6 @@
 
 #include "Lyra/Core.h"
 
-#include <string>
 #include <glm/glm.hpp>
 
 namespace Lyra

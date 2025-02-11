@@ -4,6 +4,7 @@
 
 namespace Lyra
 {
+	/* Interface to handle each graphics API context initialization */
 	class LYRA_API GraphicsContext
 	{
 	public:

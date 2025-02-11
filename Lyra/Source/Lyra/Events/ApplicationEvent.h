@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <sstream>
 
 #include "Lyra/Core.h"

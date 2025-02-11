@@ -1,13 +1,12 @@
 #pragma once
 
 #include <functional>
-#include <cstdint>
 
 #include "Lyra/Core.h"
 
 namespace Lyra
 {
-	enum class EventType : std::uint8_t
+	enum class EventType : uint8_t
 	{
 		None = 0,
 		WindowClose, WindowResize, WindowFocus, WindowLostFocus, WindowMoved,

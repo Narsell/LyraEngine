@@ -3,10 +3,10 @@
 #include <vector>
 
 #include "Lyra/Core.h"
-#include "Layer.h"
 
 namespace Lyra
 {
+	class Layer;
 	/*
 		Wrapper around a Layer container with iterators.
 		Layers are stored first and overlays are bunched up at the end of the stack.

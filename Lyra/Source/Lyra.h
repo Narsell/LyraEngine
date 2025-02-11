@@ -7,9 +7,9 @@
 #include "Lyra/Log.h"
 
 /* INPUT SYSTEM */
-#include "Lyra/Input.h"
-#include "Lyra/KeyCodes.h"
-#include "Lyra/MouseButtonCodes.h"
+#include "Lyra/Input/Input.h"
+#include "Lyra/Input/KeyCodes.h"
+#include "Lyra/Input/MouseButtonCodes.h"
 
 /* LAYER SYSTEM*/
 #include "Lyra/Layer.h"

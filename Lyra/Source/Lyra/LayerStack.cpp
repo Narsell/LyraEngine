@@ -1,6 +1,7 @@
 #include "lrpch.h"
 
 #include "LayerStack.h"
+#include "Layer.h"
 
 namespace Lyra
 {
