@@ -54,6 +54,10 @@ namespace Lyra
 		ImGui::DestroyContext();
 	}
 
+	void ImGuiLayer::OnUpdate()
+	{
+	}
+
 	void ImGuiLayer::OnImGuiRender()
 	{
 		bool showDemoWindow = true;

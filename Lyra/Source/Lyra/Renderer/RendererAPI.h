@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include "Lyra/Renderer/Buffer.h"
 
 namespace Lyra

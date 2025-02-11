@@ -6,16 +6,10 @@
 #include "Lyra/Window.h"
 #include "Lyra/Events/ApplicationEvent.h"
 #include "Lyra/LayerStack.h"
-#include "Lyra/Renderer/Camera.h"
 
 namespace Lyra
 {
 	class ImGuiLayer;
-	class VertexLayout;
-	class VertexArray;
-	class VertexBuffer;
-	class IndexBuffer;
-	class Shader;
 
 	class LYRA_API Application
 	{
@@ -44,15 +38,7 @@ namespace Lyra
 		bool m_Running = true;
 		LayerStack m_LayerStack;
 
-		std::shared_ptr<VertexArray> m_TriangleVertexArray;
-		std::shared_ptr<VertexArray> m_SquareVertexArray;
-		std::shared_ptr<Shader> m_TriangleShader;
-		std::shared_ptr<Shader> m_SquareShader;
-
-		OrthographicCamera m_Camera;
-
 	private:
-
 		static Application* s_Instance;
 
 	};
