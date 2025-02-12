@@ -149,6 +149,7 @@ public:
 	void OnAttach() override
 	{
 		//LR_TRACE("GameLayer::OnAttach");
+		
 	}
 
 	void OnDetach() override
@@ -167,14 +168,20 @@ public:
 		Lyra::Renderer::BeginScene(m_Camera);
 
 		m_SquareShader->Bind();
-
-		m_SquareShader->UploadUniform_Mat4f("u_Model", m_SquareTransform);
-		Lyra::Renderer::Submit(m_SquareShader, m_SquareVertexArray);
+		
+		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
+		for (int y = 0; y < 20; y++)
+		{
+			for (int x = 0; x < 20; x++)
+			{
+				glm::vec3 position(x * 30.5f, y * 30.5f, 0.0f);
+				m_SquareTransform = glm::translate(glm::mat4(1.0f), position) * scale;
+				Lyra::Renderer::Submit(m_SquareShader, m_SquareVertexArray, m_SquareTransform);
+			}
+		}
 
 		m_TriangleShader->Bind();
-
-		m_TriangleShader->UploadUniform_Mat4f("u_Model", m_TriangleTransform);
-		Lyra::Renderer::Submit(m_TriangleShader, m_TriangleVertexArray);
+		Lyra::Renderer::Submit(m_TriangleShader, m_TriangleVertexArray, m_TriangleTransform);
 
 		Lyra::Renderer::EndScene();
 
@@ -216,9 +223,6 @@ public:
 		m_Camera.SetPosition(m_CameraTranslation);
 
 		/* Update models' transforms */
-		m_SquareTransform[3][0] = m_SquareTranslation.x;
-		m_SquareTransform[3][1] = m_SquareTranslation.y;
-		m_SquareTransform[3][2] = m_SquareTranslation.z;
 
 		m_TriangleTransform[3][0] = m_TriangleTranslation.x;
 		m_TriangleTransform[3][1] = m_TriangleTranslation.y;
@@ -230,7 +234,7 @@ public:
 	{
 		ImGui::Begin("World Outline");
 		ImGui::DragFloat3("Camera", &m_CameraTranslation.x);
-		ImGui::DragFloat3("Square", &m_SquareTranslation.x);
+		//ImGui::DragFloat3("Square", &m_SquareTranslation.x);
 		ImGui::DragFloat3("Triangle", &m_TriangleTranslation.x);
 		ImGui::End();
 	}

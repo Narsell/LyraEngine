@@ -37,6 +37,7 @@ namespace Lyra
 	{
 		while (m_Running)
 		{
+			/* Temporary glfw call, this should be platform independent */
 			float time = static_cast<float>(glfwGetTime());
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
