@@ -129,4 +129,13 @@ namespace Lyra
 		}
 		glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 	}
+	void OpenGLShader::UploadUniform_4f(const std::string& name, const glm::vec4& value)
+	{
+		int location = glGetUniformLocation(m_RendererId, name.c_str());
+		if (location == -1)
+		{
+			LR_CORE_ASSERT(false, "Unable to set shader uniform.");
+		}
+		glUniform4f(location, value.r, value.g, value.b, value.a);
+	}
 }

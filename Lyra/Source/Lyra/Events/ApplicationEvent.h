@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "Lyra/Core.h"
+#include "Lyra/Core/Core.h"
 #include "Event.h"
 
 namespace Lyra

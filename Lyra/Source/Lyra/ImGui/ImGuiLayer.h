@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Lyra/Core.h"
-#include "Lyra/Layer.h"
+#include "Lyra/Core/Core.h"
+#include "Lyra/Layer/Layer.h"
 
 
 namespace Lyra

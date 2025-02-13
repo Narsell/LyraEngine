@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-#include "Lyra/Core.h"
+#include "Lyra/Core/Core.h"
 #include "Event.h"
 
 namespace Lyra
@@ -20,7 +20,6 @@ namespace Lyra
 			: m_KeyCode(keyCode)
 		{};
 
-		//TODO: Could this be std::uint8_t? do we have to worry about negative keycodes (invalid)?
 		int m_KeyCode;
 
 	};

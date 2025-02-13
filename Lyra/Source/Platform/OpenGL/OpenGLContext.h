@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lyra/Core.h"
+#include "Lyra/Core/Core.h"
 #include "Lyra/Renderer/GraphicsContext.h"
 
 struct GLFWwindow;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lyra/Core.h"
+#include "Lyra/Core/Core.h"
 
 #include <glm/glm.hpp>
 
@@ -13,6 +13,7 @@ namespace Lyra
 		virtual ~Shader() = default;
 
 		virtual void UploadUniform_Mat4f(const std::string& name, const glm::mat4& matrix) = 0;
+		virtual void UploadUniform_4f(const std::string& name, const glm::vec4& value) = 0;
 
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;

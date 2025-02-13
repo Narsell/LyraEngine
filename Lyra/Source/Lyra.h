@@ -3,9 +3,10 @@
 // ONLY FOR APPLICATION USE
 
 /* CORE SYSTEMS */
-#include "Lyra/Application.h"
+#include "Lyra/Core/Application.h"
 #include "Lyra/Core/Timestep.h"
-#include "Lyra/Log.h"
+#include "Lyra/Core/Log.h"
+#include "Lyra/Core/Ref.h"
 
 /* INPUT SYSTEM */
 #include "Lyra/Input/Input.h"
@@ -13,7 +14,7 @@
 #include "Lyra/Input/MouseButtonCodes.h"
 
 /* LAYER SYSTEM*/
-#include "Lyra/Layer.h"
+#include "Lyra/Layer/Layer.h"
 #include "Lyra/ImGui/ImGuiLayer.h"
 
 /* RENDERER */
@@ -31,4 +32,4 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 /* ENTRY POINT */
-#include "Lyra/EntryPoint.h"
+#include "Lyra/Core/EntryPoint.h"

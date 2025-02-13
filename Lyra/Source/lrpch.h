@@ -14,7 +14,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Lyra/Log.h"
+#include "Lyra/Core/Log.h"
+#include "Lyra/Core/Ref.h"
 
 #ifdef LR_PLATFORM_WINDOWS
 	#include <Windows.h>

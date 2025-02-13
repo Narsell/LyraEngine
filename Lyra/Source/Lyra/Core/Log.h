@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 
-#include "Lyra/Core.h"
+#include "Lyra/Core/Core.h"
 #include "spdlog/spdlog.h"
 
 namespace Lyra

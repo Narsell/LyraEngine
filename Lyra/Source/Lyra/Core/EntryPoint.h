@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lyra/Application.h"
+#include "Lyra/Core/Application.h"
 
 #ifdef LR_PLATFORM_WINDOWS
 

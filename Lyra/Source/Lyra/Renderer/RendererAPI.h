@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 
+#include "Lyra/Core/Ref.h"
 #include "Lyra/Renderer/Buffer.h"
 
 namespace Lyra
@@ -21,7 +22,7 @@ namespace Lyra
 		virtual void Clear() = 0;
 
 		/* Named after DirectX */
-		virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) = 0;
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
 
 		inline static API GetAPI() { return s_API; }
 

@@ -3,8 +3,8 @@
 #include <cstdint>
 #include <string>
 
-#include "Lyra/Core.h"
-#include "Lyra/Window.h"
+#include "Lyra/Core/Core.h"
+#include "Lyra/Core/Window.h"
 
 struct GLFWwindow;
 

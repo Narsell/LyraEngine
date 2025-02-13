@@ -1,8 +1,8 @@
 #include "lrpch.h"
 
 #include "Application.h"
-#include "Lyra/Core.h"
-#include "Events/Event.h"
+#include "Lyra/Core/Core.h"
+#include "Lyra/Events/Event.h"
 #include "Lyra/Input/Input.h"
 #include "Lyra/ImGui/ImGuiLayer.h"
 #include "Lyra/Renderer/Shader.h"
@@ -19,7 +19,7 @@ namespace Lyra
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
-		:m_Window(std::unique_ptr<Window>(Window::Create())),
+		:m_Window(Scope<Window>(Window::Create())),
 		 m_ImGuiLayer(new ImGuiLayer())
 	{
 		LR_CORE_ASSERT(!s_Instance, "There's already an application instance!");

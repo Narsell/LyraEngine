@@ -1,12 +1,11 @@
 #pragma once
 
-#include <memory>
-
-#include "Lyra/Core.h"
-#include "Lyra/Window.h"
+#include "Lyra/Core/Core.h"
+#include "Lyra/Core/Window.h"
 #include "Lyra/Events/ApplicationEvent.h"
-#include "Lyra/LayerStack.h"
+#include "Lyra/Layer/LayerStack.h"
 #include "Lyra/Core/Timestep.h"
+#include "Lyra/Core/Ref.h"
 
 namespace Lyra
 {
@@ -36,7 +35,7 @@ namespace Lyra
 
 	private:
 
-		std::unique_ptr<Window> m_Window;
+		Scope<Window> m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Running = true;
 		LayerStack m_LayerStack;

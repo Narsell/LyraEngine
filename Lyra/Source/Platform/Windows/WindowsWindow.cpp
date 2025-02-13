@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Lyra/Core.h"
+#include "Lyra/Core/Core.h"
 #include "WindowsWindow.h"
 #include "Lyra/Events/ApplicationEvent.h"
 #include "Lyra/Events/MouseEvent.h"

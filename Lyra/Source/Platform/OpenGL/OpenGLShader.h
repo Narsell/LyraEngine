@@ -14,6 +14,7 @@ namespace Lyra
 		virtual void Unbind() override;
 
 		virtual void UploadUniform_Mat4f(const std::string& name, const glm::mat4& matrix) override;
+		virtual void UploadUniform_4f(const std::string& name, const glm::vec4& value) override;
 
 	private:
 		uint32_t m_RendererId;

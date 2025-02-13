@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "Lyra/Core.h"
+#include "Lyra/Core/Core.h"
 #include "Lyra/Events/Event.h"
 #include "Lyra/Core/Timestep.h"
 

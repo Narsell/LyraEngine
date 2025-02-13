@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Lyra/Core/Ref.h"
 #include "Lyra/Renderer/RendererAPI.h"
 
 namespace Lyra
@@ -11,7 +12,7 @@ namespace Lyra
 		virtual void Clear() override;
 
 		/* Named after DirectX */
-		virtual void DrawIndexed(const std::shared_ptr<VertexArray>& vertexArray) override;
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
 
 	};
 }

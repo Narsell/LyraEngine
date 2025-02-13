@@ -2,7 +2,7 @@
 
 #include <functional>
 
-#include "Lyra/Core.h"
+#include "Lyra/Core/Core.h"
 
 namespace Lyra
 {
@@ -74,8 +74,7 @@ namespace Lyra
 			{
 				//Calling callback function which returns a bool that determines if the event was handled.
 				//Since we already checked m_Event is of type T we can safely cast this.
-				//TODO: Try reinterpret_cast<T*>(&m_Event) here
-				m_Event.m_Handled = func(*(T*)&m_Event);
+				m_Event.m_Handled = func(*static_cast<T*>(&m_Event));
 				return true;
 			}
 			return false;

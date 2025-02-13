@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "Lyra/Core.h"
+#include "Lyra/Core/Core.h"
 
 namespace Lyra
 {
