@@ -6,6 +6,7 @@
 
 namespace Lyra
 {
+	// TODO: Use Ref<T> here
 	VertexBuffer* VertexBuffer::Create(float* vertices, size_t size, const VertexLayout& layout)
 	{
 		switch (Renderer::GetAPI())

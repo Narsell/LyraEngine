@@ -119,6 +119,16 @@ namespace Lyra
 		glUseProgram(0);
 	}
 
+	void OpenGLShader::UploadUniform_1i(const std::string& name, int value)
+	{
+		int location = glGetUniformLocation(m_RendererId, name.c_str());
+		if (location == -1)
+		{
+			LR_CORE_ASSERT(false, "Unable to set shader uniform.");
+		}
+		glUniform1i(location, value);
+	}
+
 	void OpenGLShader::UploadUniform_Mat4f(const std::string& name, const glm::mat4& matrix)
 	{
 		/* TODO: Cache the uniform location in a map */

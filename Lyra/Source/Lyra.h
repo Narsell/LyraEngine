@@ -24,6 +24,7 @@
 #include "Lyra/Renderer/Buffer.h"
 #include "Lyra/Renderer/VertexLayout.h"
 #include "Lyra/Renderer/Shader.h"
+#include "Lyra/Renderer/Texture.h"
 
 #include "Lyra/Renderer/Camera.h"
 

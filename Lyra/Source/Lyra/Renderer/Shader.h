@@ -12,6 +12,8 @@ namespace Lyra
 	public:
 		virtual ~Shader() = default;
 
+		virtual void UploadUniform_1i(const std::string& name, int value) = 0;
+
 		virtual void UploadUniform_Mat4f(const std::string& name, const glm::mat4& matrix) = 0;
 		virtual void UploadUniform_4f(const std::string& name, const glm::vec4& value) = 0;
 

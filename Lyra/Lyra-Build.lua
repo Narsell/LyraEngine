@@ -10,9 +10,12 @@ project "Lyra"
       "Source/**.hpp",
       "Source/**.cpp",
       "Source/**.c",
-      -- Include glm files into Lyra project
+      -- Include glm files
       "Vendor/glm/glm/**.hpp",
       "Vendor/glm/glm/**.inl",
+      -- Include stb files
+      "Vendor/stb_image/**.h",
+      "Vendor/stb_image/**.cpp",
    }
 
    includedirs
@@ -23,6 +26,7 @@ project "Lyra"
       "%{IncludeDir.Glad}",
       "%{IncludeDir.ImGui}",
       "%{IncludeDir.glm}",
+      "%{IncludeDir.stb_image}",
    }
 
    links

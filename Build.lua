@@ -13,6 +13,7 @@ IncludeDir["Glad"] = "Vendor/glad/include"
 IncludeDir["ImGui"] = "Vendor/imgui"
 IncludeDir["glm"] = "Vendor/glm"
 IncludeDir["spdlog"] = "Vendor/spdlog/include"
+IncludeDir["stb_image"] = "Vendor/stb_image"
 
 group "Dependencies"
    include "Lyra/Vendor/GLFW"

@@ -91,17 +91,18 @@ public:
 
 		m_SquareVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
 
-		float squareVertices[3 * 4] =
+		float squareVertices[5 * 4] =
 		{
-			 0.0f,    0.0f,    0.0f,
-			 150.0f,  0.0f,    0.0f,
-			 150.0f,  150.0f,  0.0f,
-			 0.0f,    150.0f,  0.0f
+			 0.0f,    0.0f,    0.0f,  0.0f,  0.0f,
+			 150.0f,  0.0f,    0.0f,  1.0f,  0.0f,
+			 150.0f,  150.0f,  0.0f,  1.0f,  1.0f,
+			 0.0f,    150.0f,  0.0f,  0.0f,  1.0f
 		};
 
 		Lyra::VertexLayout squareVertexLayout
 		{
-			{"a_Position", Lyra::ShaderData::Float3}
+			{"a_Position", Lyra::ShaderData::Float3},
+			{"a_TexCoord", Lyra::ShaderData::Float2}
 		};
 		Ref<Lyra::VertexBuffer> squareVertexBuffer(Lyra::VertexBuffer::Create(squareVertices, sizeof(squareVertices), squareVertexLayout));
 		m_SquareVertexArray->AddVertexBuffer(squareVertexBuffer);
@@ -148,6 +149,43 @@ public:
 
 		m_SquareShader = Ref<Lyra::Shader>(Lyra::Shader::Create(squareVertexSrc, squareFragmentSrc));
 
+
+		std::string textureVertexSrc = R"(
+			#version 330 core
+			
+			layout(location=0) in vec3 a_Position;
+			layout(location=1) in vec2 a_TexCoord;
+
+			out vec2 v_TexCoord;
+
+			uniform mat4 u_VP;
+			uniform mat4 u_Model;
+			
+			void main()
+			{
+				v_TexCoord = a_TexCoord;
+				gl_Position = u_VP * u_Model * vec4(a_Position, 1.0);
+			};
+		)";
+
+		std::string textureFragmentSrc = R"(
+			#version 330 core
+			
+			out vec4 o_Color;
+			in vec2 v_TexCoord;
+
+			uniform sampler2D u_Texture;
+
+			void main()
+			{
+				o_Color = texture(u_Texture, v_TexCoord);
+			};
+		)";
+
+		m_TextureShader = Ref<Lyra::Shader>(Lyra::Shader::Create(textureVertexSrc, textureFragmentSrc));
+		m_Texture = Lyra::Texture2D::Create("Assets/Textures/Checkerboard.png");
+		m_TextureShader->Bind();
+		m_TextureShader->UploadUniform_1i("u_Texture", 0);
 	}
 
 	void OnAttach() override
@@ -182,9 +220,12 @@ public:
 				Lyra::Renderer::Submit(m_SquareShader, m_SquareVertexArray, m_SquareTransform);
 			}
 		}
+		
+		m_Texture->Bind();
+		Lyra::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(2.0f)));
 
-		m_TriangleShader->Bind();
-		Lyra::Renderer::Submit(m_TriangleShader, m_TriangleVertexArray, m_TriangleTransform);
+		//m_TriangleShader->Bind();
+		//Lyra::Renderer::Submit(m_TriangleShader, m_TriangleVertexArray, m_TriangleTransform);
 
 		Lyra::Renderer::EndScene();
 
@@ -254,6 +295,9 @@ private:
 	Ref<Lyra::VertexArray> m_SquareVertexArray;
 	Ref<Lyra::Shader> m_TriangleShader;
 	Ref<Lyra::Shader> m_SquareShader;
+	Ref<Lyra::Shader> m_TextureShader;
+
+	Ref<Lyra::Texture2D> m_Texture;
 
 	Lyra::OrthographicCamera m_Camera;
 
