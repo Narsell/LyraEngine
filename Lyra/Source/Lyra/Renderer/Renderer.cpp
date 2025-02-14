@@ -8,6 +8,11 @@ namespace Lyra
 {
 	glm::mat4 Renderer::s_ViewProjectionMatrix = glm::mat4(1.0f);
 
+	void Renderer::Init()
+	{
+		RenderCommand::Init();
+	}
+
 	void Renderer::BeginScene(const OrthographicCamera& camera)
 	{
 		s_ViewProjectionMatrix = camera.GetViewProjectionMatrix();

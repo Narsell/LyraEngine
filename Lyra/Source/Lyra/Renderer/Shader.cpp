@@ -3,16 +3,17 @@
 #include "Shader.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Lyra/Renderer/Renderer.h"
+#include "Lyra/Core/Ref.h"
 
 namespace Lyra
 {
-	Shader* Shader::Create(const std::string& vertexSrc, const std::string& fragmentSrc)
+	Ref<Shader> Shader::Create(const std::string& vertexSrc, const std::string& fragmentSrc)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::OpenGL:
 			{
-				return new OpenGLShader(vertexSrc, fragmentSrc);
+				return std::make_shared<OpenGLShader>(vertexSrc, fragmentSrc);
 			}
 			case RendererAPI::API::None:
 			{

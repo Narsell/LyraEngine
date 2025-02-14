@@ -25,6 +25,8 @@ namespace Lyra
 		LR_CORE_ASSERT(!s_Instance, "There's already an application instance!");
 		s_Instance = this;
 
+		Renderer::Init();
+
 		PushOverlay(m_ImGuiLayer);
 		m_Window->SetEventCallback(LR_BIND_EVENT_FN(&Application::OnEvent));
 	}

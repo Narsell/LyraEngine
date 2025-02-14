@@ -85,7 +85,7 @@ public:
 		)";
 
 		//Creating shader instance - Compiles and links shader source code.
-		m_TriangleShader = Ref<Lyra::Shader>(Lyra::Shader::Create(triangleVertexSrc, triangleFragmentSrc));
+		m_TriangleShader = Lyra::Shader::Create(triangleVertexSrc, triangleFragmentSrc);
 
 		/* SQUARE SECTION */
 
@@ -147,8 +147,7 @@ public:
 			};
 		)";
 
-		m_SquareShader = Ref<Lyra::Shader>(Lyra::Shader::Create(squareVertexSrc, squareFragmentSrc));
-
+		m_SquareShader = Lyra::Shader::Create(squareVertexSrc, squareFragmentSrc);
 
 		std::string textureVertexSrc = R"(
 			#version 330 core
@@ -182,10 +181,12 @@ public:
 			};
 		)";
 
-		m_TextureShader = Ref<Lyra::Shader>(Lyra::Shader::Create(textureVertexSrc, textureFragmentSrc));
+		m_TextureShader = Lyra::Shader::Create(textureVertexSrc, textureFragmentSrc);
+
 		m_Texture = Lyra::Texture2D::Create("Assets/Textures/Checkerboard.png");
-		m_TextureShader->Bind();
-		m_TextureShader->UploadUniform_1i("u_Texture", 0);
+		m_TransparentTexture = Lyra::Texture2D::Create("Assets/Textures/ChernoLogo.png");
+		m_Texture->Bind(0);
+		m_TransparentTexture->Bind(1);
 	}
 
 	void OnAttach() override
@@ -221,7 +222,12 @@ public:
 			}
 		}
 		
-		m_Texture->Bind();
+		m_TextureShader->Bind();
+
+		m_TextureShader->UploadUniform_1i("u_Texture", 0);
+		Lyra::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(2.0f)));
+
+		m_TextureShader->UploadUniform_1i("u_Texture", 1);
 		Lyra::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(2.0f)));
 
 		//m_TriangleShader->Bind();
@@ -297,7 +303,7 @@ private:
 	Ref<Lyra::Shader> m_SquareShader;
 	Ref<Lyra::Shader> m_TextureShader;
 
-	Ref<Lyra::Texture2D> m_Texture;
+	Ref<Lyra::Texture2D> m_Texture, m_TransparentTexture;
 
 	Lyra::OrthographicCamera m_Camera;
 
