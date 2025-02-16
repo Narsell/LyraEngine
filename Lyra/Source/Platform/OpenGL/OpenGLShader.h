@@ -23,13 +23,17 @@ namespace Lyra
 
 	private:
 		void CreateShaderProgram(const std::unordered_map<GLenum, std::string>& shaderSources);
-		bool Compile(const std::unordered_map<GLenum, std::string>& shaderSources, std::vector<GLenum>& glShaderIds);
-		bool Link(const std::vector<GLenum>& glShaderIds);
-		std::string ReadFile(const std::string& filepath);
-		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source);
+		bool Compile(const std::unordered_map<GLenum, std::string>& shaderSources, std::array<GLenum, 2>& glShaderIds);
+		bool Link(const std::array<GLenum, 2>& glShaderIds);
+		std::string ReadFile(const std::string& filepath) const;
+		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source) const;
+
+		int GetUniformLocation(const std::string& name) const;
 
 	private:
 		uint32_t m_RendererId;
+
+		mutable std::unordered_map<std::string, int> m_UniformLocationCache;
 	};
 
 }

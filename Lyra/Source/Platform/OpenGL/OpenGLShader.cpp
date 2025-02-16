@@ -3,6 +3,7 @@
 #include "OpenGLShader.h"
 
 #include <fstream>
+#include <array>
 
 namespace Lyra
 {
@@ -38,7 +39,10 @@ namespace Lyra
 
 	void OpenGLShader::CreateShaderProgram(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
-		std::vector<GLenum> glShaderIds;
+		constexpr uint8_t maxElements = 2;
+		std::array<GLenum, maxElements> glShaderIds;
+
+		LR_CORE_ASSERT(shaderSources.size() <= maxElements, "Shader source file contains more than {0} shaders.", maxElements);
 
 		if (Compile(shaderSources, glShaderIds))
 		{
@@ -46,10 +50,11 @@ namespace Lyra
 		}
 	}
 
-	bool OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources, std::vector<GLenum>& outGLShaderIds)
+	bool OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources, std::array<GLenum, 2>& outGLShaderIds)
 	{
 		m_RendererId = glCreateProgram();
 
+		int glShaderIdsIndex = 0;
 		for (const auto& [type, source] : shaderSources)
 		{
 			// Create an empty shader handle
@@ -85,13 +90,13 @@ namespace Lyra
 
 			// Shader is successfully compiled.
 			glAttachShader(m_RendererId, shaderId);
-			outGLShaderIds.push_back(shaderId);
+			outGLShaderIds[glShaderIdsIndex++] = shaderId;
 		}
 
 		return true;
 	}
 
-	bool OpenGLShader::Link(const std::vector<GLenum>& glShaderIds)
+	bool OpenGLShader::Link(const std::array<GLenum, 2>& glShaderIds)
 	{
 		// Link our program
 		glLinkProgram(m_RendererId);
@@ -131,18 +136,21 @@ namespace Lyra
 		return true;
 	}
 
-	std::string OpenGLShader::ReadFile(const std::string& filepath)
+	std::string OpenGLShader::ReadFile(const std::string& filepath) const
 	{
 		std::string result;
 
+		// Creates an input stream of binary data.
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 		if (in)
 		{
-			// TODO: Document this and learn about ifstream
+			// Sets the stream file pointer to the end of the file.
 			in.seekg(0, std::ios::end);
+			// We then resize our string to be able to hold all the bytes (char = 1 byte) in the input stream.
 			result.resize(in.tellg());
-
+			// Return stream file pointer to the begining of the file.
 			in.seekg(0, std::ios::beg);
+			// Read stream into result string.
 			in.read(&result[0], result.size());
 			in.close();
 		}
@@ -154,7 +162,7 @@ namespace Lyra
 		return result;
 	}
 
-	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source)
+	std::unordered_map<GLenum, std::string> OpenGLShader::PreProcess(const std::string& source) const
 	{
 		std::unordered_map<GLenum, std::string> shaderSources;
 
@@ -176,6 +184,27 @@ namespace Lyra
 
 		return shaderSources;
 	}
+
+	int OpenGLShader::GetUniformLocation(const std::string& name) const
+	{
+		int location = -1;
+
+		if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+		{
+			location = m_UniformLocationCache.at(name);
+		}
+		else
+		{
+			location = glGetUniformLocation(m_RendererId, name.c_str());
+			m_UniformLocationCache[name] = location;
+		}
+		if (location == -1)
+		{
+			LR_CORE_ASSERT(false, "Unable to set shader uniform");
+		}
+
+		return location;
+	}
 	
 	void OpenGLShader::Bind()
 	{
@@ -189,32 +218,19 @@ namespace Lyra
 
 	void OpenGLShader::UploadUniform_1i(const std::string& name, int value)
 	{
-		int location = glGetUniformLocation(m_RendererId, name.c_str());
-		if (location == -1)
-		{
-			LR_CORE_ASSERT(false, "Unable to set shader uniform.");
-		}
+		int location = GetUniformLocation(name);
 		glUniform1i(location, value);
 	}
 
 	void OpenGLShader::UploadUniform_Mat4f(const std::string& name, const glm::mat4& matrix)
 	{
-		/* TODO: Cache the uniform location in a map */
-		int location = glGetUniformLocation(m_RendererId, name.c_str());
-		if (location == -1)
-		{
-			LR_CORE_ASSERT(false, "Unable to set shader uniform.");
-		}
+		int location = GetUniformLocation(name);
 		glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 	}
 
 	void OpenGLShader::UploadUniform_4f(const std::string& name, const glm::vec4& value)
 	{
-		int location = glGetUniformLocation(m_RendererId, name.c_str());
-		if (location == -1)
-		{
-			LR_CORE_ASSERT(false, "Unable to set shader uniform.");
-		}
+		int location = GetUniformLocation(name);
 		glUniform4f(location, value.r, value.g, value.b, value.a);
 	}
 }
