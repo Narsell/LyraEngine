@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <array>
+#include <filesystem>
 
 namespace Lyra
 {
@@ -24,9 +25,14 @@ namespace Lyra
 		auto shaderSources = PreProcess(source);
 
 		CreateShaderProgram(shaderSources);
+
+		// Extract filename from path using std::filesystem
+		std::filesystem::path path = filepath;
+		m_Name = path.stem().string();
 	}
 
-	OpenGLShader::OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+		:m_Name(name)
 	{
 		std::unordered_map<GLenum, std::string> shaderSources
 		{

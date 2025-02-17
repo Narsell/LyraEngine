@@ -85,7 +85,7 @@ public:
 		)";
 
 		//Creating shader instance - Compiles and links shader source code.
-		m_TriangleShader = Lyra::Shader::Create(triangleVertexSrc, triangleFragmentSrc);
+		m_TriangleShader = Lyra::Shader::Create("TriangleShader", triangleVertexSrc, triangleFragmentSrc);
 
 		/* SQUARE SECTION */
 
@@ -147,7 +147,7 @@ public:
 			};
 		)";
 
-		m_SquareShader = Lyra::Shader::Create(squareVertexSrc, squareFragmentSrc);
+		m_SquareShader = Lyra::Shader::Create("Square Shader", squareVertexSrc, squareFragmentSrc);
 
 		m_TextureShader = Lyra::Shader::Create("Assets/Shaders/Texture.glsl");
 

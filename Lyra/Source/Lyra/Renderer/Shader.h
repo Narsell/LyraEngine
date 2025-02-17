@@ -1,8 +1,12 @@
 #pragma once
 
-#include "Lyra/Core/Core.h"
-
 #include <glm/glm.hpp>
+
+#include <string>
+#include <unordered_map>
+
+#include "Lyra/Core/Core.h"
+#include "Lyra/Core/Ref.h"
 
 namespace Lyra
 {
@@ -20,8 +24,24 @@ namespace Lyra
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 
+		virtual const std::string& GetName() const = 0;
+
 		static Ref<Shader> Create(const std::string& filepath);
-		static Ref<Shader> Create(const std::string& vertexSrc, const std::string& fragmentSrc);
+		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
+	};
+
+	class LYRA_API ShaderLibrary
+	{
+	public:
+		void Add(const std::string& name, const Ref<Shader>& shader);
+		void Add(const Ref<Shader>& shader);
+		Ref<Shader> Load(const std::string& name, const std::string& filepath);
+		Ref<Shader> Load(const std::string& filepath);
+
+		Ref<Shader> Get(const std::string& name) const;
+		bool Exists(const std::string& name) const;
+	private:
+		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
 	};
 
 }

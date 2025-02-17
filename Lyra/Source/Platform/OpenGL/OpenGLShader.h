@@ -11,10 +11,12 @@ namespace Lyra
 	{
 	public:
 		OpenGLShader(const std::string& filepath);
-		OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc);
+		OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 
 		virtual void Bind() override;
 		virtual void Unbind() override;
+
+		virtual const std::string& GetName() const override { return m_Name; }
 
 		virtual void UploadUniform_1i(const std::string& name, int value) override;
 
@@ -33,6 +35,7 @@ namespace Lyra
 	private:
 		uint32_t m_RendererId;
 
+		std::string m_Name;
 		mutable std::unordered_map<std::string, int> m_UniformLocationCache;
 	};
 
