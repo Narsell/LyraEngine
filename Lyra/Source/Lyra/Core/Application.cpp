@@ -44,9 +44,12 @@ namespace Lyra
 			Timestep timestep = time - m_LastFrameTime;
 			m_LastFrameTime = time;
 
-			for (Layer* layer : m_LayerStack)
+			if (!m_Minimized)
 			{
-				layer->OnUpdate(timestep);
+				for (Layer* layer : m_LayerStack)
+				{
+					layer->OnUpdate(timestep);
+				}
 			}
 
 			m_ImGuiLayer->Begin();
@@ -62,12 +65,10 @@ namespace Lyra
 
 	void Application::OnEvent(Event& e)
 	{
-		// Dispatch window close event
+		// Dispatch window events
 		EventDispatcher dispatcher(e);
-		if (dispatcher.Dispatch<WindowCloseEvent>(LR_BIND_EVENT_FN(&Application::OnWindowClose)))
-		{
-			LR_CORE_TRACE("Dispatched WindowCloseEvent to Application::OnWindowClose");
-		}
+		dispatcher.Dispatch<WindowCloseEvent>(LR_BIND_EVENT_FN(&Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(LR_BIND_EVENT_FN(&Application::OnWindowResize));
 
 		// Traverse to the layers bakwards to propagate events (Top layers get events first)
 		// C++20 reverse ranged-based for loop HELL YEAH
@@ -98,5 +99,18 @@ namespace Lyra
 	{
 		m_Running = false;
 		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		if (e.GetWidth() == 0 || e.GetHeight() == 0)
+		{
+			m_Minimized = true;
+			return false;
+		}
+		m_Minimized = false;
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+		return false;
 	}
 }

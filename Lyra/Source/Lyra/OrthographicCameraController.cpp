@@ -82,14 +82,17 @@ namespace Lyra
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
+		// We get the zoom level from the MouseScrolledEvent and adjust the camera's projection matrix, basically we set the bounds to adjust for that zoom.
 		m_ZoomLevel = std::clamp(m_ZoomLevel - ((float)e.GetYOffset() / 5.0f), m_MinZoom, m_MaxZoom);
-		LR_CORE_INFO("{0}", m_ZoomLevel);
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;
 	}
 
 	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
 	{
+		// Basically the same thing as the previous function, we adjust the camera's projection matrix to consider for the new aspect ratio.
+		// Note: TODO: We could try to rework this so it takes the actual window bounds so that the camera takes the space of the window as it gets resized.
+		// BUT I would need to figure out what to do with zoom, it's probably fine...? anyway test later :)
 		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
 		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
 		return false;

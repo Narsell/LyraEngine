@@ -210,9 +210,9 @@ public:
 		ImGui::End();
 	}
 
-	void OnEvent(Lyra::Event& event) override
+	void OnEvent(Lyra::Event& e) override
 	{
-		m_CameraController.OnEvent(event);
+		m_CameraController.OnEvent(e);
 	}
 
 private:
