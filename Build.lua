@@ -3,6 +3,11 @@ workspace "Lyra"
    configurations { "Debug", "Release", "Dist"}
    startproject "App"
 
+   flags
+	{
+		"MultiProcessorCompile"
+	}
+
 OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
 IncludeDir = {}

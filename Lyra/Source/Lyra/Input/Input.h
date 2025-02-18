@@ -7,7 +7,13 @@ namespace Lyra
 
 	class LYRA_API Input
 	{
+	protected:
+		Input() = default;
+
 	public:
+		Input(const Input&) = delete;
+		Input& operator=(const Input&) = delete;
+
 		inline static bool IsKeyPressed(int keycode) { return s_Instance->IsKeyPressedImpl(keycode); }
 		inline static bool IsMouseButtonPressed(uint8_t button) { return s_Instance->IsMouseButtonPressedImpl(button); }
 		inline static std::pair<float, float> GetMousePosition() { return s_Instance->GetMousePositionImpl(); }

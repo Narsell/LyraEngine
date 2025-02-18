@@ -30,7 +30,7 @@ namespace Lyra
 
 	void LayerStack::PopLayer(Layer* layer)
 	{
-		LayerContainer::iterator it = std::find(begin(), end(), layer);
+		LayerContainer::iterator it = std::find(begin(), begin() + m_LayerInsertIndex, layer);
 		if (it != end())
 		{
 			m_Layers.erase(it);
@@ -40,7 +40,7 @@ namespace Lyra
 
 	void LayerStack::PopOverlay(Layer* overlay)
 	{
-		LayerContainer::iterator it = std::find(begin(), end(), overlay);
+		LayerContainer::iterator it = std::find(begin() + m_LayerInsertIndex, end(), overlay);
 		if (it != end())
 		{
 			m_Layers.erase(it);

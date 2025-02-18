@@ -62,8 +62,8 @@ namespace Lyra
 	{
 		//Create, bind and set indices to GL_ELEMENT_ARRAY_BUFFER which is the index buffer
 		glCreateBuffers(1, &m_RendererId);
-		Bind();
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, m_RendererId);
+		glBufferData(GL_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
 	}
 
 	OpenGLIndexBuffer::~OpenGLIndexBuffer()

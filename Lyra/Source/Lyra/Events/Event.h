@@ -57,24 +57,21 @@ namespace Lyra
 
 	class EventDispatcher
 	{
-		//Basic event function signature: bool Function_Name(EventDerivedClass& e)
-		template<typename T>
-		using EventFn = std::function<bool(T&)>;
 
 	public:
 		EventDispatcher(Event& event)
 			: m_Event(event)
 		{};
 
-		template<typename T>
-		bool Dispatch(EventFn<T> func)
+		template<typename T, typename F>
+		bool Dispatch(const F& func)
 		{
 			//If <T> is the same type as m_Event then we can process the event
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
 				//Calling callback function which returns a bool that determines if the event was handled.
 				//Since we already checked m_Event is of type T we can safely cast this.
-				m_Event.m_Handled = func(*static_cast<T*>(&m_Event));
+				m_Event.m_Handled = func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;
