@@ -7,13 +7,9 @@ class GameLayer : public Lyra::Layer
 public:
 	GameLayer()
 		:	Layer("GameLayer"),
-			m_Camera(0.0f, 1280.0f, 0.0f, 720.0f),
-			m_CameraTranslation(m_Camera.GetPosition()),
-			m_SquareTranslation(glm::vec3(640.0f, 360.0f, 0.0f)),
-			m_TriangleTranslation(glm::vec3(0.0f, 0.0f, 0.0f)),
+			m_CameraController(1920.f/1080.f, true),
 			m_SelectedColor(glm::vec4(1.0f)),
-			m_SquareTransform(glm::translate(glm::mat4(1.0f), m_SquareTranslation)),
-			m_TriangleTransform(glm::translate(glm::mat4(1.0f), m_TriangleTranslation))
+			m_SquareTransform(glm::mat4(1.0f))
 	{
 		/* TRIANGLE SECTION */
 
@@ -94,9 +90,9 @@ public:
 		float squareVertices[5 * 4] =
 		{
 			 0.0f,    0.0f,    0.0f,  0.0f,  0.0f,
-			 150.0f,  0.0f,    0.0f,  1.0f,  0.0f,
-			 150.0f,  150.0f,  0.0f,  1.0f,  1.0f,
-			 0.0f,    150.0f,  0.0f,  0.0f,  1.0f
+			 0.5f,  0.0f,    0.0f,  1.0f,  0.0f,
+			 0.5f,  0.5f,  0.0f,  1.0f,  1.0f,
+			 0.0f,    0.5f,  0.0f,  0.0f,  1.0f
 		};
 
 		Lyra::VertexLayout squareVertexLayout
@@ -170,12 +166,13 @@ public:
 
 	void OnUpdate(Lyra::Timestep ts) override
 	{
+		m_CameraController.OnUpdate(ts);
 		/* Clearing buffers */
 		Lyra::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
 		Lyra::RenderCommand::Clear();
 
 		/* Actual rendering happens here */
-		Lyra::Renderer::BeginScene(m_Camera);
+		Lyra::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		m_SquareShader->Bind();
 		m_SquareShader->UploadUniform_4f("u_Color", m_SelectedColor);
@@ -184,7 +181,7 @@ public:
 		{
 			for (int x = 0; x < 20; x++)
 			{
-				glm::vec3 position(x * 35.5f, y * 35.5f, 0.0f);
+				glm::vec3 position(x * 0.12f, y * 0.12f, 0.0f);
 				m_SquareTransform = glm::translate(glm::mat4(1.0f), position) * scale;
 				Lyra::Renderer::Submit(m_SquareShader, m_SquareVertexArray, m_SquareTransform);
 			}
@@ -193,74 +190,29 @@ public:
 		m_TextureShader->Bind();
 
 		m_TextureShader->UploadUniform_1i("u_Texture", 0);
-		Lyra::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(2.0f)));
+		Lyra::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
 
 		m_TextureShader->UploadUniform_1i("u_Texture", 1);
-		Lyra::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(2.0f)));
+		Lyra::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
 
 		//m_TriangleShader->Bind();
 		//Lyra::Renderer::Submit(m_TriangleShader, m_TriangleVertexArray, m_TriangleTransform);
 
 		Lyra::Renderer::EndScene();
 
-		/* Moving camera with keyboard input (input polling) */
-		glm::vec3 currentPosition = m_Camera.GetPosition();
-		glm::vec3 offsetPosition = glm::vec3(0.0f);
-
-		if (Lyra::Input::IsKeyPressed(LR_KEY_W))
-		{
-			offsetPosition.y += 1.0f;
-		}
-		else if (Lyra::Input::IsKeyPressed(LR_KEY_S))
-		{
-			offsetPosition.y -= 1.0f;
-		}
-		if (Lyra::Input::IsKeyPressed(LR_KEY_D))
-		{
-			offsetPosition.x += 1.0f;
-		}
-		else if (Lyra::Input::IsKeyPressed(LR_KEY_A))
-		{
-			offsetPosition.x -= 1.0f;
-		}
-		if (Lyra::Input::IsKeyPressed(LR_KEY_E))
-		{
-			m_Camera.SetRotation(m_Camera.GetRotation() - (m_CameraRotationSpeed * ts));
-		}
-		else if (Lyra::Input::IsKeyPressed(LR_KEY_Q))
-		{
-			m_Camera.SetRotation(m_Camera.GetRotation() + (m_CameraRotationSpeed * ts));
-		}
-
-		if (offsetPosition != glm::vec3(0.0f))
-		{
-			offsetPosition = glm::normalize(offsetPosition) * (m_CameraSpeed * ts);
-			m_CameraTranslation = currentPosition + offsetPosition;
-		}
-
-		m_Camera.SetPosition(m_CameraTranslation);
-
-		/* Update models' transforms */
-
-		m_TriangleTransform[3][0] = m_TriangleTranslation.x;
-		m_TriangleTransform[3][1] = m_TriangleTranslation.y;
-		m_TriangleTransform[3][2] = m_TriangleTranslation.z;
-
 	}
 
 	void OnImGuiRender() override
 	{
 		ImGui::Begin("World Outline");
-		ImGui::DragFloat3("Camera", &m_CameraTranslation.x);
 		//ImGui::DragFloat3("Square", &m_SquareTranslation.x);
-		ImGui::DragFloat3("Triangle", &m_TriangleTranslation.x);
 		ImGui::ColorEdit4("Square Color", &m_SelectedColor.x);
 		ImGui::End();
 	}
 
 	void OnEvent(Lyra::Event& event) override
 	{
-		//LR_TRACE("GameLayer::OnEvent: {0}", event);
+		m_CameraController.OnEvent(event);
 	}
 
 private:
@@ -273,19 +225,11 @@ private:
 
 	Ref<Lyra::Texture2D> m_Texture, m_TransparentTexture;
 
-	Lyra::OrthographicCamera m_Camera;
-
-	glm::vec3 m_CameraTranslation;
-	glm::vec3 m_SquareTranslation;
-	glm::vec3 m_TriangleTranslation;
+	Lyra::OrthographicCameraController m_CameraController;
 
 	glm::vec4 m_SelectedColor;
 
 	glm::mat4 m_SquareTransform;
-	glm::mat4 m_TriangleTransform;
-
-	float m_CameraSpeed = 500.0f;
-	float m_CameraRotationSpeed = 50.0f;
 };
 
 class SandboxApp : public Lyra::Application

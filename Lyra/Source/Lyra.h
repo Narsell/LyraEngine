@@ -13,6 +13,9 @@
 #include "Lyra/Input/KeyCodes.h"
 #include "Lyra/Input/MouseButtonCodes.h"
 
+/* CONTROLLERS */
+#include "Lyra/OrthographicCameraController.h"
+
 /* LAYER SYSTEM*/
 #include "Lyra/Layer/Layer.h"
 #include "Lyra/ImGui/ImGuiLayer.h"
@@ -25,7 +28,6 @@
 #include "Lyra/Renderer/VertexLayout.h"
 #include "Lyra/Renderer/Shader.h"
 #include "Lyra/Renderer/Texture.h"
-
 #include "Lyra/Renderer/Camera.h"
 
 /* MATH */

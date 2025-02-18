@@ -39,6 +39,9 @@ namespace Lyra
 		MouseScrolledEvent(double offsetX, double offsetY)
 			: m_OffsetX(offsetX), m_OffsetY(offsetY) {}
 
+		inline double GetYOffset() const { return m_OffsetY; }
+		inline double GetXOffset() const { return m_OffsetX; }
+
 		std::string ToString() const override
 		{
 			std::stringstream ss;
