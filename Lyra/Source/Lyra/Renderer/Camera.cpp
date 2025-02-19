@@ -4,11 +4,21 @@
 
 namespace Lyra
 {
-	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
-		:	m_Position(0.0f, 0.0f, 0.0f),
-			m_ProjectionMatrix(glm::ortho(left, right, bottom, top, -1.0f, 1.0f)),
-			m_ViewMatrix(glm::mat4(1.0f)),
+	Camera::Camera(glm::mat4 projectionMatrix, glm::vec3 position)
+		:	m_ProjectionMatrix(projectionMatrix),
+			m_Position(position),
+			m_ViewMatrix(glm::translate(glm::mat4(1.0f), m_Position)),
 			m_ViewProjectionMatrix(m_ProjectionMatrix * m_ViewMatrix)
+	{
+	}
+	void Camera::SetPosition(const glm::vec3& position)
+	{
+		m_Position = position;
+		RecalculateViewMatrix();
+	}
+
+	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
+		: Camera(glm::ortho(left, right, bottom, top, -1.0f, 1.0f), { 0.0f, 0.0f, 0.0f })
 	{
 	}
 
@@ -16,12 +26,6 @@ namespace Lyra
 	{
 		m_ProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
-	}
-
-	void OrthographicCamera::SetPosition(const glm::vec3& position)
-	{
-		m_Position = position; 
-		RecalculateViewMatrix();
 	}
 
 	void OrthographicCamera::SetRotation(float rotation)
@@ -41,4 +45,24 @@ namespace Lyra
 		m_ViewMatrix = glm::inverse(transform);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
+
+	/* * * * * * * * * * * * * 
+	 *   PERSPECTIVE CAMERA  *
+	 * * * * * * * * * * * * */
+
+	PerspectiveCamera::PerspectiveCamera(float fov, float aspectRatio, float zNear, float zFar)
+		: Camera(glm::perspective(fov, aspectRatio, zNear, zFar), { 0.0f, 0.0, 0.0f })
+	{
+	}
+
+	void PerspectiveCamera::RecalculateViewMatrix()
+	{
+		glm::mat4 transform = glm::mat4(1.0f);
+
+		transform = glm::translate(transform, m_Position);
+
+		m_ViewMatrix = glm::inverse(transform);
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
+
 }

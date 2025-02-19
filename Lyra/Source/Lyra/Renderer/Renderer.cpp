@@ -18,7 +18,7 @@ namespace Lyra
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 
-	void Renderer::BeginScene(const OrthographicCamera& camera)
+	void Renderer::BeginScene(const Camera& camera)
 	{
 		s_ViewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}

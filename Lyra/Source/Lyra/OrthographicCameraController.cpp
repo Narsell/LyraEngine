@@ -10,8 +10,10 @@ namespace Lyra
 	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
 		:	m_AspectRatio(aspectRatio),
 			m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel),
-			m_Rotation(rotation)
+			m_Rotation(rotation),
+			m_CameraPosition(m_Camera.GetPosition())
 	{
+		m_Camera.SetPosition(m_CameraPosition);
 	}
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
@@ -68,7 +70,7 @@ namespace Lyra
 		}
 
 		// This maps our movement speed to the zoom level (More zoomed in = less speed, less zoomed in = more speed)
-		m_CameraMoveSpeed = 1.3 * m_ZoomLevel;
+		m_CameraMoveSpeed = 1.3f * m_ZoomLevel;
 
 	}
 

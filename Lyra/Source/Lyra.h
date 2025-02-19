@@ -15,6 +15,7 @@
 
 /* CONTROLLERS */
 #include "Lyra/OrthographicCameraController.h"
+#include "Lyra/PerspectiveCameraController.h"
 
 /* LAYER SYSTEM*/
 #include "Lyra/Layer/Layer.h"
