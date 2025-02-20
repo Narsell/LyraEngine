@@ -15,6 +15,7 @@ namespace Lyra
 		virtual void Unbind() const = 0;
 
 		virtual const VertexLayout& GetLayout() const = 0;
+		virtual uint32_t GetVertexCount() const = 0;
 
 		static VertexBuffer* Create(float* vertices, size_t size, const VertexLayout& layout);
 

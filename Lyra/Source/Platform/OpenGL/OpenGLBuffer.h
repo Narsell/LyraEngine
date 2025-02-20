@@ -15,10 +15,12 @@ namespace Lyra
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
+		virtual uint32_t GetVertexCount() const override { return m_VertexCount; }
 		virtual const VertexLayout& GetLayout() const override { return m_VertexLayout; };
 
 	private:
 		const VertexLayout& m_VertexLayout;
+		uint32_t m_VertexCount;
 
 	private:
 		uint32_t m_RendererId;

@@ -28,13 +28,21 @@ namespace Lyra
 
 	}
 
-	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform)
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, bool drawIndexed)
 	{
 		shader->Bind();
 		shader->UploadUniform_Mat4f("u_VP", s_ViewProjectionMatrix);
 		shader->UploadUniform_Mat4f("u_Model", transform);
 
 		vertexArray->Bind();
-		RenderCommand::DrawIndexed(vertexArray);
+
+		if (drawIndexed)
+		{
+			RenderCommand::DrawIndexed(vertexArray);
+		}
+		else
+		{
+			RenderCommand::DrawUnindexed(vertexArray);
+		}
 	}
 }

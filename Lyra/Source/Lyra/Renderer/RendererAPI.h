@@ -25,6 +25,7 @@ namespace Lyra
 
 		/* Named after DirectX */
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
+		virtual void DrawUnindexed(const Ref<VertexArray>& vertexArray) = 0;
 
 		inline static API GetAPI() { return s_API; }
 

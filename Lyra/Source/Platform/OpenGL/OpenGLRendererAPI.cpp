@@ -8,7 +8,9 @@ namespace Lyra
 {
 	void OpenGLRendererAPI::Init()
 	{
+		// TODO: Expose these params to the API and make them configurable
 		glEnable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
@@ -30,5 +32,13 @@ namespace Lyra
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray)
 	{
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+	}
+
+	void OpenGLRendererAPI::DrawUnindexed(const Ref<VertexArray>& vertexArray)
+	{
+		for (const auto& vertexBuffer : vertexArray->GetVertexBuffers())
+		{
+			glDrawArrays(GL_TRIANGLES, 0, vertexBuffer->GetVertexCount());
+		}
 	}
 }

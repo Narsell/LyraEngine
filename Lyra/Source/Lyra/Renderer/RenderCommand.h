@@ -33,6 +33,11 @@ namespace Lyra
 			s_RendererAPI->DrawIndexed(vertexArray);
 		}
 
+		inline static void DrawUnindexed(const Ref<VertexArray>& vertexArray)
+		{
+			s_RendererAPI->DrawUnindexed(vertexArray);
+		}
+
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

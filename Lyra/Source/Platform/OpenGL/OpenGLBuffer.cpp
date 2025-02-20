@@ -28,7 +28,8 @@ namespace Lyra
 	/* ############################# */
 
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, size_t size, const VertexLayout& layout)
-		: m_VertexLayout(layout)
+		:	m_VertexLayout(layout),
+			m_VertexCount(size/layout.GetStride())
 	{
 		//Create vertex buffer and bind it to GL_ARRAY_BUFFER
 		glCreateBuffers(1, &m_RendererId);
