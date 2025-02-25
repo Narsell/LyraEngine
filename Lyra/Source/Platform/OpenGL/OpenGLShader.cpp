@@ -228,6 +228,12 @@ namespace Lyra
 		glUniform1i(location, value);
 	}
 
+	void OpenGLShader::UploadUniform_1f(const std::string& name, float value)
+	{
+		int location = GetUniformLocation(name);
+		glUniform1f(location, value);
+	}
+
 	void OpenGLShader::UploadUniform_Mat4f(const std::string& name, const glm::mat4& matrix)
 	{
 		int location = GetUniformLocation(name);

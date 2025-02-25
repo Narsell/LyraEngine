@@ -25,7 +25,7 @@ namespace Lyra
 		PerspectiveCamera m_Camera;
 
 		float m_CameraMoveSpeed = 3.f;
-		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 2.0f };
+		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 5.0f };
 
 	};
 

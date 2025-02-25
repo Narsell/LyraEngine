@@ -19,6 +19,7 @@ namespace Lyra
 		virtual const std::string& GetName() const override { return m_Name; }
 
 		virtual void UploadUniform_1i(const std::string& name, int value) override;
+		virtual void UploadUniform_1f(const std::string& name, float value) override;
 
 		virtual void UploadUniform_3f(const std::string& name, const glm::vec3& value) override;
 		virtual void UploadUniform_Mat4f(const std::string& name, const glm::mat4& matrix) override;

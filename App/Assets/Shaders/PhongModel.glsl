@@ -3,10 +3,12 @@
 
 layout(location=0) in vec3 a_Position;
 layout(location=1) in vec3 a_Normal;
+layout(location=2) in vec2 a_TexCoord;
 
 uniform mat4 u_VP;
 uniform mat4 u_Model;
 
+out vec2 v_TexCoord;
 out vec3 v_Normal;
 out vec3 v_FragWorldPosition;
 
@@ -18,6 +20,7 @@ void main()
 	// TODO: Calculate this in CPU and send as an uniform, the inverse operation is expensive to do for every vertex.
 	v_Normal = mat3(transpose(inverse(u_Model))) * a_Normal;
 	v_FragWorldPosition = vec3(u_Model * vec4(a_Position, 1.0));
+	v_TexCoord = a_TexCoord;
 
 	gl_Position = u_VP * u_Model * vec4(a_Position, 1.0);
 };
@@ -25,14 +28,19 @@ void main()
 #type fragment
 #version 330 core
 
+in vec2 v_TexCoord;
 in vec3 v_Normal;
 in vec3 v_FragWorldPosition;
 
 out vec4 o_Color;
 
-uniform vec4 u_ObjectColor;
+uniform sampler2D u_Texture;
 uniform vec4 u_LightColor;
 uniform vec3 u_LightPosition;
+uniform float u_AmbientStrenght;
+uniform float u_SpecularStrenght;
+uniform float u_ShininessFactor;
+
 uniform vec3 u_CameraPosition;
 
 void main()
@@ -48,17 +56,15 @@ void main()
 	vec3 diffuseColor = diffuseFactor * vec3(u_LightColor);
 
 	// --- Specular light calculation ---
-	float specularStrength = 0.5;
 	vec3 viewDirection = normalize(u_CameraPosition - v_FragWorldPosition);
 	// relflect() expects a vector pointing from the light source to the fragment, so we invent lightDirection
 	vec3 reflectionDirection = reflect(-lightDirection, normalVector);
 	// Now we calculate the specular component
-	float specularFactor = pow(max(dot(viewDirection, reflectionDirection), 0.0), 32);
-	vec3 specularColor = specularStrength * specularFactor * vec3(u_LightColor);
+	float specularFactor = pow(max(dot(viewDirection, reflectionDirection), 0.0), u_ShininessFactor);
+	vec3 specularColor = u_SpecularStrenght * specularFactor * vec3(u_LightColor);
 
 	// --- Ambient light calculation ---
-	float ambientStrenght = 0.1;
-	vec3 ambientColor = ambientStrenght * vec3(u_LightColor);
+	vec3 ambientColor = u_AmbientStrenght * vec3(u_LightColor);
 
-	o_Color = vec4(specularColor + ambientColor + diffuseColor, u_LightColor.a) * u_ObjectColor;
+	o_Color = vec4(specularColor + ambientColor + diffuseColor, u_LightColor.a) * texture(u_Texture, v_TexCoord);
 };
