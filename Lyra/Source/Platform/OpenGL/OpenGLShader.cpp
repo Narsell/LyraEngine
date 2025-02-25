@@ -239,4 +239,12 @@ namespace Lyra
 		int location = GetUniformLocation(name);
 		glUniform4f(location, value.r, value.g, value.b, value.a);
 	}
+	
+	void OpenGLShader::UploadUniform_3f(const std::string& name, const glm::vec3& value)
+	{
+		int location = GetUniformLocation(name);
+		glUniform3f(location, value.x, value.y, value.z);
+	}
+
+
 }

@@ -8,8 +8,8 @@ public:
 	GameLayer()
 		:	Layer("GameLayer"),
 			m_CameraController(45.0f, 16.f/9.f, 0.1f, 100.f),
-			m_GridColor(glm::vec4(0.2f, 0.65f, 0.35f, 1.0f)),
-			m_LightSourceColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
+			m_LightSourceColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)),
+			m_LightSourcePosition(glm::vec3(0.65f, 0.5f, 0.5f))
 	{   
 		
 		/* TEXTURED CUBE SECTION */
@@ -71,11 +71,11 @@ public:
 			m_CubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
 		}
 
-		/* SQUARE SECTION */
+		/* QUAD SECTION */
 		{
-			m_SquareVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
+			m_QuadVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
 
-			float squareVertices[5 * 4] =
+			float quadVertices[5 * 4] =
 			{
 				 0.0f,  0.0f,  0.0f,  0.0f,  0.0f,
 				 0.5f,  0.0f,  0.0f,  1.0f,  0.0f,
@@ -83,24 +83,24 @@ public:
 				 0.0f,  0.5f,  0.0f,  0.0f,  1.0f
 			};
 
-			Lyra::VertexLayout squareVertexLayout
+			Lyra::VertexLayout quadVertexLayout
 			{
 				{"a_Position", Lyra::ShaderData::Float3},
 				{"a_TexCoord", Lyra::ShaderData::Float2}
 			};
-			Ref<Lyra::VertexBuffer> squareVertexBuffer(Lyra::VertexBuffer::Create(squareVertices, sizeof(squareVertices), squareVertexLayout));
-			m_SquareVertexArray->AddVertexBuffer(squareVertexBuffer);
-			squareVertexLayout.DebugPrint("Square");
+			Ref<Lyra::VertexBuffer> squareVertexBuffer(Lyra::VertexBuffer::Create(quadVertices, sizeof(quadVertices), quadVertexLayout));
+			m_QuadVertexArray->AddVertexBuffer(squareVertexBuffer);
+			quadVertexLayout.DebugPrint("Square");
 
-			uint32_t squareIndices[6] =
+			uint32_t quadIndices[6] =
 			{
 				0, 1, 2, 2, 3, 0
 			};
 
-			Ref<Lyra::IndexBuffer> squareIndexBuffer(Lyra::IndexBuffer::Create(squareIndices, sizeof(squareIndices)));
-			m_SquareVertexArray->AddIndexBuffer(squareIndexBuffer);
+			Ref<Lyra::IndexBuffer> quadIndexBuffer(Lyra::IndexBuffer::Create(quadIndices, sizeof(quadIndices)));
+			m_QuadVertexArray->AddIndexBuffer(quadIndexBuffer);
 
-			std::string squareVertexSrc = R"(
+			std::string quadVertexSrc = R"(
 				#version 330 core
 			
 				layout(location=0) in vec3 a_Position;
@@ -117,7 +117,7 @@ public:
 				};
 			)";
 
-			std::string squareFragmentSrc = R"(
+			std::string quadFragmentSrc = R"(
 				#version 330 core
 			
 				out vec4 o_Color;
@@ -131,61 +131,62 @@ public:
 				};
 			)";
 
-			m_SquareShader = Lyra::Shader::Create("Square Shader", squareVertexSrc, squareFragmentSrc);
+			m_QuadShader = Lyra::Shader::Create("Quad Shader", quadVertexSrc, quadFragmentSrc);
 		}
-
-		float cubeVertices[] = {
-			-0.5f, -0.5f, -0.5f, // Back face
-			 0.5f, -0.5f, -0.5f,
-			 0.5f,  0.5f, -0.5f,
-			 0.5f,  0.5f, -0.5f,
-			-0.5f,  0.5f, -0.5f,
-			-0.5f, -0.5f, -0.5f,
-
-			-0.5f, -0.5f,  0.5f, // Front face
-			 0.5f, -0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f,  0.5f,
-			-0.5f, -0.5f,  0.5f,
-
-			-0.5f,  0.5f,  0.5f, // Left face
-			-0.5f,  0.5f, -0.5f,
-			-0.5f, -0.5f, -0.5f,
-			-0.5f, -0.5f, -0.5f,
-			-0.5f, -0.5f,  0.5f,
-			-0.5f,  0.5f,  0.5f,
-
-			 0.5f,  0.5f,  0.5f, // Right face
-			 0.5f,  0.5f, -0.5f,
-			 0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-
-			-0.5f, -0.5f, -0.5f, // Bottom face
-			 0.5f, -0.5f, -0.5f,
-			 0.5f, -0.5f,  0.5f,
-			 0.5f, -0.5f,  0.5f,
-			-0.5f, -0.5f,  0.5f,
-			-0.5f, -0.5f, -0.5f,
-
-			-0.5f,  0.5f, -0.5f, // Upper face
-			 0.5f,  0.5f, -0.5f,
-			 0.5f,  0.5f,  0.5f,
-			 0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f,  0.5f,
-			-0.5f,  0.5f, -0.5f
-		};
 
 		/* LIGHT REFLECTIVE CUBE SECTION */
 		{
 			m_ReflectiveCubeVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
 
+			/* Pos (x, y, z), Normals (x, y, z) */
+			float cubeVertices[] = {
+				-0.5f, -0.5f, -0.5f, 0.0, 0.0, -1.0, // Back face
+				 0.5f, -0.5f, -0.5f, 0.0, 0.0, -1.0,
+				 0.5f,  0.5f, -0.5f, 0.0, 0.0, -1.0,
+				 0.5f,  0.5f, -0.5f, 0.0, 0.0, -1.0,
+				-0.5f,  0.5f, -0.5f, 0.0, 0.0, -1.0,
+				-0.5f, -0.5f, -0.5f, 0.0, 0.0, -1.0,
+
+				-0.5f, -0.5f,  0.5f, 0.0, 0.0, 1.0, // Front face
+				 0.5f, -0.5f,  0.5f, 0.0, 0.0, 1.0,
+				 0.5f,  0.5f,  0.5f, 0.0, 0.0, 1.0,
+				 0.5f,  0.5f,  0.5f, 0.0, 0.0, 1.0,
+				-0.5f,  0.5f,  0.5f, 0.0, 0.0, 1.0,
+				-0.5f, -0.5f,  0.5f, 0.0, 0.0, 1.0,
+
+				-0.5f,  0.5f,  0.5f, -1.0, 0.0, 0.0, // Left face
+				-0.5f,  0.5f, -0.5f, -1.0, 0.0, 0.0,
+				-0.5f, -0.5f, -0.5f, -1.0, 0.0, 0.0,
+				-0.5f, -0.5f, -0.5f, -1.0, 0.0, 0.0,
+				-0.5f, -0.5f,  0.5f, -1.0, 0.0, 0.0,
+				-0.5f,  0.5f,  0.5f, -1.0, 0.0, 0.0,
+
+				 0.5f,  0.5f,  0.5f, 1.0, 0.0, 0.0,  // Right face
+				 0.5f,  0.5f, -0.5f, 1.0, 0.0, 0.0,
+				 0.5f, -0.5f, -0.5f, 1.0, 0.0, 0.0,
+				 0.5f, -0.5f, -0.5f, 1.0, 0.0, 0.0,
+				 0.5f, -0.5f,  0.5f, 1.0, 0.0, 0.0,
+				 0.5f,  0.5f,  0.5f, 1.0, 0.0, 0.0,
+
+				-0.5f, -0.5f, -0.5f, 0.0, -1.0, 0.0, // Bottom face
+				 0.5f, -0.5f, -0.5f, 0.0, -1.0, 0.0,
+				 0.5f, -0.5f,  0.5f, 0.0, -1.0, 0.0,
+				 0.5f, -0.5f,  0.5f, 0.0, -1.0, 0.0,
+				-0.5f, -0.5f,  0.5f, 0.0, -1.0, 0.0,
+				-0.5f, -0.5f, -0.5f, 0.0, -1.0, 0.0,
+
+				-0.5f,  0.5f, -0.5f, 0.0, 1.0, 0.0, // Upper face
+				 0.5f,  0.5f, -0.5f, 0.0, 1.0, 0.0,
+				 0.5f,  0.5f,  0.5f, 0.0, 1.0, 0.0,
+				 0.5f,  0.5f,  0.5f, 0.0, 1.0, 0.0,
+				-0.5f,  0.5f,  0.5f, 0.0, 1.0, 0.0,
+				-0.5f,  0.5f, -0.5f, 0.0, 1.0, 0.0,
+			};
 
 			Lyra::VertexLayout cubeVertexLayout
 			{
-				{"a_Position", Lyra::ShaderData::Float3}
+				{"a_Position", Lyra::ShaderData::Float3},
+				{"a_Normal", Lyra::ShaderData::Float3}
 			};
 
 			Ref<Lyra::VertexBuffer> cubeVertexBuffer(Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout));
@@ -195,6 +196,50 @@ public:
 		/* LIGHT SOURCE CUBE SECTION */
 		{
 			m_LightSourceCubeVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
+
+			float cubeVertices[] = {
+				-0.5f, -0.5f, -0.5f, // Back face
+				 0.5f, -0.5f, -0.5f,
+				 0.5f,  0.5f, -0.5f,
+				 0.5f,  0.5f, -0.5f,
+				-0.5f,  0.5f, -0.5f,
+				-0.5f, -0.5f, -0.5f,
+
+				-0.5f, -0.5f,  0.5f, // Front face
+				 0.5f, -0.5f,  0.5f,
+				 0.5f,  0.5f,  0.5f,
+				 0.5f,  0.5f,  0.5f,
+				-0.5f,  0.5f,  0.5f,
+				-0.5f, -0.5f,  0.5f,
+
+				-0.5f,  0.5f,  0.5f, // Left face
+				-0.5f,  0.5f, -0.5f,
+				-0.5f, -0.5f, -0.5f,
+				-0.5f, -0.5f, -0.5f,
+				-0.5f, -0.5f,  0.5f,
+				-0.5f,  0.5f,  0.5f,
+
+				 0.5f,  0.5f,  0.5f, // Right face
+				 0.5f,  0.5f, -0.5f,
+				 0.5f, -0.5f, -0.5f,
+				 0.5f, -0.5f, -0.5f,
+				 0.5f, -0.5f,  0.5f,
+				 0.5f,  0.5f,  0.5f,
+
+				-0.5f, -0.5f, -0.5f, // Bottom face
+				 0.5f, -0.5f, -0.5f,
+				 0.5f, -0.5f,  0.5f,
+				 0.5f, -0.5f,  0.5f,
+				-0.5f, -0.5f,  0.5f,
+				-0.5f, -0.5f, -0.5f,
+
+				-0.5f,  0.5f, -0.5f, // Upper face
+				 0.5f,  0.5f, -0.5f,
+				 0.5f,  0.5f,  0.5f,
+				 0.5f,  0.5f,  0.5f,
+				-0.5f,  0.5f,  0.5f,
+				-0.5f,  0.5f, -0.5f
+			};
 
 			Lyra::VertexLayout cubeVertexLayout
 			{
@@ -207,7 +252,7 @@ public:
 
 		// Shader creation
 		m_TextureShader = Lyra::Shader::Create("Assets/Shaders/Texture.glsl");
-		m_ReflectiveObjShader = Lyra::Shader::Create("Assets/Shaders/ReflectionColor.glsl");
+		m_PhongShader = Lyra::Shader::Create("Assets/Shaders/PhongModel.glsl");
 		m_LightSourceShader = Lyra::Shader::Create("Assets/Shaders/LightSource.glsl");
 
 		// Creating and setting textures
@@ -240,20 +285,6 @@ public:
 		Lyra::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		/* Actual rendering happens here */
-
-		/* Render square grid (Indexed) */
-		m_SquareShader->Bind();
-		m_SquareShader->UploadUniform_4f("u_Color", m_GridColor);
-		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.2f));
-		static glm::mat4 rotation = glm::rotate(glm::mat4(1.0f),glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		for (int y = 0; y < 20; y++)
-		{
-			for (int x = 0; x < 20; x++)
-			{
-				glm::vec3 position(x * 0.12f, y * 0.12f, 0.0f);
-				Lyra::Renderer::Submit(m_SquareShader, m_SquareVertexArray, glm::translate(glm::mat4(1.0f), position) * rotation * scale);
-			}
-		}
 		
 		/* Render cube (Non-indexed) */
 		m_TextureShader->Bind();
@@ -261,33 +292,35 @@ public:
 		Lyra::Renderer::Submit(
 			m_TextureShader,
 			m_CubeVertexArray, 
-			glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(1.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -2.0f)), 
+			glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(1.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.15f, -6.0f)), 
 			false
 		);
-
+		
 		/* Render light source (Non-indexed) */
 		Lyra::Renderer::Submit(
 			m_LightSourceShader,
 			m_LightSourceCubeVertexArray,
-			glm::translate(glm::mat4(1.0f), glm::vec3(4.5f, 2.0f, -0.5f)) * glm::scale(glm::mat4(1.0f), glm::vec3(0.25f)),
+			glm::translate(glm::mat4(1.0f), m_LightSourcePosition) * glm::scale(glm::mat4(1.0f), glm::vec3(0.25f)),
 			false
 		);
 
 		/* Render reflective cube (Non-indexed) */
-		m_ReflectiveObjShader->Bind();
-		m_ReflectiveObjShader->UploadUniform_4f("u_ObjectColor", glm::vec4(1.0f, 0.5f, 0.31f, 1.0f));
-		m_ReflectiveObjShader->UploadUniform_4f("u_LightColor", m_LightSourceColor);
+		m_PhongShader->Bind();
+		m_PhongShader->UploadUniform_4f("u_ObjectColor", glm::vec4(1.0f, 0.5f, 0.31f, 1.0f));
+		m_PhongShader->UploadUniform_4f("u_LightColor", m_LightSourceColor);
+		m_PhongShader->UploadUniform_3f("u_LightPosition", m_LightSourcePosition);
+		m_PhongShader->UploadUniform_3f("u_CameraPosition", m_CameraController.GetCamera().GetPosition());
 		Lyra::Renderer::Submit(
-			m_ReflectiveObjShader,
+			m_PhongShader,
 			m_ReflectiveCubeVertexArray,
-			glm::rotate(glm::mat4(1.0f), glm::radians(15.0f), glm::vec3(1.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(3.5f, 1.5f, -0.5f)),
+			glm::rotate(glm::mat4(1.0f), glm::radians(15.0f), glm::vec3(1.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -0.5f)),
 			false
 		);
 
 		/* Render quad (Indexed) */
 		m_TextureShader->Bind();
 		m_TextureShader->UploadUniform_1i("u_Texture", 1);
-		Lyra::Renderer::Submit(m_TextureShader, m_SquareVertexArray, glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(0.7f, -0.45f, 1.0f)));
+		Lyra::Renderer::Submit(m_TextureShader, m_QuadVertexArray, glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0, -4.5f)));
 
 		Lyra::Renderer::EndScene();
 
@@ -296,9 +329,8 @@ public:
 	void OnImGuiRender() override
 	{
 		ImGui::Begin("World Outline");
-		//ImGui::DragFloat3("Square", &m_SquareTranslation.x);
-		ImGui::ColorEdit4("Grid Color", &m_GridColor.x);
-		ImGui::ColorEdit4("Light Source Color", &m_LightSourceColor.x);
+		ImGui::ColorEdit4("LightSource Color", &m_LightSourceColor.x);
+		ImGui::DragFloat3("LightSource Position", &m_LightSourcePosition.x, 0.1);
 		ImGui::End();
 	}
 
@@ -308,23 +340,22 @@ public:
 	}
 
 private:
-	Ref<Lyra::VertexArray> m_SquareVertexArray;
+	Ref<Lyra::VertexArray> m_QuadVertexArray;
 	Ref<Lyra::VertexArray> m_CubeVertexArray;
 	Ref<Lyra::VertexArray> m_ReflectiveCubeVertexArray;
 	Ref<Lyra::VertexArray> m_LightSourceCubeVertexArray;
-	Ref<Lyra::Shader> m_SquareShader;
+	Ref<Lyra::Shader> m_QuadShader;
 	Ref<Lyra::Shader> m_TextureShader;
-	Ref<Lyra::Shader> m_ReflectiveObjShader;
+	Ref<Lyra::Shader> m_PhongShader;
 	Ref<Lyra::Shader> m_LightSourceShader;
 
 	Ref<Lyra::Texture2D> m_Texture, m_TransparentTexture;
 
 	Lyra::PerspectiveCameraController m_CameraController;
 
-	glm::vec4 m_GridColor;
 	glm::vec4 m_LightSourceColor;
 
-	glm::vec4 m_LightSourcePosition;
+	glm::vec3 m_LightSourcePosition;
 };
 
 class SandboxApp : public Lyra::Application
