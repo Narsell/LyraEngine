@@ -23,5 +23,6 @@ namespace Lyra
 
 	private:
 		static glm::mat4 s_ViewProjectionMatrix;
+		static glm::mat4 s_ViewMatrix;
 	};
 }

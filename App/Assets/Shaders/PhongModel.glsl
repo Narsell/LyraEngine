@@ -7,10 +7,14 @@ layout(location=2) in vec2 a_TexCoord;
 
 uniform mat4 u_VP;
 uniform mat4 u_Model;
+uniform mat4 u_View;
+uniform mat3 u_Normal;
+uniform vec3 u_LightPosition;
 
 out vec2 v_TexCoord;
 out vec3 v_Normal;
-out vec3 v_FragWorldPosition;
+out vec3 v_FragViewPosition;
+out vec3 v_LightPosition;
 
 void main()
 {
@@ -18,8 +22,9 @@ void main()
 	// the normal vector (a_Normal) with the normal matrix
 	// The normal matrix is defined as the transpose of the inverse of the upper 3x3 section of the model matrix
 	// TODO: Calculate this in CPU and send as an uniform, the inverse operation is expensive to do for every vertex.
-	v_Normal = mat3(transpose(inverse(u_Model))) * a_Normal;
-	v_FragWorldPosition = vec3(u_Model * vec4(a_Position, 1.0));
+	v_Normal = u_Normal * a_Normal;
+	v_FragViewPosition = vec3(u_View * u_Model * vec4(a_Position, 1.0));
+	v_LightPosition = vec3(u_View * vec4(u_LightPosition, 1.0));
 	v_TexCoord = a_TexCoord;
 
 	gl_Position = u_VP * u_Model * vec4(a_Position, 1.0);
@@ -30,24 +35,22 @@ void main()
 
 in vec2 v_TexCoord;
 in vec3 v_Normal;
-in vec3 v_FragWorldPosition;
+in vec3 v_FragViewPosition;
+in vec3 v_LightPosition;
 
 out vec4 o_Color;
 
 uniform sampler2D u_Texture;
 uniform vec4 u_LightColor;
-uniform vec3 u_LightPosition;
 uniform float u_AmbientStrenght;
 uniform float u_SpecularStrenght;
 uniform float u_ShininessFactor;
-
-uniform vec3 u_CameraPosition;
 
 void main()
 {
 	//  --- Diffuse light calculation ---
 	vec3 normalVector = normalize(v_Normal);
-	vec3 lightDirection = normalize(u_LightPosition - v_FragWorldPosition);
+	vec3 lightDirection = normalize(v_LightPosition - v_FragViewPosition);
 
 	// The greater the angle (up to 90) the greater the factor (more light)
 	float diffuseFactor = max(dot(lightDirection, normalVector), 0.0);
@@ -56,7 +59,7 @@ void main()
 	vec3 diffuseColor = diffuseFactor * vec3(u_LightColor);
 
 	// --- Specular light calculation ---
-	vec3 viewDirection = normalize(u_CameraPosition - v_FragWorldPosition);
+	vec3 viewDirection = normalize(-v_FragViewPosition);
 	// relflect() expects a vector pointing from the light source to the fragment, so we invent lightDirection
 	vec3 reflectionDirection = reflect(-lightDirection, normalVector);
 	// Now we calculate the specular component

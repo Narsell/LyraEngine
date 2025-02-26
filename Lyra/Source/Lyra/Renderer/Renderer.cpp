@@ -7,6 +7,7 @@
 namespace Lyra
 {
 	glm::mat4 Renderer::s_ViewProjectionMatrix = glm::mat4(1.0f);
+	glm::mat4 Renderer::s_ViewMatrix = glm::mat4(1.0f);
 
 	void Renderer::Init()
 	{
@@ -21,6 +22,7 @@ namespace Lyra
 	void Renderer::BeginScene(const Camera& camera)
 	{
 		s_ViewProjectionMatrix = camera.GetViewProjectionMatrix();
+		s_ViewMatrix = camera.GetViewMatrix();
 	}
 
 	void Renderer::EndScene()
@@ -33,6 +35,12 @@ namespace Lyra
 		shader->Bind();
 		shader->UploadUniform_Mat4f("u_VP", s_ViewProjectionMatrix);
 		shader->UploadUniform_Mat4f("u_Model", transform);
+		if (shader->GetName() == "PhongModel")
+		{
+			glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(s_ViewMatrix * transform)));
+			shader->UploadUniform_Mat3f("u_Normal", normalMatrix);
+			shader->UploadUniform_Mat4f("u_View", s_ViewMatrix);
+		}
 
 		vertexArray->Bind();
 

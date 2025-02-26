@@ -234,22 +234,28 @@ namespace Lyra
 		glUniform1f(location, value);
 	}
 
+	void OpenGLShader::UploadUniform_4f(const std::string& name, const glm::vec4& value)
+	{
+		int location = GetUniformLocation(name);
+		glUniform4f(location, value.r, value.g, value.b, value.a);
+	}
+
 	void OpenGLShader::UploadUniform_Mat4f(const std::string& name, const glm::mat4& matrix)
 	{
 		int location = GetUniformLocation(name);
 		glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 	}
 
-	void OpenGLShader::UploadUniform_4f(const std::string& name, const glm::vec4& value)
-	{
-		int location = GetUniformLocation(name);
-		glUniform4f(location, value.r, value.g, value.b, value.a);
-	}
-	
 	void OpenGLShader::UploadUniform_3f(const std::string& name, const glm::vec3& value)
 	{
 		int location = GetUniformLocation(name);
 		glUniform3f(location, value.x, value.y, value.z);
+	}
+	
+	void OpenGLShader::UploadUniform_Mat3f(const std::string& name, const glm::mat3& matrix)
+	{
+		int location = GetUniformLocation(name);
+		glUniformMatrix3fv(location, 1, GL_FALSE, &matrix[0][0]);
 	}
 
 

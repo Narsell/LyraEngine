@@ -334,7 +334,6 @@ public:
 		m_PhongShader->UploadUniform_1i("u_Texture", 0);
 		m_PhongShader->UploadUniform_4f("u_LightColor", m_LightSourceColor);
 		m_PhongShader->UploadUniform_3f("u_LightPosition", m_LightSourcePosition);
-		m_PhongShader->UploadUniform_3f("u_CameraPosition", m_CameraController.GetCamera().GetPosition());
 		m_PhongShader->UploadUniform_1f("u_AmbientStrenght", m_AmbientStrength);
 		m_PhongShader->UploadUniform_1f("u_SpecularStrenght", m_SpecularStrength);
 		m_PhongShader->UploadUniform_1f("u_ShininessFactor", m_ShininessFactor);

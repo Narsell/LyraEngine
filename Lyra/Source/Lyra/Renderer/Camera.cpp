@@ -4,18 +4,27 @@
 
 namespace Lyra
 {
+	/* * * * * * * * * * * * *
+	 *       BASE CAMERA     *
+	 * * * * * * * * * * * * */
+
 	Camera::Camera(glm::mat4 projectionMatrix, glm::vec3 position)
 		:	m_ProjectionMatrix(projectionMatrix),
 			m_Position(position),
-			m_ViewMatrix(glm::translate(glm::mat4(1.0f), m_Position)),
+			m_ViewMatrix(glm::inverse(glm::translate(glm::mat4(1.0f), m_Position))),
 			m_ViewProjectionMatrix(m_ProjectionMatrix * m_ViewMatrix)
 	{
 	}
+
 	void Camera::SetPosition(const glm::vec3& position)
 	{
 		m_Position = position;
 		RecalculateViewMatrix();
 	}
+
+	/* * * * * * * * * * * * *
+	 *   ORTHOGRAPHIC CAMERA *
+	 * * * * * * * * * * * * */
 
 	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
 		: Camera(glm::ortho(left, right, bottom, top, -1.0f, 1.0f), { 0.0f, 0.0f, 0.0f })
