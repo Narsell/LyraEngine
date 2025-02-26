@@ -34,15 +34,12 @@ void main()
 #version 330 core
 
 struct Material {
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    sampler2D diffuse;
+    sampler2D specular;
     float shininess;
 }; 
 
 struct Light {
-    vec3 position;
-  
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -53,34 +50,31 @@ in vec3 v_Normal;
 in vec3 v_FragViewPosition;
 in vec3 v_LightPosition;
 
-out vec4 o_Color;
-
-uniform sampler2D u_Texture;
-uniform vec4 u_LightColor;
+uniform vec3 u_LightColor;
 uniform Material u_Material;
 uniform Light u_Light;  
 
+out vec4 o_Color;
 
 void main()
 {
-	//  --- Diffuse light calculation ---
+	//  --- Diffuse light factor calculation ---
 	vec3 normalVector = normalize(v_Normal);
 	vec3 lightDirection = normalize(v_LightPosition - v_FragViewPosition);
 	// The greater the angle (up to 90) the greater the factor (more light)
 	float diffuseFactor = max(dot(lightDirection, normalVector), 0.0);
-	// We apply the factor but leave the alpha out of it
-	vec3 diffuseColor = u_Light.diffuse * (diffuseFactor) * vec3(u_LightColor);
 
-	// --- Specular light calculation ---
+	// --- Specular light factor calculation ---
 	vec3 viewDirection = normalize(-v_FragViewPosition);
 	// relflect() expects a vector pointing from the light source to the fragment, so we invent lightDirection
 	vec3 reflectionDirection = reflect(-lightDirection, normalVector);
 	// Now we calculate the specular component
 	float specularFactor = pow(max(dot(viewDirection, reflectionDirection), 0.0), u_Material.shininess);
-	vec3 specularColor = u_Light.specular * (specularFactor) * vec3(u_LightColor);
 
-	// --- Ambient light calculation ---
-	vec3 ambientColor = u_Light.ambient * vec3(u_LightColor);
+	// --- Calculate color for each component ---
+	vec3 ambientColor = u_Light.ambient * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 diffuseColor = u_Light.diffuse * diffuseFactor * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 specularColor = u_Light.specular * specularFactor * vec3(texture(u_Material.specular, v_TexCoord));
 
-	o_Color = vec4(specularColor + ambientColor + diffuseColor, u_LightColor.a) * texture(u_Texture, v_TexCoord);
+	o_Color = vec4(specularColor + ambientColor + diffuseColor, 1.0);
 };

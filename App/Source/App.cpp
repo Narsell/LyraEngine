@@ -8,13 +8,11 @@ public:
 	GameLayer()
 		:	Layer("GameLayer"),
 			m_CameraController(45.0f, 16.f/9.f, 0.1f, 100.f),
-			m_LightSourceColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)),
+			m_LightSourceColor(glm::vec3(1.0f, 1.0f, 1.0f)),
 			m_CubeRotation(0.0f),
-			m_CubeRotationSpeed(35.0f),
+			m_CubeRotationSpeed(12.0f),
 			m_CubePosition(glm::vec3(0.0f, 0.0f, 0.0f)),
 			m_LightSourcePosition(glm::vec3(0.0, 0.0f, 0.0f)),
-			m_MaterialAmbientColor(glm::vec3(1.0f, 1.0f, 1.0f)),
-			m_MaterialDiffuseColor(glm::vec3(1.0f, 1.0f, 1.0f)),
 			m_MaterialSpecularColor(glm::vec3(1.0f, 1.0f, 1.0f)),
 			m_ShininessFactor(32.f),
 			m_LightAmbientColor(glm::vec3(0.2f, 0.2f, 0.2f)),
@@ -22,7 +20,7 @@ public:
 			m_LightSpecularColor(glm::vec3(1.0f, 1.0f, 1.0f)),
 			m_LightSourceAngle(0.0f),
 			m_LightSourceOrbitRadius(2.0f),
-			m_LightSourceSpeed(1.7f)
+			m_LightSourceSpeed(0.7f)
 	{   
 		
 		/* TEXTURED CUBE SECTION */
@@ -269,10 +267,12 @@ public:
 		m_LightSourceShader = Lyra::Shader::Create("Assets/Shaders/LightSource.glsl");
 
 		// Creating and setting textures
-		m_Texture = Lyra::Texture2D::Create("Assets/Textures/Cube.jpg");
+		m_Texture = Lyra::Texture2D::Create("Assets/Textures/Container.png");
+		m_TextureSpecular = Lyra::Texture2D::Create("Assets/Textures/Container_specular.png");
 		m_TransparentTexture = Lyra::Texture2D::Create("Assets/Textures/TransparentGreen.png");
 		m_Texture->Bind(0);
-		m_TransparentTexture->Bind(1);
+		m_TextureSpecular->Bind(1);
+		m_TransparentTexture->Bind(2);
 	}
 
 	void OnAttach() override
@@ -309,7 +309,7 @@ public:
 			m_LightSourceColor.y = sin(m_Time * 0.7f);
 			m_LightSourceColor.z = sin(m_Time * 1.3f);
 
-			m_LightDiffuseColor = m_LightSourceColor * glm::vec4(0.5f, 0.5f, 0.5f, 1.0f);
+			m_LightDiffuseColor = m_LightSourceColor * glm::vec3(0.5f, 0.5f, 0.5f);
 			m_LightAmbientColor = m_LightDiffuseColor * glm::vec3(0.5f, 0.5f, 0.5f);
 		}
 
@@ -336,7 +336,7 @@ public:
 		
 		/* Render light source (Non-indexed) */
 		m_LightSourceShader->Bind();
-		m_LightSourceShader->UploadUniform_4f("u_Color", m_LightSourceColor);
+		m_LightSourceShader->UploadUniform_3f("u_Color", m_LightSourceColor);
 		Lyra::Renderer::Submit(
 			m_LightSourceShader,
 			m_LightSourceCubeVertexArray,
@@ -346,12 +346,10 @@ public:
 
 		/* Render reflective cube (Non-indexed) */
 		m_PhongShader->Bind();
-		m_PhongShader->UploadUniform_1i("u_Texture", 0);
-		m_PhongShader->UploadUniform_4f("u_LightColor", m_LightSourceColor);
+		m_PhongShader->UploadUniform_3f("u_LightColor", m_LightSourceColor);
 		m_PhongShader->UploadUniform_3f("u_LightPosition", m_LightSourcePosition);
-		m_PhongShader->UploadUniform_3f("u_Material.ambient", m_MaterialAmbientColor);
-		m_PhongShader->UploadUniform_3f("u_Material.diffuse", m_MaterialDiffuseColor);
-		m_PhongShader->UploadUniform_3f("u_Material.specular", m_MaterialSpecularColor);
+		m_PhongShader->UploadUniform_1i("u_Material.diffuse", 0);
+		m_PhongShader->UploadUniform_1i("u_Material.specular", 1);
 		m_PhongShader->UploadUniform_1f("u_Material.shininess", m_ShininessFactor);
 		m_PhongShader->UploadUniform_3f("u_Light.ambient", m_LightAmbientColor);
 		m_PhongShader->UploadUniform_3f("u_Light.diffuse", m_LightDiffuseColor);
@@ -365,7 +363,7 @@ public:
 
 		/* Render quad (Indexed) */
 		m_TextureShader->Bind();
-		m_TextureShader->UploadUniform_1i("u_Texture", 1);
+		m_TextureShader->UploadUniform_1i("u_Texture", 2);
 		Lyra::Renderer::Submit(m_TextureShader, m_QuadVertexArray, glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0, -4.5f)));
 
 		Lyra::Renderer::EndScene();
@@ -382,8 +380,6 @@ public:
 		ImGui::DragFloat3("Diffuse##Light", &m_LightDiffuseColor.x, 0.05f, 0.0f, 1.0f);
 		ImGui::DragFloat3("Specular##Light", &m_LightSpecularColor.x, 0.05f, 0.0f, 1.0f);
 		ImGui::Text("Material");
-		ImGui::DragFloat3("Ambient##Material", &m_MaterialAmbientColor.x, 0.05f, 0.0f, 1.0f);
-		ImGui::DragFloat3("Diffuse##Material", &m_MaterialDiffuseColor.x, 0.05f, 0.0f, 1.0f);
 		ImGui::DragFloat3("Specular##Material", &m_MaterialSpecularColor.x, 0.05f, 0.0f, 1.0f);
 		ImGui::SliderFloat("Shininess", &m_ShininessFactor, 2.f, 256.f);
 		ImGui::Text("Light orbit");
@@ -392,7 +388,7 @@ public:
 		ImGui::Text("Obj Properties");
 		ImGui::DragFloat3("Light Position", &m_LightSourcePosition.x, 0.1f);
 		ImGui::DragFloat3("Cube Position", &m_CubePosition.x, 0.1f);
-		ImGui::DragFloat("Cube Rot Speed", &m_CubeRotationSpeed, 0.1f, 0.0f, 360.f);
+		ImGui::SliderFloat("Cube Rot Speed", &m_CubeRotationSpeed, 0.0f, 100.0f);
 		ImGui::End();
 	}
 
@@ -411,22 +407,20 @@ private:
 	Ref<Lyra::Shader> m_PhongShader;
 	Ref<Lyra::Shader> m_LightSourceShader;
 
-	Ref<Lyra::Texture2D> m_Texture, m_TransparentTexture;
+	Ref<Lyra::Texture2D> m_Texture, m_TextureSpecular, m_TransparentTexture;
 
 	Lyra::PerspectiveCameraController m_CameraController;
 
-	glm::vec4 m_LightSourceColor;
 
 	float m_CubeRotation;
 	float m_CubeRotationSpeed;
 	glm::vec3 m_CubePosition;
 	glm::vec3 m_LightSourcePosition;
 
-	glm::vec3 m_MaterialAmbientColor;
-	glm::vec3 m_MaterialDiffuseColor;
 	glm::vec3 m_MaterialSpecularColor;
 	float m_ShininessFactor;
 
+	glm::vec3 m_LightSourceColor;
 	glm::vec3 m_LightAmbientColor;
 	glm::vec3 m_LightDiffuseColor;
 	glm::vec3 m_LightSpecularColor;
