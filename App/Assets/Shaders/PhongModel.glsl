@@ -33,6 +33,21 @@ void main()
 #type fragment
 #version 330 core
 
+struct Material {
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+}; 
+
+struct Light {
+    vec3 position;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};
+
 in vec2 v_TexCoord;
 in vec3 v_Normal;
 in vec3 v_FragViewPosition;
@@ -42,32 +57,30 @@ out vec4 o_Color;
 
 uniform sampler2D u_Texture;
 uniform vec4 u_LightColor;
-uniform float u_AmbientStrenght;
-uniform float u_SpecularStrenght;
-uniform float u_ShininessFactor;
+uniform Material u_Material;
+uniform Light u_Light;  
+
 
 void main()
 {
 	//  --- Diffuse light calculation ---
 	vec3 normalVector = normalize(v_Normal);
 	vec3 lightDirection = normalize(v_LightPosition - v_FragViewPosition);
-
 	// The greater the angle (up to 90) the greater the factor (more light)
 	float diffuseFactor = max(dot(lightDirection, normalVector), 0.0);
-
 	// We apply the factor but leave the alpha out of it
-	vec3 diffuseColor = diffuseFactor * vec3(u_LightColor);
+	vec3 diffuseColor = u_Light.diffuse * (diffuseFactor) * vec3(u_LightColor);
 
 	// --- Specular light calculation ---
 	vec3 viewDirection = normalize(-v_FragViewPosition);
 	// relflect() expects a vector pointing from the light source to the fragment, so we invent lightDirection
 	vec3 reflectionDirection = reflect(-lightDirection, normalVector);
 	// Now we calculate the specular component
-	float specularFactor = pow(max(dot(viewDirection, reflectionDirection), 0.0), u_ShininessFactor);
-	vec3 specularColor = u_SpecularStrenght * specularFactor * vec3(u_LightColor);
+	float specularFactor = pow(max(dot(viewDirection, reflectionDirection), 0.0), u_Material.shininess);
+	vec3 specularColor = u_Light.specular * (specularFactor) * vec3(u_LightColor);
 
 	// --- Ambient light calculation ---
-	vec3 ambientColor = u_AmbientStrenght * vec3(u_LightColor);
+	vec3 ambientColor = u_Light.ambient * vec3(u_LightColor);
 
 	o_Color = vec4(specularColor + ambientColor + diffuseColor, u_LightColor.a) * texture(u_Texture, v_TexCoord);
 };
