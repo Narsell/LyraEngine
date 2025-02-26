@@ -20,67 +20,8 @@ public:
 			m_LightSpecularColor(glm::vec3(1.0f, 1.0f, 1.0f)),
 			m_LightSourceAngle(0.0f),
 			m_LightSourceOrbitRadius(2.0f),
-			m_LightSourceSpeed(0.7f)
+			m_LightSourceSpeed(1.7f)
 	{   
-		
-		/* TEXTURED CUBE SECTION */
-		{
-			m_CubeVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
-
-			float cubeVertices [] = {
-				-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // Back face
-				 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-
-				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // Front face
-				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-				-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-
-				-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // Left face
-				-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-				-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // Right face
-				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-				 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-				 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-				 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-
-				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, // Bottom face
-				 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-				 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-				-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-				-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-
-				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // Upper face
-				 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-				 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-				-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-				-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
-			};
-
-			Lyra::VertexLayout cubeVertexLayout
-			{
-				{"a_Position", Lyra::ShaderData::Float3},
-				{"a_TexCoord", Lyra::ShaderData::Float2}
-			};
-
-			Ref<Lyra::VertexBuffer> cubeVertexBuffer(Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout));
-			m_CubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
-		}
-
 		/* QUAD SECTION */
 		{
 			m_QuadVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
@@ -142,53 +83,51 @@ public:
 
 			m_QuadShader = Lyra::Shader::Create("Quad Shader", quadVertexSrc, quadFragmentSrc);
 		}
-
-		/* PHONG MODEL CUBE SECTION */
+		
+		/* PHONG MODEL CUBES SECTION */
 		{
-			m_ReflectiveCubeVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
-
 			/* Pos (x, y, z), Normals (x, y, z), Texture Coords (x, y) */
 			float cubeVertices[] = {
 				-0.5f, -0.5f, -0.5f, 0.0, 0.0, -1.0, 0.0f, 0.0f,  // Back face
-				 0.5f, -0.5f, -0.5f, 0.0, 0.0, -1.0, 1.0f, 0.0f, 
-				 0.5f,  0.5f, -0.5f, 0.0, 0.0, -1.0, 1.0f, 1.0f, 
-				 0.5f,  0.5f, -0.5f, 0.0, 0.0, -1.0, 1.0f, 1.0f, 
-				-0.5f,  0.5f, -0.5f, 0.0, 0.0, -1.0, 0.0f, 1.0f, 
-				-0.5f, -0.5f, -0.5f, 0.0, 0.0, -1.0, 0.0f, 0.0f, 
-													  		   
+				 0.5f, -0.5f, -0.5f, 0.0, 0.0, -1.0, 1.0f, 0.0f,
+				 0.5f,  0.5f, -0.5f, 0.0, 0.0, -1.0, 1.0f, 1.0f,
+				 0.5f,  0.5f, -0.5f, 0.0, 0.0, -1.0, 1.0f, 1.0f,
+				-0.5f,  0.5f, -0.5f, 0.0, 0.0, -1.0, 0.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f, 0.0, 0.0, -1.0, 0.0f, 0.0f,
+
 				-0.5f, -0.5f,  0.5f, 0.0, 0.0, 1.0,  0.0f, 0.0f, // Front face
-				 0.5f, -0.5f,  0.5f, 0.0, 0.0, 1.0,	 1.0f, 0.0f, 
-				 0.5f,  0.5f,  0.5f, 0.0, 0.0, 1.0,	 1.0f, 1.0f, 
-				 0.5f,  0.5f,  0.5f, 0.0, 0.0, 1.0,	 1.0f, 1.0f, 
-				-0.5f,  0.5f,  0.5f, 0.0, 0.0, 1.0,	 0.0f, 1.0f, 
-				-0.5f, -0.5f,  0.5f, 0.0, 0.0, 1.0,	 0.0f, 0.0f, 
-													  		   
+				 0.5f, -0.5f,  0.5f, 0.0, 0.0, 1.0,	 1.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f, 0.0, 0.0, 1.0,	 1.0f, 1.0f,
+				 0.5f,  0.5f,  0.5f, 0.0, 0.0, 1.0,	 1.0f, 1.0f,
+				-0.5f,  0.5f,  0.5f, 0.0, 0.0, 1.0,	 0.0f, 1.0f,
+				-0.5f, -0.5f,  0.5f, 0.0, 0.0, 1.0,	 0.0f, 0.0f,
+
 				-0.5f,  0.5f,  0.5f, -1.0, 0.0, 0.0, 1.0f, 0.0f,  // Left face
-				-0.5f,  0.5f, -0.5f, -1.0, 0.0, 0.0, 1.0f, 1.0f, 
-				-0.5f, -0.5f, -0.5f, -1.0, 0.0, 0.0, 0.0f, 1.0f, 
-				-0.5f, -0.5f, -0.5f, -1.0, 0.0, 0.0, 0.0f, 1.0f, 
-				-0.5f, -0.5f,  0.5f, -1.0, 0.0, 0.0, 0.0f, 0.0f, 
-				-0.5f,  0.5f,  0.5f, -1.0, 0.0, 0.0, 1.0f, 0.0f, 
-													  		   
+				-0.5f,  0.5f, -0.5f, -1.0, 0.0, 0.0, 1.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f, -1.0, 0.0, 0.0, 0.0f, 1.0f,
+				-0.5f, -0.5f, -0.5f, -1.0, 0.0, 0.0, 0.0f, 1.0f,
+				-0.5f, -0.5f,  0.5f, -1.0, 0.0, 0.0, 0.0f, 0.0f,
+				-0.5f,  0.5f,  0.5f, -1.0, 0.0, 0.0, 1.0f, 0.0f,
+
 				 0.5f,  0.5f,  0.5f, 1.0, 0.0, 0.0,  1.0f, 0.0f,  // Right face
-				 0.5f,  0.5f, -0.5f, 1.0, 0.0, 0.0,	 1.0f, 1.0f, 
-				 0.5f, -0.5f, -0.5f, 1.0, 0.0, 0.0,	 0.0f, 1.0f, 
-				 0.5f, -0.5f, -0.5f, 1.0, 0.0, 0.0,	 0.0f, 1.0f, 
-				 0.5f, -0.5f,  0.5f, 1.0, 0.0, 0.0,	 0.0f, 0.0f, 
-				 0.5f,  0.5f,  0.5f, 1.0, 0.0, 0.0,	 1.0f, 0.0f, 
-													  		   
+				 0.5f,  0.5f, -0.5f, 1.0, 0.0, 0.0,	 1.0f, 1.0f,
+				 0.5f, -0.5f, -0.5f, 1.0, 0.0, 0.0,	 0.0f, 1.0f,
+				 0.5f, -0.5f, -0.5f, 1.0, 0.0, 0.0,	 0.0f, 1.0f,
+				 0.5f, -0.5f,  0.5f, 1.0, 0.0, 0.0,	 0.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f, 1.0, 0.0, 0.0,	 1.0f, 0.0f,
+
 				-0.5f, -0.5f, -0.5f, 0.0, -1.0, 0.0, 0.0f, 1.0f,  // Bottom face
-				 0.5f, -0.5f, -0.5f, 0.0, -1.0, 0.0, 1.0f, 1.0f, 
-				 0.5f, -0.5f,  0.5f, 0.0, -1.0, 0.0, 1.0f, 0.0f, 
-				 0.5f, -0.5f,  0.5f, 0.0, -1.0, 0.0, 1.0f, 0.0f, 
-				-0.5f, -0.5f,  0.5f, 0.0, -1.0, 0.0, 0.0f, 0.0f, 
-				-0.5f, -0.5f, -0.5f, 0.0, -1.0, 0.0, 0.0f, 1.0f, 
-													  		   
+				 0.5f, -0.5f, -0.5f, 0.0, -1.0, 0.0, 1.0f, 1.0f,
+				 0.5f, -0.5f,  0.5f, 0.0, -1.0, 0.0, 1.0f, 0.0f,
+				 0.5f, -0.5f,  0.5f, 0.0, -1.0, 0.0, 1.0f, 0.0f,
+				-0.5f, -0.5f,  0.5f, 0.0, -1.0, 0.0, 0.0f, 0.0f,
+				-0.5f, -0.5f, -0.5f, 0.0, -1.0, 0.0, 0.0f, 1.0f,
+
 				-0.5f,  0.5f, -0.5f, 0.0, 1.0, 0.0,  0.0f, 1.0f, // Upper face
-				 0.5f,  0.5f, -0.5f, 0.0, 1.0, 0.0,	 1.0f, 1.0f, 
-				 0.5f,  0.5f,  0.5f, 0.0, 1.0, 0.0,	 1.0f, 0.0f, 
-				 0.5f,  0.5f,  0.5f, 0.0, 1.0, 0.0,	 1.0f, 0.0f, 
-				-0.5f,  0.5f,  0.5f, 0.0, 1.0, 0.0,	 0.0f, 0.0f, 
+				 0.5f,  0.5f, -0.5f, 0.0, 1.0, 0.0,	 1.0f, 1.0f,
+				 0.5f,  0.5f,  0.5f, 0.0, 1.0, 0.0,	 1.0f, 0.0f,
+				 0.5f,  0.5f,  0.5f, 0.0, 1.0, 0.0,	 1.0f, 0.0f,
+				-0.5f,  0.5f,  0.5f, 0.0, 1.0, 0.0,	 0.0f, 0.0f,
 				-0.5f,  0.5f, -0.5f, 0.0, 1.0, 0.0,	 0.0f, 1.0f
 			};
 
@@ -199,9 +138,15 @@ public:
 				{"a_TexCoord", Lyra::ShaderData::Float2}
 			};
 			cubeVertexLayout.DebugPrint("Phong model cube");
-
 			Ref<Lyra::VertexBuffer> cubeVertexBuffer(Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout));
-			m_ReflectiveCubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
+
+			/* 1st cube */
+			m_CubeVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
+			m_CubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
+
+			/* 2nd cube */
+			m_Cube2VertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
+			m_Cube2VertexArray->AddVertexBuffer(cubeVertexBuffer);
 		}
 		
 		/* LIGHT SOURCE CUBE SECTION */
@@ -289,6 +234,8 @@ public:
 	void OnUpdate(Lyra::Timestep ts) override
 	{
 		m_Time += ts;
+		m_CameraController.OnUpdate(ts);
+
 		/* Light source orbit */
 		m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
 		float height = 0.5f * glm::sin(m_LightSourceAngle * 2.0f);
@@ -298,6 +245,7 @@ public:
 			height,
 			m_LightSourceOrbitRadius * glm::sin(m_LightSourceAngle)
 		);
+
 		/* Cube rotation */
 		m_CubeRotation += m_CubeRotationSpeed * ts.GetSeconds();
 		m_CubeRotation = glm::mod(m_CubeRotation, 360.f);
@@ -313,7 +261,6 @@ public:
 			m_LightAmbientColor = m_LightDiffuseColor * glm::vec3(0.5f, 0.5f, 0.5f);
 		}
 
-		m_CameraController.OnUpdate(ts);
 
 		/* Clearing buffers */
 		Lyra::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
@@ -323,17 +270,7 @@ public:
 		Lyra::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		/* Actual rendering happens here */
-		
-		/* Render cube (Non-indexed) */
-		m_TextureShader->Bind();
-		m_TextureShader->UploadUniform_1i("u_Texture", 0);
-		Lyra::Renderer::Submit(
-			m_TextureShader,
-			m_CubeVertexArray, 
-			glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(1.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(-0.5f, 0.15f, -6.0f)), 
-			false
-		);
-		
+				
 		/* Render light source (Non-indexed) */
 		m_LightSourceShader->Bind();
 		m_LightSourceShader->UploadUniform_3f("u_Color", m_LightSourceColor);
@@ -344,7 +281,7 @@ public:
 			false
 		);
 
-		/* Render reflective cube (Non-indexed) */
+		/* Render cubes (Non-indexed) */
 		m_PhongShader->Bind();
 		m_PhongShader->UploadUniform_3f("u_LightColor", m_LightSourceColor);
 		m_PhongShader->UploadUniform_3f("u_LightPosition", m_LightSourcePosition);
@@ -354,10 +291,17 @@ public:
 		m_PhongShader->UploadUniform_3f("u_Light.ambient", m_LightAmbientColor);
 		m_PhongShader->UploadUniform_3f("u_Light.diffuse", m_LightDiffuseColor);
 		m_PhongShader->UploadUniform_3f("u_Light.specular", m_LightSpecularColor);
+
 		Lyra::Renderer::Submit(
 			m_PhongShader,
-			m_ReflectiveCubeVertexArray,
+			m_Cube2VertexArray,
 			glm::rotate(glm::mat4(1.0f), glm::radians(m_CubeRotation), glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f))) * glm::translate(glm::mat4(1.0f), m_CubePosition),
+			false
+		);
+		Lyra::Renderer::Submit(
+			m_PhongShader,
+			m_CubeVertexArray,
+			glm::rotate(glm::mat4(1.0f), glm::radians(-45.0f), glm::vec3(1.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, -1.2f, -0.5f)),
 			false
 		);
 
@@ -387,8 +331,8 @@ public:
 		ImGui::SliderFloat("Speed", &m_LightSourceSpeed, 0.0f, 25.0f);
 		ImGui::Text("Obj Properties");
 		ImGui::DragFloat3("Light Position", &m_LightSourcePosition.x, 0.1f);
-		ImGui::DragFloat3("Cube Position", &m_CubePosition.x, 0.1f);
-		ImGui::SliderFloat("Cube Rot Speed", &m_CubeRotationSpeed, 0.0f, 100.0f);
+		ImGui::DragFloat3("Cube2 Position", &m_CubePosition.x, 0.1f);
+		ImGui::SliderFloat("Cube2 Rot Speed", &m_CubeRotationSpeed, 0.0f, 100.0f);
 		ImGui::End();
 	}
 
@@ -400,7 +344,7 @@ public:
 private:
 	Ref<Lyra::VertexArray> m_QuadVertexArray;
 	Ref<Lyra::VertexArray> m_CubeVertexArray;
-	Ref<Lyra::VertexArray> m_ReflectiveCubeVertexArray;
+	Ref<Lyra::VertexArray> m_Cube2VertexArray;
 	Ref<Lyra::VertexArray> m_LightSourceCubeVertexArray;
 	Ref<Lyra::Shader> m_QuadShader;
 	Ref<Lyra::Shader> m_TextureShader;
