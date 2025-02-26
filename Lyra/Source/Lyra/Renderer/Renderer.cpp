@@ -34,13 +34,12 @@ namespace Lyra
 	{
 		shader->Bind();
 		shader->UploadUniform_Mat4f("u_VP", s_ViewProjectionMatrix);
+		shader->UploadUniform_Mat4f("u_View", s_ViewMatrix);
 		shader->UploadUniform_Mat4f("u_Model", transform);
-		if (shader->GetName() == "PhongModel")
-		{
-			glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(s_ViewMatrix * transform)));
-			shader->UploadUniform_Mat3f("u_Normal", normalMatrix);
-			shader->UploadUniform_Mat4f("u_View", s_ViewMatrix);
-		}
+
+		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(s_ViewMatrix * transform)));
+		shader->UploadUniform_Mat3f("u_Normal", normalMatrix);
+		
 
 		vertexArray->Bind();
 

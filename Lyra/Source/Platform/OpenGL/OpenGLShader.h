@@ -31,10 +31,12 @@ namespace Lyra
 		void CreateShaderProgram(const std::unordered_map<GLenum, std::string>& shaderSources);
 		bool Compile(const std::unordered_map<GLenum, std::string>& shaderSources, std::array<GLenum, 2>& glShaderIds);
 		bool Link(const std::array<GLenum, 2>& glShaderIds);
+		void CacheActiveUniforms();
+
 		std::string ReadFile(const std::string& filepath) const;
 		std::unordered_map<GLenum, std::string> PreProcess(const std::string& source) const;
 
-		int GetUniformLocation(const std::string& name) const;
+		bool UniformExists(const std::string& name) const;
 
 	private:
 		uint32_t m_RendererId;

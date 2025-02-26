@@ -52,7 +52,10 @@ namespace Lyra
 
 		if (Compile(shaderSources, glShaderIds))
 		{
-			Link(glShaderIds);
+			if (Link(glShaderIds))
+			{
+				CacheActiveUniforms();
+			}
 		}
 	}
 
@@ -142,6 +145,30 @@ namespace Lyra
 		return true;
 	}
 
+	void OpenGLShader::CacheActiveUniforms()
+	{
+		const uint8_t maxUniformNameLength = 128;
+
+		GLint longestUniformName = 0;
+		glGetProgramiv(m_RendererId, GL_ACTIVE_UNIFORM_MAX_LENGTH, &longestUniformName);
+
+		if (longestUniformName > maxUniformNameLength)
+		{
+			LR_CORE_WARN("One or more uniforms in this shader exceed the maximum character limit of {0}. Some names will get truncated", maxUniformNameLength);
+		}
+
+		GLint uniformCount = 0;
+		glGetProgramiv(m_RendererId, GL_ACTIVE_UNIFORMS, &uniformCount);
+
+		for (int i = 0; i < uniformCount; i++)
+		{
+			char uniformName[maxUniformNameLength];
+			glGetActiveUniformName(m_RendererId, i, maxUniformNameLength, nullptr, uniformName);
+			m_UniformLocationCache[uniformName] = glGetUniformLocation(m_RendererId, uniformName);
+		}
+
+	}
+
 	std::string OpenGLShader::ReadFile(const std::string& filepath) const
 	{
 		std::string result;
@@ -191,25 +218,15 @@ namespace Lyra
 		return shaderSources;
 	}
 
-	int OpenGLShader::GetUniformLocation(const std::string& name) const
+	bool OpenGLShader::UniformExists(const std::string& uniformName) const
 	{
-		int location = -1;
-
-		if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+		bool uniformExists = m_UniformLocationCache.find(uniformName) != m_UniformLocationCache.end();
+		if (!uniformExists)
 		{
-			location = m_UniformLocationCache.at(name);
+			// TODO: Turn on this warning again once I have basic material and scene systems.
+			//LR_CORE_WARN("Uniform '{0}' doesn't exist in shader '{1}'. It won't be uploaded.", uniformName, m_Name);
 		}
-		else
-		{
-			location = glGetUniformLocation(m_RendererId, name.c_str());
-			m_UniformLocationCache[name] = location;
-		}
-		if (location == -1)
-		{
-			LR_CORE_ASSERT(false, "Unable to set shader uniform");
-		}
-
-		return location;
+		return uniformExists;
 	}
 	
 	void OpenGLShader::Bind()
@@ -224,38 +241,38 @@ namespace Lyra
 
 	void OpenGLShader::UploadUniform_1i(const std::string& name, int value)
 	{
-		int location = GetUniformLocation(name);
-		glUniform1i(location, value);
+		if (!UniformExists(name)) return;
+		glUniform1i(m_UniformLocationCache[name], value);
 	}
 
 	void OpenGLShader::UploadUniform_1f(const std::string& name, float value)
 	{
-		int location = GetUniformLocation(name);
-		glUniform1f(location, value);
+		if (!UniformExists(name)) return;
+		glUniform1f(m_UniformLocationCache[name], value);
 	}
 
 	void OpenGLShader::UploadUniform_4f(const std::string& name, const glm::vec4& value)
 	{
-		int location = GetUniformLocation(name);
-		glUniform4f(location, value.r, value.g, value.b, value.a);
+		if (!UniformExists(name)) return;
+		glUniform4f(m_UniformLocationCache[name], value.r, value.g, value.b, value.a);
 	}
 
 	void OpenGLShader::UploadUniform_Mat4f(const std::string& name, const glm::mat4& matrix)
 	{
-		int location = GetUniformLocation(name);
-		glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
+		if (!UniformExists(name)) return;
+		glUniformMatrix4fv(m_UniformLocationCache[name], 1, GL_FALSE, &matrix[0][0]);
 	}
 
 	void OpenGLShader::UploadUniform_3f(const std::string& name, const glm::vec3& value)
 	{
-		int location = GetUniformLocation(name);
-		glUniform3f(location, value.x, value.y, value.z);
+		if (!UniformExists(name)) return;
+		glUniform3f(m_UniformLocationCache[name], value.x, value.y, value.z);
 	}
 	
 	void OpenGLShader::UploadUniform_Mat3f(const std::string& name, const glm::mat3& matrix)
 	{
-		int location = GetUniformLocation(name);
-		glUniformMatrix3fv(location, 1, GL_FALSE, &matrix[0][0]);
+		if (!UniformExists(name)) return;
+		glUniformMatrix3fv(m_UniformLocationCache[name], 1, GL_FALSE, &matrix[0][0]);
 	}
 
 

@@ -74,7 +74,6 @@ public:
 				{"a_Position", Lyra::ShaderData::Float3},
 				{"a_TexCoord", Lyra::ShaderData::Float2}
 			};
-			cubeVertexLayout.DebugPrint("Cube");
 
 			Ref<Lyra::VertexBuffer> cubeVertexBuffer(Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout));
 			m_CubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
@@ -99,7 +98,6 @@ public:
 			};
 			Ref<Lyra::VertexBuffer> squareVertexBuffer(Lyra::VertexBuffer::Create(quadVertices, sizeof(quadVertices), quadVertexLayout));
 			m_QuadVertexArray->AddVertexBuffer(squareVertexBuffer);
-			quadVertexLayout.DebugPrint("Square");
 
 			uint32_t quadIndices[6] =
 			{
@@ -143,7 +141,7 @@ public:
 			m_QuadShader = Lyra::Shader::Create("Quad Shader", quadVertexSrc, quadFragmentSrc);
 		}
 
-		/* LIGHT REFLECTIVE CUBE SECTION */
+		/* PHONG MODEL CUBE SECTION */
 		{
 			m_ReflectiveCubeVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
 
@@ -198,6 +196,7 @@ public:
 				{"a_Normal", Lyra::ShaderData::Float3},
 				{"a_TexCoord", Lyra::ShaderData::Float2}
 			};
+			cubeVertexLayout.DebugPrint("Phong model cube");
 
 			Ref<Lyra::VertexBuffer> cubeVertexBuffer(Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout));
 			m_ReflectiveCubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
