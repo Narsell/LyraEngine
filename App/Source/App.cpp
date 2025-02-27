@@ -12,7 +12,7 @@ public:
 			m_CubeRotation(0.0f),
 			m_CubeRotationSpeed(12.0f),
 			m_CubePosition(glm::vec3(0.0f, 0.0f, 0.0f)),
-			m_LightSourcePosition(glm::vec3(0.0, 0.0f, 0.0f)),
+			m_LightDirection(glm::vec3(-0.2f, -1.0f, -0.3f)),
 			m_MaterialSpecularColor(glm::vec3(1.0f, 1.0f, 1.0f)),
 			m_ShininessFactor(32.f),
 			m_LightAmbientColor(glm::vec3(0.2f, 0.2f, 0.2f)),
@@ -236,31 +236,9 @@ public:
 		m_Time += ts;
 		m_CameraController.OnUpdate(ts);
 
-		/* Light source orbit */
-		m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
-		float height = 0.5f * glm::sin(m_LightSourceAngle * 2.0f);
-		m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-		m_LightSourcePosition = m_CubePosition + glm::vec3(
-			m_LightSourceOrbitRadius * glm::cos(m_LightSourceAngle),
-			height,
-			m_LightSourceOrbitRadius * glm::sin(m_LightSourceAngle)
-		);
-
 		/* Cube rotation */
 		m_CubeRotation += m_CubeRotationSpeed * ts.GetSeconds();
 		m_CubeRotation = glm::mod(m_CubeRotation, 360.f);
-
-		/* Light source color */
-		if (m_ChangeColor)
-		{
-			m_LightSourceColor.x = sin(m_Time * 2.0f);
-			m_LightSourceColor.y = sin(m_Time * 0.7f);
-			m_LightSourceColor.z = sin(m_Time * 1.3f);
-
-			m_LightDiffuseColor = m_LightSourceColor * glm::vec3(0.5f, 0.5f, 0.5f);
-			m_LightAmbientColor = m_LightDiffuseColor * glm::vec3(0.5f, 0.5f, 0.5f);
-		}
-
 
 		/* Clearing buffers */
 		Lyra::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
@@ -272,26 +250,32 @@ public:
 		/* Actual rendering happens here */
 				
 		/* Render light source (Non-indexed) */
-		m_LightSourceShader->Bind();
-		m_LightSourceShader->UploadUniform_3f("u_Color", m_LightSourceColor);
-		Lyra::Renderer::Submit(
-			m_LightSourceShader,
-			m_LightSourceCubeVertexArray,
-			glm::translate(glm::mat4(1.0f), m_LightSourcePosition) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
-			false
-		);
+		//m_LightSourceShader->Bind();
+		//m_LightSourceShader->UploadUniform_3f("u_Color", m_LightSourceColor);
+		//Lyra::Renderer::Submit(
+		//	m_LightSourceShader,
+		//	m_LightSourceCubeVertexArray,
+		//	glm::translate(glm::mat4(1.0f), m_LightDirection) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
+		//	false
+		//);
 
 		/* Render cubes (Non-indexed) */
 		m_PhongShader->Bind();
-		m_PhongShader->UploadUniform_3f("u_LightColor", m_LightSourceColor);
-		m_PhongShader->UploadUniform_3f("u_LightPosition", m_LightSourcePosition);
 		m_PhongShader->UploadUniform_1i("u_Material.diffuse", 0);
 		m_PhongShader->UploadUniform_1i("u_Material.specular", 1);
 		m_PhongShader->UploadUniform_1f("u_Material.shininess", m_ShininessFactor);
+		m_PhongShader->UploadUniform_3f("u_LightColor", m_LightSourceColor);
+		m_PhongShader->UploadUniform_3f("u_Light.direction", m_LightDirection);
 		m_PhongShader->UploadUniform_3f("u_Light.ambient", m_LightAmbientColor);
 		m_PhongShader->UploadUniform_3f("u_Light.diffuse", m_LightDiffuseColor);
 		m_PhongShader->UploadUniform_3f("u_Light.specular", m_LightSpecularColor);
 
+		Lyra::Renderer::Submit(
+			m_PhongShader,
+			m_Cube2VertexArray,
+			glm::rotate(glm::mat4(1.0f), glm::radians(m_CubeRotation), glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f))) * glm::translate(glm::mat4(1.0f), m_CubePosition),
+			false
+		);
 		Lyra::Renderer::Submit(
 			m_PhongShader,
 			m_Cube2VertexArray,
@@ -318,7 +302,7 @@ public:
 	{
 		ImGui::Begin("Properties");
 		ImGui::Text("Light");
-		ImGui::Checkbox("Change Color", &m_ChangeColor);
+		ImGui::DragFloat3("Direction", &m_LightDirection.x, 0.1f);
 		ImGui::ColorEdit3("Color", &m_LightSourceColor.x);
 		ImGui::DragFloat3("Ambient##Light", &m_LightAmbientColor.x, 0.05f, 0.0f, 1.0f);
 		ImGui::DragFloat3("Diffuse##Light", &m_LightDiffuseColor.x, 0.05f, 0.0f, 1.0f);
@@ -330,7 +314,6 @@ public:
 		ImGui::SliderFloat("Radius", &m_LightSourceOrbitRadius, 1.0f, 10.0f);
 		ImGui::SliderFloat("Speed", &m_LightSourceSpeed, 0.0f, 25.0f);
 		ImGui::Text("Obj Properties");
-		ImGui::DragFloat3("Light Position", &m_LightSourcePosition.x, 0.1f);
 		ImGui::DragFloat3("Cube2 Position", &m_CubePosition.x, 0.1f);
 		ImGui::SliderFloat("Cube2 Rot Speed", &m_CubeRotationSpeed, 0.0f, 100.0f);
 		ImGui::End();
@@ -355,15 +338,14 @@ private:
 
 	Lyra::PerspectiveCameraController m_CameraController;
 
-
 	float m_CubeRotation;
 	float m_CubeRotationSpeed;
 	glm::vec3 m_CubePosition;
-	glm::vec3 m_LightSourcePosition;
 
 	glm::vec3 m_MaterialSpecularColor;
 	float m_ShininessFactor;
 
+	glm::vec3 m_LightDirection;
 	glm::vec3 m_LightSourceColor;
 	glm::vec3 m_LightAmbientColor;
 	glm::vec3 m_LightDiffuseColor;

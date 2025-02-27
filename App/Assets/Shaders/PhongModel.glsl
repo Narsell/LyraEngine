@@ -40,6 +40,8 @@ struct Material {
 }; 
 
 struct Light {
+	vec3 direction; // This is a directional light
+
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
@@ -48,7 +50,6 @@ struct Light {
 in vec2 v_TexCoord;
 in vec3 v_Normal;
 in vec3 v_FragViewPosition;
-in vec3 v_LightPosition;
 
 uniform vec3 u_LightColor;
 uniform Material u_Material;
@@ -60,13 +61,15 @@ void main()
 {
 	//  --- Diffuse light factor calculation ---
 	vec3 normalVector = normalize(v_Normal);
-	vec3 lightDirection = normalize(v_LightPosition - v_FragViewPosition);
+	// Lighting calculations inside the shader expect a vector pointing from the fragment to the source, but we want the uniform to provide
+	// a vector pointing from the source to the fragment since that's more useful to think about. So we invert the incoming uniform direction.
+	vec3 lightDirection = normalize(-u_Light.direction);
 	// The greater the angle (up to 90) the greater the factor (more light)
 	float diffuseFactor = max(dot(lightDirection, normalVector), 0.0);
 
 	// --- Specular light factor calculation ---
 	vec3 viewDirection = normalize(-v_FragViewPosition);
-	// relflect() expects a vector pointing from the light source to the fragment, so we invent lightDirection
+	// relflect() expects a vector pointing from the light source to the fragment, so we invert lightDirection
 	vec3 reflectionDirection = reflect(-lightDirection, normalVector);
 	// Now we calculate the specular component
 	float specularFactor = pow(max(dot(viewDirection, reflectionDirection), 0.0), u_Material.shininess);
