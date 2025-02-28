@@ -252,14 +252,14 @@ public:
 		/* Actual rendering happens here */
 				
 		/* Render light source (Non-indexed) */
-		m_LightSourceShader->Bind();
-		m_LightSourceShader->UploadUniform_3f("u_Color", m_LightDiffuseColor);
-		Lyra::Renderer::Submit(
-			m_LightSourceShader,
-			m_LightSourceCubeVertexArray,
-			glm::translate(glm::mat4(1.0f), m_LightPosition) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
-			false
-		);
+		//m_LightSourceShader->Bind();
+		//m_LightSourceShader->UploadUniform_3f("u_Color", m_LightDiffuseColor);
+		//Lyra::Renderer::Submit(
+		//	m_LightSourceShader,
+		//	m_LightSourceCubeVertexArray,
+		//	glm::translate(glm::mat4(1.0f), m_LightPosition) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
+		//	false
+		//);
 
 		/* Render cubes (Non-indexed) */
 		m_PhongShader->Bind();
@@ -267,13 +267,16 @@ public:
 		m_PhongShader->UploadUniform_1i("u_Material.specular", 1);
 		m_PhongShader->UploadUniform_1f("u_Material.shininess", m_ShininessFactor);
 		// Light position should be sent in view space since that's the coordinate space the fragment shader uses :)
-		m_PhongShader->UploadUniform_3f("u_Light.position", glm::vec3(m_CameraController.GetCamera().GetViewMatrix() * glm::vec4(m_LightPosition, 1.0)));
+		//m_PhongShader->UploadUniform_3f("u_Light.position", glm::vec3(m_CameraController.GetCamera().GetViewMatrix() * glm::vec4(m_LightPosition, 1.0)));
 		m_PhongShader->UploadUniform_3f("u_Light.ambient", m_LightAmbientColor);
 		m_PhongShader->UploadUniform_3f("u_Light.diffuse", m_LightDiffuseColor);
 		m_PhongShader->UploadUniform_3f("u_Light.specular", m_LightSpecularColor);
 		m_PhongShader->UploadUniform_1f("u_Light.constAttenuation", 1.0f);
 		m_PhongShader->UploadUniform_1f("u_Light.linearAttenuation", 0.09f);
 		m_PhongShader->UploadUniform_1f("u_Light.quadAttenuation", 0.032f);
+		m_PhongShader->UploadUniform_3f("u_Light.direction", glm::vec3(0.0f, 0.0f, -1.0f));
+		m_PhongShader->UploadUniform_1f("u_Light.innerCutoffCosine", glm::cos(glm::radians(12.5f)));
+		m_PhongShader->UploadUniform_1f("u_Light.outerCutoffCosine", glm::cos(glm::radians(17.5f)));
 
 		for (float i = 0; i < 10; i++)
 		{
