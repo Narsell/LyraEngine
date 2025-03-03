@@ -30,14 +30,14 @@ namespace Lyra
 
 	}
 
-	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& transform, bool drawIndexed)
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& modelMatrix, bool drawIndexed)
 	{
 		shader->Bind();
 		shader->UploadUniform_Mat4f("u_VP", s_ViewProjectionMatrix);
 		shader->UploadUniform_Mat4f("u_View", s_ViewMatrix);
-		shader->UploadUniform_Mat4f("u_Model", transform);
+		shader->UploadUniform_Mat4f("u_Model", modelMatrix);
 
-		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(s_ViewMatrix * transform)));
+		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(s_ViewMatrix * modelMatrix)));
 		shader->UploadUniform_Mat3f("u_Normal", normalMatrix);
 		
 

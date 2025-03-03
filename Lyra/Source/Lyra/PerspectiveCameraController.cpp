@@ -2,8 +2,10 @@
 
 #include "PerspectiveCameraController.h"
 
+#include "Lyra/Core/Application.h"
 #include "Lyra/Input/Input.h"
 #include "Lyra/Input/KeyCodes.h"
+#include "Lyra/Input/MouseButtonCodes.h"
 
 namespace Lyra
 {
@@ -12,7 +14,9 @@ namespace Lyra
 			m_AspectRatio(aspectRatio),
 			m_Near(zNear),
 			m_Far(zFar),
-			m_Camera(m_FOV, m_AspectRatio, m_Near, m_Far)
+			m_Camera(m_FOV, m_AspectRatio, m_Near, m_Far),
+			m_Window(Application::GetApplication().GetWindow()),
+			m_Time(0.0f)
 	{
 		m_Camera.SetPosition(m_CameraPosition);
 	}
@@ -22,45 +26,54 @@ namespace Lyra
 
 	void PerspectiveCameraController::OnUpdate(Timestep ts)
 	{
-		// Offsets
-		glm::vec3 offsetPosition = { 0.0f, 0.0f, 0.0f };
-		float offsetRotation = 0.0f;
+		m_Time += ts.GetSeconds();
 
-		// Get movement input
+		glm::vec3 direction = { 0.0f, 0.0f, 0.0f };
+
 		if (Input::IsKeyPressed(LR_KEY_W))
 		{
-			offsetPosition.y += 1.0f;
+			direction += m_Camera.GetForward();
 		}
 		else if (Input::IsKeyPressed(LR_KEY_S))
 		{
-			offsetPosition.y -= 1.0f;
+			direction += -m_Camera.GetForward();
 		}
 		if (Input::IsKeyPressed(LR_KEY_D))
 		{
-			offsetPosition.x += 1.0f;
+			direction += m_Camera.GetRight();
 		}
 		else if (Input::IsKeyPressed(LR_KEY_A))
 		{
-			offsetPosition.x -= 1.0f;
+			direction += -m_Camera.GetRight();
 		}
-		if (Input::IsKeyPressed(LR_KEY_KP_ADD))
+		if (Input::IsKeyPressed(LR_KEY_SPACE))
 		{
-			offsetPosition.z -= 1.0f;
+			direction += m_Camera.GetUp();
 		}
-		else if (Input::IsKeyPressed(LR_KEY_KP_SUBTRACT))
+		else if (Input::IsKeyPressed(LR_KEY_LEFT_CONTROL))
 		{
-			offsetPosition.z += 1.0f;
+			direction += -m_Camera.GetUp();
 		}
 
-		if (offsetPosition != glm::vec3(0.0f))
+		if (glm::length(direction) > 0.0f)
 		{
-			offsetPosition = glm::normalize(offsetPosition) * (m_CameraMoveSpeed * ts);
-			m_CameraPosition = m_Camera.GetPosition() + offsetPosition;
+			m_CameraPosition = m_Camera.GetPosition() + (glm::normalize(direction) * m_CameraMoveSpeed * ts.GetSeconds());
 			m_Camera.SetPosition(m_CameraPosition);
 		}
 	}
 
 	void PerspectiveCameraController::OnEvent(Event& e)
 	{
+		EventDispatcher dispatcher(e);
+
+		dispatcher.Dispatch<MouseMovedEvent>(LR_BIND_EVENT_FN(&PerspectiveCameraController::OnMouseMove));
+	}
+
+	bool PerspectiveCameraController::OnMouseMove(MouseMovedEvent& e)
+	{
+		// Somehow, figure out how to translate mouse screen cords to world cords
+		// Math is hard >.>
+
+		return false;
 	}
 }

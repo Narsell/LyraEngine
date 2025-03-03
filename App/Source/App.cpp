@@ -14,7 +14,7 @@ public:
 			m_LightPosition(glm::vec3(1.5f, 1.0f, -0.0f)),
 			m_ShininessFactor(32.f),
 			m_LightAmbientColor(glm::vec3(0.2f, 0.2f, 0.2f)),
-			m_LightDiffuseColor(glm::vec3(0.5f, 0.5f, 0.5f)),
+			m_LightDiffuseColor(glm::vec3(1.0f, 1.0f, 1.0f)),
 			m_LightSpecularColor(glm::vec3(1.0f, 1.0f, 1.0f)),
 			m_LightSourceAngle(0.0f),
 			m_LightSourceOrbitRadius(2.0f),
@@ -230,13 +230,13 @@ public:
 		m_CameraController.OnUpdate(ts);
 
 		/* Light source orbit */
-		m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
-		m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-		m_LightPosition = m_CubePosition + glm::vec3(
-			m_LightSourceOrbitRadius * glm::cos(m_LightSourceAngle),
-			m_LightSourceOrbitRadius * glm::sin(m_LightSourceAngle),
-			0.0f
-		);
+		//m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
+		//m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
+		//m_LightPosition = m_CubePosition + glm::vec3(
+		//	m_LightSourceOrbitRadius * glm::cos(m_LightSourceAngle),
+		//	m_LightSourceOrbitRadius * glm::sin(m_LightSourceAngle),
+		//	0.0f
+		//);
 
 		/* Cube rotation */
 		m_CubeRotation += m_CubeRotationSpeed * ts.GetSeconds();
@@ -274,7 +274,7 @@ public:
 		m_PhongShader->UploadUniform_1f("u_Light.constAttenuation", 1.0f);
 		m_PhongShader->UploadUniform_1f("u_Light.linearAttenuation", 0.09f);
 		m_PhongShader->UploadUniform_1f("u_Light.quadAttenuation", 0.032f);
-		m_PhongShader->UploadUniform_3f("u_Light.direction", glm::vec3(0.0f, 0.0f, -1.0f));
+		m_PhongShader->UploadUniform_3f("u_Light.direction", m_CameraController.GetCamera().GetForward());
 		m_PhongShader->UploadUniform_1f("u_Light.innerCutoffCosine", glm::cos(glm::radians(12.5f)));
 		m_PhongShader->UploadUniform_1f("u_Light.outerCutoffCosine", glm::cos(glm::radians(17.5f)));
 
@@ -320,6 +320,13 @@ public:
 		ImGui::Text("Obj Properties");
 		ImGui::DragFloat3("Cube Position", &m_CubePosition.x, 0.1f);
 		ImGui::SliderFloat("Cube Rot Speed", &m_CubeRotationSpeed, 0.0f, 100.0f);
+		ImGui::Text("Camera Position:");
+		ImGui::SameLine();
+		ImGui::Value("X", m_CameraController.GetCamera().GetPosition().x);
+		ImGui::SameLine();
+		ImGui::Value("Y", m_CameraController.GetCamera().GetPosition().y);
+		ImGui::SameLine();
+		ImGui::Value("Z", m_CameraController.GetCamera().GetPosition().z);
 		ImGui::End();
 	}
 

@@ -73,15 +73,12 @@ void main()
 	
 	// --- Attenuation factor ---
 	float distance = length(v_FragViewPosition);
-	float distAttenuation = 1 / (u_Light.constAttenuation + u_Light.linearAttenuation * distance + u_Light.quadAttenuation * (distance * distance));
+	float distAttenuation = 1.0; // Disabling this temporarily / (u_Light.constAttenuation + u_Light.linearAttenuation * distance + u_Light.quadAttenuation * (distance * distance));
 
-	// Cosine of angle from camera (light) to fragment
-	float cosTheta = dot(normalize(u_Light.direction), -lightToFragDirection);
+	// Spotlight with soft edges - Cosine of angle from camera (light) to fragment
+	float cosTheta = dot(lightToFragDirection, normalize(-u_Light.direction));
 	float cosEpsilon = u_Light.innerCutoffCosine - u_Light.outerCutoffCosine;
 	float spotLightIntensity = clamp((cosTheta - u_Light.outerCutoffCosine) / cosEpsilon, 0.0, 1.0);
-
-	// If we are inside the cutoff angle range, we can calculate the diffuse and specular components
-	// Otherwise, we just set the ambient
 
 	//  --- Diffuse light factor calculation ---
 	vec3 normalVector = normalize(v_Normal);

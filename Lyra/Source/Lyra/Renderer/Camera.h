@@ -54,10 +54,24 @@ namespace Lyra
 	public:
 		PerspectiveCamera(float fov, float aspectRatio, float zNear, float zFar);
 
-		const glm::vec3& GetPosition() const { return m_Position; }
+		// 1st column stores the right vector
+		const glm::vec3 GetRight() const { return glm::vec3(m_ViewMatrix[0]); }
+		// 2nd column stores the up vector
+		const glm::vec3 GetUp() const { return glm::vec3(m_ViewMatrix[1]); }
+		// 3rd column stores the backwards vector
+		const glm::vec3 GetForward() const { return -glm::vec3(m_ViewMatrix[2]); }
+
+		void SetTarget(const glm::vec3& target);
 
 	private:
 		virtual void RecalculateViewMatrix() override;
+
+	private:
+
+		glm::vec3 m_Target;
+		glm::vec3 m_Forward;
+		glm::vec3 m_Right;
+		glm::vec3 m_Up;
 
 	};
 }
