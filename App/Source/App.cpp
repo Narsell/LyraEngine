@@ -333,6 +333,27 @@ public:
 	void OnEvent(Lyra::Event& e) override
 	{
 		m_CameraController.OnEvent(e);
+
+		Lyra::EventDispatcher dispatcher(e);
+		dispatcher.Dispatch<Lyra::KeyPressedEvent>(LR_BIND_EVENT_FN(&GameLayer::OnKeyPressed));
+	}
+
+	bool OnKeyPressed(const Lyra::KeyPressedEvent& e)
+	{
+		if (e.GetKeyCode() == LR_KEY_F1)
+		{
+			Lyra::Window& window = Lyra::Application::GetApplication().GetWindow();
+			if (window.GetMouseInputMode() == LR_CURSOR_NORMAL)
+			{
+				window.SetMouseInputMode(LR_CURSOR_DISABLED);
+			}
+			else if (window.GetMouseInputMode() == LR_CURSOR_DISABLED)
+			{
+				window.SetMouseInputMode(LR_CURSOR_NORMAL);
+			}
+			return true;
+		}
+		return false;
 	}
 
 private:

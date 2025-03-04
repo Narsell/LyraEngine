@@ -19,7 +19,7 @@ namespace Lyra
 
 		const PerspectiveCamera& GetCamera() const { return m_Camera; }
 	private:
-		bool OnMouseMove(MouseMovedEvent& e);
+		bool OnMouseMoved(MouseMovedEvent& e);
 
 	private:
 		float m_FOV = 45.0f;
@@ -33,7 +33,11 @@ namespace Lyra
 		PerspectiveCamera m_Camera;
 		Window& m_Window;
 
+		float m_MouseLastX, m_MouseLastY;
+
 		float m_Time;
+
+		bool m_FirstMouseMovement = true;
 
 	};
 

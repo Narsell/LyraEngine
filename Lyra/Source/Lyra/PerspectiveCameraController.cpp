@@ -16,6 +16,8 @@ namespace Lyra
 			m_Far(zFar),
 			m_Camera(m_FOV, m_AspectRatio, m_Near, m_Far),
 			m_Window(Application::GetApplication().GetWindow()),
+			m_MouseLastX(m_Window.GetWidth() / 2.0f),
+			m_MouseLastY(m_Window.GetHeight() / 2.0f),
 			m_Time(0.0f)
 	{
 		m_Camera.SetPosition(m_CameraPosition);
@@ -57,7 +59,7 @@ namespace Lyra
 
 		if (glm::length(direction) > 0.0f)
 		{
-			m_CameraPosition = m_Camera.GetPosition() + (glm::normalize(direction) * m_CameraMoveSpeed * ts.GetSeconds());
+			m_CameraPosition += (glm::normalize(direction) * m_CameraMoveSpeed * ts.GetSeconds());
 			m_Camera.SetPosition(m_CameraPosition);
 		}
 	}
@@ -66,13 +68,28 @@ namespace Lyra
 	{
 		EventDispatcher dispatcher(e);
 
-		dispatcher.Dispatch<MouseMovedEvent>(LR_BIND_EVENT_FN(&PerspectiveCameraController::OnMouseMove));
+		dispatcher.Dispatch<MouseMovedEvent>(LR_BIND_EVENT_FN(&PerspectiveCameraController::OnMouseMoved));
 	}
 
-	bool PerspectiveCameraController::OnMouseMove(MouseMovedEvent& e)
+	bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent& e)
 	{
-		// Somehow, figure out how to translate mouse screen cords to world cords
-		// Math is hard >.>
+		float mouseX = e.GetMouseX();
+		float mouseY = e.GetMouseY();
+
+		if (m_FirstMouseMovement)
+		{
+			m_MouseLastX = mouseX;
+			m_MouseLastY = mouseY;
+			m_FirstMouseMovement = false;
+		}
+
+		float xOffset = mouseX - m_MouseLastX;
+		float yOffset = m_MouseLastY - mouseY;
+
+		m_MouseLastX = mouseX;
+		m_MouseLastY = mouseY;
+
+		m_Camera.ProcessMouseMovement(xOffset, yOffset);
 
 		return false;
 	}

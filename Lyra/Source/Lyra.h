@@ -13,6 +13,11 @@
 #include "Lyra/Input/KeyCodes.h"
 #include "Lyra/Input/MouseButtonCodes.h"
 
+/* EVENT SYSTEM */
+#include "Lyra/Events/KeyEvent.h"
+#include "Lyra/Events/ApplicationEvent.h"
+#include "Lyra/Events/MouseEvent.h"
+
 /* CONTROLLERS */
 #include "Lyra/OrthographicCameraController.h"
 #include "Lyra/PerspectiveCameraController.h"

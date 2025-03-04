@@ -60,8 +60,7 @@ namespace Lyra
 	 * * * * * * * * * * * * */
 
 	PerspectiveCamera::PerspectiveCamera(float fov, float aspectRatio, float zNear, float zFar)
-		: Camera(glm::perspective(fov, aspectRatio, zNear, zFar), { 0.0f, 0.0, -1.0f }), // By default, perspective camera is positioned 1 unit back in the z axis.
-			m_Target(glm::vec3(0.0f, 0.0f, 0.0f)), // By default camera is looking at the world origin.
+		: Camera(glm::perspective(fov, aspectRatio, zNear, zFar), { 0.0f, 0.0, 0.0f }),
 			m_Forward(glm::vec3(0.0f)),
 			m_Right(glm::vec3(0.0f)),
 			m_Up(glm::vec3(0.0f))
@@ -69,18 +68,28 @@ namespace Lyra
 		RecalculateViewMatrix();
 	}
 
-	void PerspectiveCamera::SetTarget(const glm::vec3& target)
+	void PerspectiveCamera::ProcessMouseMovement(float xOffset, float yOffset)
 	{
-		m_Target = target;
+		xOffset *= m_LookAtSensitivity;
+		yOffset *= m_LookAtSensitivity;
+
+		m_Yaw += xOffset;
+		m_Pitch += yOffset;
+		m_Pitch = std::clamp(m_Pitch, -89.0f, 89.0f);
+
 		RecalculateViewMatrix();
 	}
 
 	void PerspectiveCamera::RecalculateViewMatrix()
 	{
 		// Look up Gram–Schmidt process!
-		m_Forward = glm::vec3(0.0f, 0.0f, -1.0);// Saving this for later: glm::normalize(m_Position - m_Target);
-		m_Right = glm::normalize(glm::cross(glm::vec3(0.0f, 1.0f, 0.0f), m_Forward));
-		m_Up = glm::normalize(glm::cross(m_Forward, m_Right));
+		m_Forward.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+		m_Forward.y = sin(glm::radians(m_Pitch));
+		m_Forward.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
+		m_Forward	= glm::normalize(m_Forward);
+
+		m_Right		= glm::normalize(glm::cross(m_Forward, glm::vec3(0.0f, 1.0f, 0.0f)));
+		m_Up		= glm::normalize(glm::cross(m_Right, m_Forward));
 
 		m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Forward, m_Up);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;

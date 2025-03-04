@@ -9,12 +9,10 @@ uniform mat4 u_VP;
 uniform mat4 u_Model;
 uniform mat4 u_View;
 uniform mat3 u_Normal;
-uniform vec3 u_LightPosition;
 
 out vec2 v_TexCoord;
 out vec3 v_Normal;
 out vec3 v_FragViewPosition;
-out vec3 v_LightPosition;
 
 void main()
 {
@@ -24,7 +22,6 @@ void main()
 	// TODO: Calculate this in CPU and send as an uniform, the inverse operation is expensive to do for every vertex.
 	v_Normal = u_Normal * a_Normal;
 	v_FragViewPosition = vec3(u_View * u_Model * vec4(a_Position, 1.0));
-	v_LightPosition = vec3(u_View * vec4(u_LightPosition, 1.0));
 	v_TexCoord = a_TexCoord;
 
 	gl_Position = u_VP * u_Model * vec4(a_Position, 1.0);

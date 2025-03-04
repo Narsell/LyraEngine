@@ -24,7 +24,8 @@ namespace Lyra
 		virtual inline uint16_t GetHeight() const override { return m_Data.Height; }
 		virtual bool IsVSync() const override { return m_Data.VSync; };
 		virtual void* GetNativeWindow() const override { return m_Window; }
-
+		virtual int GetMouseInputMode() const;
+		virtual void SetMouseInputMode(int InputMode) override;
 		virtual void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; };
 		virtual void SetVSync(bool enabled) override;
 

@@ -2,8 +2,9 @@
 
 #include <GLFW/glfw3.h>
 
-#include "Lyra/Core/Core.h"
 #include "WindowsWindow.h"
+#include "Lyra/Input/Input.h"
+#include "Lyra/Core/Core.h"
 #include "Lyra/Events/ApplicationEvent.h"
 #include "Lyra/Events/MouseEvent.h"
 #include "Lyra/Events/KeyEvent.h"
@@ -62,8 +63,10 @@ namespace Lyra
         m_Context = new OpenGLContext(m_Window);
         m_Context->Init();
 
-        glfwSetWindowUserPointer(m_Window, &m_Data);
         SetVSync(true);
+        glfwSetWindowUserPointer(m_Window, &m_Data);
+        // Mouse won't be visible and it should not leave the window.
+        SetMouseInputMode(GLFW_CURSOR_DISABLED);
 
         // Set GLFW callbacks
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)
@@ -165,6 +168,16 @@ namespace Lyra
     {
         glfwPollEvents();
         m_Context->SwapBuffers();
+    }
+
+    int WindowsWindow::GetMouseInputMode() const
+    {
+        return glfwGetInputMode(m_Window, LR_CURSOR);
+    }
+
+    void WindowsWindow::SetMouseInputMode(int InputMode)
+    {
+        glfwSetInputMode(m_Window, LR_CURSOR, InputMode);
     }
 
     void WindowsWindow::SetVSync(bool enabled)
