@@ -11,7 +11,7 @@ namespace Lyra
 {
 	PerspectiveCameraController::PerspectiveCameraController()
 		:	m_Window(Application::GetApplication().GetWindow()),
-			m_Camera(45.0f, (float)m_Window.GetWidth() / (float)m_Window.GetHeight(), 0.1f, 100.0f),
+			m_Camera(m_Window.GetAspectRatio()),
 			m_MouseLastX(m_Window.GetWidth() / 2.0f),
 			m_MouseLastY(m_Window.GetHeight() / 2.0f)
 	{

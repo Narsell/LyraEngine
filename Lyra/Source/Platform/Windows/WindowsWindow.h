@@ -22,6 +22,8 @@ namespace Lyra
 
 		virtual inline uint16_t GetWidth() const override { return m_Data.Width; }
 		virtual inline uint16_t GetHeight() const override { return m_Data.Height; }
+		virtual inline float GetAspectRatio() const override { return (float) m_Data.Width / (float) m_Data.Height; }
+
 		virtual bool IsVSync() const override { return m_Data.VSync; };
 		virtual void* GetNativeWindow() const override { return m_Window; }
 		virtual int GetMouseInputMode() const;

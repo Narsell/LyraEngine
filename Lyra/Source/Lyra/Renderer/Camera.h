@@ -1,6 +1,9 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "Lyra/Events/Event.h"
+#include "Lyra/Events/ApplicationEvent.h"
+#include "Lyra/Events/MouseEvent.h"
 
 namespace Lyra
 {
@@ -21,6 +24,8 @@ namespace Lyra
 		virtual const glm::mat4& GetViewMatrix() const { return m_ViewMatrix; }
 		virtual const glm::mat4& GetViewProjectionMatrix() const { return m_ViewProjectionMatrix; }
 
+		virtual void OnEvent(Event& e) = 0;
+
 	protected:
 		virtual void RecalculateViewMatrix() = 0;
 		virtual void RecalculateProjectionMatrix() = 0;
@@ -35,26 +40,37 @@ namespace Lyra
 	class OrthographicCamera : public Camera
 	{
 	public:
-		OrthographicCamera(float left, float right, float bottom, float top);
-		void SetProjection(float left, float right, float bottom, float top);
+		OrthographicCamera(float aspectRatio, float zoomLevel = 1.0f, float zNear = -1.0f, float zFar = 10.0f);
 
+		const glm::vec3 GetForward() const { return glm::vec3(0.0f, 0.0f, -1.0f); }
+		const float GetZoomLevel() const { return m_ZoomLevel; }
 		const float GetRotation() const { return m_Rotation; }
+
 		void SetRotation(float rotation);
+
+		virtual void OnEvent(Event& e) override;
 
 	private:
 		virtual void RecalculateViewMatrix() override;
 		virtual void RecalculateProjectionMatrix() override;
 
+		bool OnWindowResized(WindowResizeEvent& e);
+		bool OnMouseScrolled(MouseScrolledEvent& e);
+
 	private:
 		// Since this is an orthographic camera we only need rotation around one axis.
 		float m_Rotation = 0.0f;
+
+		float m_MinFOV, m_MaxFOV;
+		float m_AspectRatio, m_ZoomLevel;
+		float m_ZNear, m_ZFar;
 
 	};
 
 	class PerspectiveCamera : public Camera
 	{
 	public:
-		PerspectiveCamera(float fov, float aspectRatio, float zNear, float zFar);
+		PerspectiveCamera(float aspectRatio, float fov = 45.0f, float zoomLevel = 1.0f, float zNear = 0.1f, float zFar = 100.0f);
 
 		const glm::vec3 GetRight() const { return m_Right; }
 		const glm::vec3 GetUp() const { return m_Up; }
@@ -65,15 +81,20 @@ namespace Lyra
 		void SetFOV(float newFOV);
 		void SetAspectRatio(float newAspectRatio);
 
-		bool OnEvent(Event& e);
+		virtual void OnEvent(Event& e) override;
 
 	private:
 		virtual void RecalculateViewMatrix() override;
 		virtual void RecalculateProjectionMatrix() override;
 
+		bool OnWindowResized(WindowResizeEvent& e);
+		bool OnMouseScrolled(MouseScrolledEvent& e);
+
 	private:
 
-		float m_FOV, m_AspectRatio, m_ZNear, m_ZFar;
+		float m_MinFOV, m_MaxFOV;
+		float m_FOV, m_AspectRatio, m_ZoomLevel;
+		float m_ZNear, m_ZFar;
 
 		glm::vec3 m_Forward;
 		glm::vec3 m_Right;

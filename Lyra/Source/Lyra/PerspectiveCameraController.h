@@ -1,9 +1,10 @@
 #pragma once
-#include "Lyra/Renderer/Camera.h"
+
 #include "Lyra/Core/Timestep.h"
+#include "Lyra/Core/Window.h"
+#include "Lyra/Renderer/Camera.h"
 #include "Lyra/Events/Event.h"
 #include "Lyra/Events/MouseEvent.h"
-#include "Lyra/Core/Window.h"
 
 namespace Lyra
 {

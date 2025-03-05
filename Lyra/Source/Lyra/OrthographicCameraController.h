@@ -1,42 +1,35 @@
 #pragma once
 
-#include "Lyra/Renderer/Camera.h"
+#include "Lyra/Core/Window.h"
 #include "Lyra/Core/Timestep.h"
+#include "Lyra/Renderer/Camera.h"
 #include "Lyra/Events/ApplicationEvent.h"
 #include "Lyra/Events/MouseEvent.h"
+
 
 namespace Lyra
 {
 	class OrthographicCameraController
 	{
 	public:
-		OrthographicCameraController(float aspectRatio, bool rotation = false);
+		OrthographicCameraController(bool rotation = false);
 
 		void OnUpdate(Timestep ts);
 
 		void OnEvent(Event& e);
 
 		const OrthographicCamera& GetCamera() const { return m_Camera; }
-		float GetZoomLevel() const { return m_ZoomLevel; }
-
-		void SetZoomLevel(float level) { m_ZoomLevel = std::clamp(level, m_MinZoom, m_MaxZoom); }
 
 	private:
+		Window& m_Window;
 
-		bool OnMouseScrolled(MouseScrolledEvent& e);
-		bool OnWindowResized(WindowResizeEvent& e);
-
-	private:
-		float m_AspectRatio = 16.f / 9.f;
-		float m_ZoomLevel = 1.0f;
-		float m_MaxZoom = 20.0f;
-		float m_MinZoom = 0.20f;
 		OrthographicCamera m_Camera;
 		
 		bool m_Rotation;
 		float m_CameraRotation = 0.0f;
-		float m_CameraMoveSpeed = 3.f;
+		float m_ZoomSpeedFactor = 1.3f;
+		float m_CameraMoveSpeed = 3.0f;
 		float m_CameraRotationSpeed = 20.f;
-		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 2.0f };
 	};
 }

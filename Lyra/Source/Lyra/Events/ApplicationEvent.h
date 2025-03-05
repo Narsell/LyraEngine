@@ -16,6 +16,7 @@ namespace Lyra
 
 		inline uint16_t GetWidth() const { return m_Width; }
 		inline uint16_t GetHeight() const { return m_Height; }
+		inline float GetAspectRatio() const { return (float)m_Width / (float)m_Height; }
 
 		std::string ToString() const override
 		{

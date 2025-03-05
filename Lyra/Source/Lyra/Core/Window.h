@@ -34,6 +34,7 @@ namespace Lyra
 
 		virtual uint16_t GetWidth() const = 0;
 		virtual uint16_t GetHeight() const = 0;
+		virtual float GetAspectRatio() const = 0;
 		virtual void* GetNativeWindow() const = 0;
 		virtual int GetMouseInputMode() const = 0;
 		virtual void SetMouseInputMode(int InputMode) = 0;

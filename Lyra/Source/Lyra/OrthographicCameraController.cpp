@@ -2,16 +2,16 @@
 
 #include "OrthographicCameraController.h"
 
+#include "Lyra/Core/Application.h"
 #include "Lyra/Input/Input.h"
 #include "Lyra/Input/KeyCodes.h"
 
 namespace Lyra
 {
-	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
-		:	m_AspectRatio(aspectRatio),
-			m_Camera(-m_AspectRatio * m_ZoomLevel, m_AspectRatio* m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel),
-			m_Rotation(rotation),
-			m_CameraPosition(m_Camera.GetPosition())
+	OrthographicCameraController::OrthographicCameraController(bool rotation)
+		:	m_Window(Application::GetApplication().GetWindow()),
+			m_Camera(m_Window.GetAspectRatio()),
+			m_Rotation(rotation)
 	{
 		m_Camera.SetPosition(m_CameraPosition);
 	}
@@ -70,33 +70,13 @@ namespace Lyra
 		}
 
 		// This maps our movement speed to the zoom level (More zoomed in = less speed, less zoomed in = more speed)
-		m_CameraMoveSpeed = 1.3f * m_ZoomLevel;
+		m_CameraMoveSpeed = m_ZoomSpeedFactor * m_Camera.GetZoomLevel();
 
 	}
 
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
-		EventDispatcher dispatcher(e);
-
-		dispatcher.Dispatch<MouseScrolledEvent>(LR_BIND_EVENT_FN(&OrthographicCameraController::OnMouseScrolled));
-		dispatcher.Dispatch<WindowResizeEvent>(LR_BIND_EVENT_FN(&OrthographicCameraController::OnWindowResized));
+		m_Camera.OnEvent(e);
 	}
 
-	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
-	{
-		// We get the zoom level from the MouseScrolledEvent and adjust the camera's projection matrix, basically we set the bounds to adjust for that zoom.
-		m_ZoomLevel = std::clamp(m_ZoomLevel - ((float)e.GetYOffset() / 5.0f), m_MinZoom, m_MaxZoom);
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
-		return false;
-	}
-
-	bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
-	{
-		// Basically the same thing as the previous function, we adjust the camera's projection matrix to consider for the new aspect ratio.
-		// Note: TODO: We could try to rework this so it takes the actual window bounds so that the camera takes the space of the window as it gets resized.
-		// BUT I would need to figure out what to do with zoom, it's probably fine...? anyway test later :)
-		m_AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
-		m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
-		return false;
-	}
 }

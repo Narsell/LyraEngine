@@ -325,6 +325,13 @@ public:
 		ImGui::Text("Obj Properties");
 		ImGui::DragFloat3("Cube Position", &m_CubePosition.x, 0.1f);
 		ImGui::SliderFloat("Cube Rot Speed", &m_CubeRotationSpeed, 0.0f, 100.0f);
+		ImGui::Text("Camera Position:");
+		ImGui::SameLine();
+		ImGui::Value("X", m_CameraController.GetCamera().GetPosition().x);
+		ImGui::SameLine();
+		ImGui::Value("Y", m_CameraController.GetCamera().GetPosition().y);
+		ImGui::SameLine();
+		ImGui::Value("Z", m_CameraController.GetCamera().GetPosition().z);
 		ImGui::End();
 	}
 
