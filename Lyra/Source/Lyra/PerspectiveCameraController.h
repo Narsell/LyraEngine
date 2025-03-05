@@ -10,7 +10,6 @@ namespace Lyra
 	class PerspectiveCameraController
 	{
 	public:
-		PerspectiveCameraController(float fov, float aspectRatio, float nearDist, float farDist);
 		PerspectiveCameraController();
 
 		void OnUpdate(Timestep ts);
@@ -22,23 +21,14 @@ namespace Lyra
 		bool OnMouseMoved(MouseMovedEvent& e);
 
 	private:
-		float m_FOV = 45.0f;
-		float m_AspectRatio = 16.f / 9.f;
-		float m_Near = 0.1f;
-		float m_Far = 100.0f;
+		Window& m_Window;
 
 		float m_CameraMoveSpeed = 3.f;
 		glm::vec3 m_CameraPosition = { 0.0, 0.0f, 2.0f };
-
 		PerspectiveCamera m_Camera;
-		Window& m_Window;
 
 		float m_MouseLastX, m_MouseLastY;
-
-		float m_Time;
-
 		bool m_FirstMouseMovement = true;
-
 	};
 
 }

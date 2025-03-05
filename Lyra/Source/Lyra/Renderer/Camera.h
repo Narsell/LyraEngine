@@ -1,6 +1,6 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 
 namespace Lyra
 {
@@ -23,6 +23,7 @@ namespace Lyra
 
 	protected:
 		virtual void RecalculateViewMatrix() = 0;
+		virtual void RecalculateProjectionMatrix() = 0;
 
 	protected:
 		glm::mat4 m_ProjectionMatrix;
@@ -42,6 +43,7 @@ namespace Lyra
 
 	private:
 		virtual void RecalculateViewMatrix() override;
+		virtual void RecalculateProjectionMatrix() override;
 
 	private:
 		// Since this is an orthographic camera we only need rotation around one axis.
@@ -60,14 +62,23 @@ namespace Lyra
 
 		void ProcessMouseMovement(float xOffset, float yOffset);
 
-	private:
-		virtual void RecalculateViewMatrix() override;
+		void SetFOV(float newFOV);
+		void SetAspectRatio(float newAspectRatio);
+
+		bool OnEvent(Event& e);
 
 	private:
+		virtual void RecalculateViewMatrix() override;
+		virtual void RecalculateProjectionMatrix() override;
+
+	private:
+
+		float m_FOV, m_AspectRatio, m_ZNear, m_ZFar;
 
 		glm::vec3 m_Forward;
 		glm::vec3 m_Right;
 		glm::vec3 m_Up;
+
 
 		float m_LookAtSensitivity = 0.2f;
 		float m_Yaw = -90.0f;

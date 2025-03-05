@@ -55,17 +55,41 @@ namespace Lyra
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 
+	void OrthographicCamera::RecalculateProjectionMatrix()
+	{
+		// TODO: Recalculate m_ProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
+		// This should also remove the SetProjection function and refactor the OrthographicCameraController
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
+
 	/* * * * * * * * * * * * * 
 	 *   PERSPECTIVE CAMERA  *
 	 * * * * * * * * * * * * */
 
 	PerspectiveCamera::PerspectiveCamera(float fov, float aspectRatio, float zNear, float zFar)
-		: Camera(glm::perspective(fov, aspectRatio, zNear, zFar), { 0.0f, 0.0, 0.0f }),
+		:	Camera(glm::perspective(fov, aspectRatio, zNear, zFar), 
+				   { 0.0f, 0.0, 0.0f }),
+			m_FOV(fov),
+			m_AspectRatio(aspectRatio),
+			m_ZNear(zNear),
+			m_ZFar(zFar),
 			m_Forward(glm::vec3(0.0f)),
 			m_Right(glm::vec3(0.0f)),
 			m_Up(glm::vec3(0.0f))
 	{
 		RecalculateViewMatrix();
+	}
+
+	void PerspectiveCamera::SetFOV(float newFOV)
+	{
+		m_FOV = newFOV;
+		RecalculateProjectionMatrix();
+	}
+
+	void PerspectiveCamera::SetAspectRatio(float newAspectRatio)
+	{
+		m_AspectRatio = newAspectRatio;
+		RecalculateProjectionMatrix();
 	}
 
 	void PerspectiveCamera::ProcessMouseMovement(float xOffset, float yOffset)
@@ -80,6 +104,18 @@ namespace Lyra
 		RecalculateViewMatrix();
 	}
 
+	bool PerspectiveCamera::OnEvent(Event& e)
+	{
+		if (e.GetEventType() == EventType::WindowResize)
+		{
+			WindowResizeEvent& re = static_cast<WindowResizeEvent&>(e);
+			float aspectRatio = (float)re.GetWidth() / (float)re.GetHeight();
+			SetAspectRatio(aspectRatio);
+		}
+
+		return false;
+	}
+
 	void PerspectiveCamera::RecalculateViewMatrix()
 	{
 		// Look up Gram–Schmidt process!
@@ -92,6 +128,12 @@ namespace Lyra
 		m_Up		= glm::normalize(glm::cross(m_Right, m_Forward));
 
 		m_ViewMatrix = glm::lookAt(m_Position, m_Position + m_Forward, m_Up);
+		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
+	}
+
+	void PerspectiveCamera::RecalculateProjectionMatrix()
+	{
+		m_ProjectionMatrix = glm::perspective(m_FOV, m_AspectRatio, m_ZNear, m_ZFar);
 		m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
 	}
 

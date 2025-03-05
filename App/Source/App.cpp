@@ -7,7 +7,6 @@ class GameLayer : public Lyra::Layer
 public:
 	GameLayer()
 		:	Layer("GameLayer"),
-			m_CameraController(45.0f, 16.f/9.f, 0.1f, 100.f),
 			m_CubeRotation(0.0f),
 			m_CubeRotationSpeed(12.0f),
 			m_CubePosition(glm::vec3(0.0f, 0.0f, 0.0f)),
@@ -274,31 +273,37 @@ public:
 		m_PhongShader->UploadUniform_1f("u_Light.constAttenuation", 1.0f);
 		m_PhongShader->UploadUniform_1f("u_Light.linearAttenuation", 0.09f);
 		m_PhongShader->UploadUniform_1f("u_Light.quadAttenuation", 0.032f);
-		m_PhongShader->UploadUniform_3f("u_Light.direction", m_CameraController.GetCamera().GetForward());
+		glm::vec3 cameraDirViewSpace = m_CameraController.GetCamera().GetViewMatrix() * glm::vec4(m_CameraController.GetCamera().GetForward(), 1.0f);
+		m_PhongShader->UploadUniform_3f("u_Light.direction", cameraDirViewSpace);
 		m_PhongShader->UploadUniform_1f("u_Light.innerCutoffCosine", glm::cos(glm::radians(12.5f)));
 		m_PhongShader->UploadUniform_1f("u_Light.outerCutoffCosine", glm::cos(glm::radians(17.5f)));
 
-		for (float i = 0; i < 10; i++)
+		Lyra::Renderer::Submit(
+			m_PhongShader,
+			m_CubeVertexArray,
+			glm::rotate(glm::mat4(1.0f), glm::radians(m_CubeRotation), glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f))) * glm::translate(glm::mat4(1.0f), m_CubePosition),
+			false
+		);
+
+		for (float y =-10; y < 10; y++)
 		{
-			glm::vec3 offset = glm::vec3(
-				(int)i % 2 == 0 ?  i / 2.0f : -i / 2.0f,
-				(int)i % 2 == 0 ? -i / 2.0f :  i / 2.0f,
-				- i
-			);
+			for (float x = -10; x < 10; x++)
+			{
+				glm::vec3 position = glm::vec3(x * 1.1f, y * 1.1f, (((int)x % 2 == 0) ? m_CubePosition.z + 1 : m_CubePosition.z - 1) - 5.0f);
 
-			Lyra::Renderer::Submit(
-				m_PhongShader,
-				m_CubeVertexArray,
-				glm::rotate(glm::mat4(1.0f), glm::radians(i == 0 ? m_CubeRotation : 0.0f), glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f))) * glm::translate(glm::mat4(1.0f), m_CubePosition + offset),
-				false
-			);
+				Lyra::Renderer::Submit(
+					m_PhongShader,
+					m_CubeVertexArray,
+					glm::translate(glm::mat4(1.0f), position),
+					false
+				);
+			}
 		}
-
 
 		/* Render quad (Indexed) */
 		m_TextureShader->Bind();
 		m_TextureShader->UploadUniform_1i("u_Texture", 2);
-		Lyra::Renderer::Submit(m_TextureShader, m_QuadVertexArray, glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0, -4.5f)));
+		Lyra::Renderer::Submit(m_TextureShader, m_QuadVertexArray, glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0, 8.0f)));
 
 		Lyra::Renderer::EndScene();
 
@@ -320,13 +325,6 @@ public:
 		ImGui::Text("Obj Properties");
 		ImGui::DragFloat3("Cube Position", &m_CubePosition.x, 0.1f);
 		ImGui::SliderFloat("Cube Rot Speed", &m_CubeRotationSpeed, 0.0f, 100.0f);
-		ImGui::Text("Camera Position:");
-		ImGui::SameLine();
-		ImGui::Value("X", m_CameraController.GetCamera().GetPosition().x);
-		ImGui::SameLine();
-		ImGui::Value("Y", m_CameraController.GetCamera().GetPosition().y);
-		ImGui::SameLine();
-		ImGui::Value("Z", m_CameraController.GetCamera().GetPosition().z);
 		ImGui::End();
 	}
 
@@ -340,6 +338,7 @@ public:
 
 	bool OnKeyPressed(const Lyra::KeyPressedEvent& e)
 	{
+		/* Toggle mouse input mode so we can use ImGui controls by pressing F1 */
 		if (e.GetKeyCode() == LR_KEY_F1)
 		{
 			Lyra::Window& window = Lyra::Application::GetApplication().GetWindow();

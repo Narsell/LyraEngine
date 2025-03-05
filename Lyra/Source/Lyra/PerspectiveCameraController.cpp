@@ -9,27 +9,17 @@
 
 namespace Lyra
 {
-	PerspectiveCameraController::PerspectiveCameraController(float fov, float aspectRatio, float zNear, float zFar)
-		:	m_FOV(fov),
-			m_AspectRatio(aspectRatio),
-			m_Near(zNear),
-			m_Far(zFar),
-			m_Camera(m_FOV, m_AspectRatio, m_Near, m_Far),
-			m_Window(Application::GetApplication().GetWindow()),
+	PerspectiveCameraController::PerspectiveCameraController()
+		:	m_Window(Application::GetApplication().GetWindow()),
+			m_Camera(45.0f, (float)m_Window.GetWidth() / (float)m_Window.GetHeight(), 0.1f, 100.0f),
 			m_MouseLastX(m_Window.GetWidth() / 2.0f),
-			m_MouseLastY(m_Window.GetHeight() / 2.0f),
-			m_Time(0.0f)
+			m_MouseLastY(m_Window.GetHeight() / 2.0f)
 	{
 		m_Camera.SetPosition(m_CameraPosition);
 	}
 
-	PerspectiveCameraController::PerspectiveCameraController()
-		: PerspectiveCameraController(m_FOV, m_AspectRatio, m_Near, m_Far) {}
-
 	void PerspectiveCameraController::OnUpdate(Timestep ts)
 	{
-		m_Time += ts.GetSeconds();
-
 		glm::vec3 direction = { 0.0f, 0.0f, 0.0f };
 
 		if (Input::IsKeyPressed(LR_KEY_W))
@@ -66,8 +56,9 @@ namespace Lyra
 
 	void PerspectiveCameraController::OnEvent(Event& e)
 	{
-		EventDispatcher dispatcher(e);
+		m_Camera.OnEvent(e);
 
+		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseMovedEvent>(LR_BIND_EVENT_FN(&PerspectiveCameraController::OnMouseMoved));
 	}
 
