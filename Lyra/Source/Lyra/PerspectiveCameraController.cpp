@@ -64,6 +64,12 @@ namespace Lyra
 
 	bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent& e)
 	{
+		if (m_Window.GetMouseInputMode() == LR_CURSOR_NORMAL)
+		{
+			m_FirstMouseMovement = true;
+			return false;
+		}
+
 		float mouseX = e.GetMouseX();
 		float mouseY = e.GetMouseY();
 

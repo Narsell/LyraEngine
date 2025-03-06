@@ -35,9 +35,35 @@ struct Material {
     float shininess;
 }; 
 
+struct DirLight 
+{
+	vec3 direction;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
+#define N_POINT_LIGHTS 4  
+
+struct PointLight
+{
+	vec3 position;
+
+	vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
+	float constAttenuation;
+	float linearAttenuation;
+	float quadAttenuation;
+};
+
 // This is a spot light at the camera's position, like a flashlight.
 // Because we're working in view space instead of world space, the light's direction (equal to the camera's direction) is always (0, 0, -1)
-struct Light {		
+struct SpotLight {	
+	vec3 position;
+
 	float innerCutoffCosine; // Inner and outer cutoff 'angles' for this spot light
 	float outerCutoffCosine;
 
@@ -55,43 +81,100 @@ in vec3 v_Normal;
 in vec3 v_FragViewPosition;
 
 uniform Material u_Material;
-uniform Light u_Light;  
+
+uniform DirLight u_DirLight;
+//uniform SpotLight u_SpotLight;
+uniform PointLight u_PointLights[N_POINT_LIGHTS];
 
 out vec4 o_Color;
 
-void main()
+vec3 CalculateDirLight(DirLight light, vec3 normal, vec3 viewDirection)
+{
+	vec3 lightDirection = normalize(-light.direction);
+
+	// Diffuse
+	float diffuseFactor = max(dot(normal, lightDirection), 0.0);
+	// Specular
+	vec3 reflectDirection = reflect(-lightDirection, normal);
+	float specularFactor = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Material.shininess);
+
+	vec3 diffuse  = light.diffuse  * diffuseFactor * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 ambient  = light.ambient  * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 specular = light.specular * specularFactor * vec3(texture(u_Material.specular, v_TexCoord));
+
+	return ambient + diffuse + specular;
+}
+
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragmentPos, vec3 viewDirection)
+{
+	vec3 lightDirection = normalize(light.position - fragmentPos);
+
+	// Diffuse
+	float diffuseFactor = max(dot(normal, lightDirection), 0.0);
+	// Specular
+	vec3 reflectDirection = reflect(-lightDirection, normal);
+	float specularFactor = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Material.shininess);
+	// Attenuation
+	float distance = length(light.position - fragmentPos);
+	float distAttenuation = 1.0 / (light.constAttenuation + light.linearAttenuation * distance + light.quadAttenuation * (distance * distance));
+
+	vec3 ambient  = distAttenuation * light.ambient  * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 diffuse  = distAttenuation * light.diffuse  * diffuseFactor * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 specular = distAttenuation * light.specular * specularFactor * vec3(texture(u_Material.specular, v_TexCoord));
+
+	return ambient + diffuse + specular;
+
+}
+
+vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragmentPos)
 {
 	// Light direction is fixed in view space.
 	vec3 lightDirection = vec3(0.0, 0.0, -1.0);
-	vec3 normalVector = normalize(v_Normal);
 
 	// Lighting calculations inside the shader expect a vector pointing from the fragment to the source.
-	vec3 lightToFragDirection = normalize(-v_FragViewPosition);
+	vec3 lightToFragDirection = normalize(-fragmentPos);
 	
 	// --- Attenuation factor ---
-	float distance = length(v_FragViewPosition);
-	float distAttenuation = 1.0 / (u_Light.constAttenuation + u_Light.linearAttenuation * distance + u_Light.quadAttenuation * (distance * distance));
+	float dist = length(fragmentPos);
+	float distAttenuation = 1.0 / (light.constAttenuation + light.linearAttenuation * dist + light.quadAttenuation * (dist * dist));
 
 	// --- Spotlight cutoff range calculation with soft edges - Cosine of angle from camera (light) to fragment
 	float cosTheta = dot(lightToFragDirection, normalize(-lightDirection));
-	float cosEpsilon = u_Light.innerCutoffCosine - u_Light.outerCutoffCosine;
-	float spotLightIntensity = clamp((cosTheta - u_Light.outerCutoffCosine) / cosEpsilon, 0.0, 1.0);
+	float cosEpsilon = light.innerCutoffCosine - light.outerCutoffCosine;
+	float spotLightIntensity = clamp((cosTheta - light.outerCutoffCosine) / cosEpsilon, 0.0, 1.0);
 
 	//  --- Diffuse light factor calculation ---
 	// The greater the angle (up to 90) the greater the factor (more light)
-	float diffuseFactor = max(dot(normalVector, lightToFragDirection), 0.0);
+	float diffuseFactor = max(dot(normal, lightToFragDirection), 0.0);
 
 	// --- Specular light factor calculation ---
-	vec3 viewDirection = normalize(-v_FragViewPosition);
-	// relflect() expects a vector pointing from the light source to the fragment, so we invert lightToFragDirection
-	vec3 reflectionDirection = reflect(-lightToFragDirection, normalVector);
+	vec3 viewDirection = normalize(-fragmentPos);
+	// reflect() expects a vector pointing from the light source to the fragment, so we invert lightToFragDirection
+	vec3 reflectionDirection = reflect(-lightToFragDirection, normal);
 	// Now we calculate the specular component
 	float specularFactor = pow(max(dot(viewDirection, reflectionDirection), 0.0), u_Material.shininess);
 
 	// --- Calculate color for each component ---
-	vec3 diffuseColor = u_Light.diffuse * spotLightIntensity * distAttenuation * diffuseFactor * vec3(texture(u_Material.diffuse, v_TexCoord));
-	vec3 specularColor = u_Light.specular * spotLightIntensity * distAttenuation * specularFactor * vec3(texture(u_Material.specular, v_TexCoord));
-	vec3 ambientColor = u_Light.ambient * distAttenuation * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 ambient  = distAttenuation * light.ambient  * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 diffuse  = distAttenuation * light.diffuse  * spotLightIntensity * diffuseFactor * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 specular = distAttenuation * light.specular * spotLightIntensity * specularFactor * vec3(texture(u_Material.specular, v_TexCoord));
 
-	o_Color = vec4(specularColor + ambientColor + diffuseColor, 1.0);
+	return specular + ambient + diffuse;
+}
+
+void main()
+{
+
+	vec3 normalVector = normalize(v_Normal);
+	vec3 viewDirection = normalize(-v_FragViewPosition);
+
+	vec3 result = CalculateDirLight(u_DirLight, normalVector, viewDirection);
+
+	for (int i = 0; i < N_POINT_LIGHTS; i++)
+	{
+		result += CalculatePointLight(u_PointLights[i], normalVector, v_FragViewPosition, viewDirection);
+	}
+
+	o_Color = vec4(result, 1.0);
+
 };

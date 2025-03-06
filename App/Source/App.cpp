@@ -4,21 +4,52 @@
 
 class GameLayer : public Lyra::Layer
 {
+	struct DirectionalLight
+	{
+		glm::vec3 direction = glm::vec3(0.0f, -1.0f, 0.0f);
+
+		glm::vec3 ambient	= glm::vec3(glm::vec3(0.2f, 0.2f, 0.2f));
+		glm::vec3 diffuse	= glm::vec3(1.0f);
+		glm::vec3 specular  = glm::vec3(1.0f);
+	};
+
+	struct PointLight
+	{
+		glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		glm::vec3 ambient = glm::vec3(glm::vec3(0.2f, 0.2f, 0.2f));
+		glm::vec3 diffuse = glm::vec3(1.0f);
+		glm::vec3 specular = glm::vec3(1.0f);
+
+		float constAttenuation = 1.0f;
+		float linearAttenuation = 0.09f;
+		float quadAttenuation = 0.032f;
+	};
+
+
 public:
 	GameLayer()
 		:	Layer("GameLayer"),
 			m_CubeRotation(0.0f),
 			m_CubeRotationSpeed(12.0f),
 			m_CubePosition(glm::vec3(0.0f, 0.0f, 0.0f)),
-			m_LightPosition(glm::vec3(1.5f, 1.0f, -0.0f)),
-			m_ShininessFactor(32.f),
-			m_LightAmbientColor(glm::vec3(0.2f, 0.2f, 0.2f)),
-			m_LightDiffuseColor(glm::vec3(1.0f, 1.0f, 1.0f)),
-			m_LightSpecularColor(glm::vec3(1.0f, 1.0f, 1.0f)),
-			m_LightSourceAngle(0.0f),
-			m_LightSourceOrbitRadius(2.0f),
-			m_LightSourceSpeed(1.7f)
-	{   
+			m_ShininessFactor(32.f)
+	{ 
+		// Setting up point lights initial positions.
+		for (int i = 0; i < m_PointLights.size(); i++)
+		{
+			m_PointLights[i].position = glm::vec3(i % 2 == 0 ? -2.0f : 2.0f, (float)i, i % 2 == 0 ? -1.5f : 1.5f);
+		}
+		m_PointLights[0].diffuse = glm::vec3(0.8f, 0.3f, 0.2f);
+		m_PointLights[0].specular = glm::vec3(0.8f, 0.3f, 0.2f);
+		m_PointLights[1].diffuse = glm::vec3(0.2f, 0.8f, 0.3f);
+		m_PointLights[1].specular = glm::vec3(0.2f, 0.8f, 0.3f);
+		m_PointLights[2].diffuse = glm::vec3(0.2f, 0.3f, 0.8f);
+		m_PointLights[2].specular = glm::vec3(0.2f, 0.3f, 0.8f);
+		m_PointLights[3].diffuse = glm::vec3(0.5f, 0.3f, 0.7f);
+		m_PointLights[3].specular = glm::vec3(0.5f, 0.3f, 0.7f);
+
+
 		/* QUAD SECTION */
 		{
 			m_QuadVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
@@ -249,34 +280,54 @@ public:
 		Lyra::Renderer::BeginScene(m_CameraController.GetCamera());
 
 		/* Actual rendering happens here */
-				
-		/* Render light source (Non-indexed) */
-		//m_LightSourceShader->Bind();
-		//m_LightSourceShader->UploadUniform_3f("u_Color", m_LightDiffuseColor);
-		//Lyra::Renderer::Submit(
-		//	m_LightSourceShader,
-		//	m_LightSourceCubeVertexArray,
-		//	glm::translate(glm::mat4(1.0f), m_LightPosition) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
-		//	false
-		//);
+			
+		/* Render point lights (Non-indexed) */
+		for (int i = 0; i < 4; i++)
+		{
+			m_LightSourceShader->Bind();
+			m_LightSourceShader->UploadUniform_3f("u_Color", m_PointLights[i].diffuse);
+			Lyra::Renderer::Submit(
+				m_LightSourceShader,
+				m_LightSourceCubeVertexArray,
+				glm::translate(glm::mat4(1.0f), m_PointLights[i].position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
+				false
+			);
+
+		}
 
 		/* Render cubes (Non-indexed) */
 		m_PhongShader->Bind();
 		m_PhongShader->UploadUniform_1i("u_Material.diffuse", 0);
 		m_PhongShader->UploadUniform_1i("u_Material.specular", 1);
 		m_PhongShader->UploadUniform_1f("u_Material.shininess", m_ShininessFactor);
+		/* Directional light */
+		m_PhongShader->UploadUniform_3f("u_DirLight.direction", glm::mat3(m_CameraController.GetCamera().GetViewMatrix()) * m_DirLight.direction);
+		m_PhongShader->UploadUniform_3f("u_DirLight.ambient", m_DirLight.ambient);
+		m_PhongShader->UploadUniform_3f("u_DirLight.diffuse", m_DirLight.diffuse);
+		m_PhongShader->UploadUniform_3f("u_DirLight.specular", m_DirLight.specular);
+
+		for (int i = 0; i < m_PointLights.size(); i++)
+		{
+			m_PhongShader->UploadUniform_3f(std::format("u_PointLights[{0}].position", i), glm::vec3(m_CameraController.GetCamera().GetViewMatrix() * glm::vec4(m_PointLights[i].position, 1.0f)));
+			m_PhongShader->UploadUniform_3f(std::format("u_PointLights[{0}].ambient", i), m_PointLights[i].ambient);
+			m_PhongShader->UploadUniform_3f(std::format("u_PointLights[{0}].diffuse", i), m_PointLights[i].diffuse);
+			m_PhongShader->UploadUniform_3f(std::format("u_PointLights[{0}].specular", i), m_PointLights[i].specular);
+			m_PhongShader->UploadUniform_1f(std::format("u_PointLights[{0}].constAttenuation", i), m_PointLights[i].constAttenuation);
+			m_PhongShader->UploadUniform_1f(std::format("u_PointLights[{0}].linearAttenuation", i), m_PointLights[i].linearAttenuation);
+			m_PhongShader->UploadUniform_1f(std::format("u_PointLights[{0}].quadAttenuation", i), m_PointLights[i].quadAttenuation);
+		}
 		// Light position should be sent in view space since that's the coordinate space the fragment shader uses :)
 		//m_PhongShader->UploadUniform_3f("u_Light.position", glm::vec3(m_CameraController.GetCamera().GetViewMatrix() * glm::vec4(m_LightPosition, 1.0)));
-		m_PhongShader->UploadUniform_3f("u_Light.ambient", m_LightAmbientColor);
-		m_PhongShader->UploadUniform_3f("u_Light.diffuse", m_LightDiffuseColor);
-		m_PhongShader->UploadUniform_3f("u_Light.specular", m_LightSpecularColor);
-		m_PhongShader->UploadUniform_1f("u_Light.constAttenuation", 1.0f);
-		m_PhongShader->UploadUniform_1f("u_Light.linearAttenuation", 0.09f);
-		m_PhongShader->UploadUniform_1f("u_Light.quadAttenuation", 0.032f);
-		glm::vec3 cameraDirViewSpace = m_CameraController.GetCamera().GetViewMatrix() * glm::vec4(m_CameraController.GetCamera().GetForward(), 1.0f);
-		m_PhongShader->UploadUniform_3f("u_Light.direction", cameraDirViewSpace);
-		m_PhongShader->UploadUniform_1f("u_Light.innerCutoffCosine", glm::cos(glm::radians(12.5f)));
-		m_PhongShader->UploadUniform_1f("u_Light.outerCutoffCosine", glm::cos(glm::radians(17.5f)));
+		//m_PhongShader->UploadUniform_3f("u_Light.ambient", m_LightAmbientColor);
+		//m_PhongShader->UploadUniform_3f("u_Light.diffuse", m_LightDiffuseColor);
+		//m_PhongShader->UploadUniform_3f("u_Light.specular", m_LightSpecularColor);
+		//m_PhongShader->UploadUniform_1f("u_Light.constAttenuation", 1.0f);
+		//m_PhongShader->UploadUniform_1f("u_Light.linearAttenuation", 0.09f);
+		//m_PhongShader->UploadUniform_1f("u_Light.quadAttenuation", 0.032f);
+		//glm::vec3 cameraDirViewSpace = m_CameraController.GetCamera().GetViewMatrix() * glm::vec4(m_CameraController.GetCamera().GetForward(), 1.0f);
+		//m_PhongShader->UploadUniform_3f("u_Light.direction", cameraDirViewSpace);
+		//m_PhongShader->UploadUniform_1f("u_Light.innerCutoffCosine", glm::cos(glm::radians(12.5f)));
+		//m_PhongShader->UploadUniform_1f("u_Light.outerCutoffCosine", glm::cos(glm::radians(17.5f)));
 
 		Lyra::Renderer::Submit(
 			m_PhongShader,
@@ -312,16 +363,42 @@ public:
 	void OnImGuiRender() override
 	{
 		ImGui::Begin("Properties");
-		ImGui::Text("Light");
-		ImGui::DragFloat3("Position", &m_LightPosition.x, 0.1f);
-		ImGui::ColorEdit3("Ambient##Light", &m_LightAmbientColor.x);
-		ImGui::ColorEdit3("Diffuse##Light", &m_LightDiffuseColor.x);
-		ImGui::ColorEdit3("Specular##Light", &m_LightSpecularColor.x);
+		ImGui::Text("Dir Light");
+		ImGui::DragFloat3("Direction", &m_DirLight.direction.x, 0.1f);
+		ImGui::ColorEdit3("Ambient##Light", &m_DirLight.ambient.x);
+		ImGui::ColorEdit3("Diffuse##Light", &m_DirLight.diffuse.x);
+		ImGui::ColorEdit3("Specular##Light", &m_DirLight.specular.x);
+
+		for (int i = 0; i < m_PointLights.size(); ++i) {
+			// Push a unique ID scope for each light to avoid label conflicts
+			ImGui::PushID(i);
+
+			// Create a collapsible header with the light's index
+			if (ImGui::CollapsingHeader(("Point Light " + std::to_string(i)).c_str())) {
+				ImGui::Indent(); // Indent controls for visual hierarchy
+
+				// Position
+				ImGui::DragFloat3("Position", &m_PointLights[i].position.x, 0.1f);
+
+				// Colors
+				ImGui::ColorEdit3("Ambient", &m_PointLights[i].ambient.r);
+				ImGui::ColorEdit3("Diffuse", &m_PointLights[i].diffuse.r);
+				ImGui::ColorEdit3("Specular", &m_PointLights[i].specular.r);
+
+				// Attenuation
+				ImGui::DragFloat("Constant Attenuation", &m_PointLights[i].constAttenuation, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Linear Attenuation", &m_PointLights[i].linearAttenuation, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Quadratic Attenuation", &m_PointLights[i].quadAttenuation, 0.01f, 0.0f, 1.0f);
+
+				ImGui::Unindent();
+			}
+
+			ImGui::PopID(); // End unique ID scope
+			ImGui::Separator(); // Visual separation between lights
+		}
+
 		ImGui::Text("Material");
 		ImGui::SliderFloat("Shininess", &m_ShininessFactor, 2.f, 256.f);
-		ImGui::Text("Light orbit");
-		ImGui::SliderFloat("Radius", &m_LightSourceOrbitRadius, 1.0f, 10.0f);
-		ImGui::SliderFloat("Speed", &m_LightSourceSpeed, 0.0f, 25.0f);
 		ImGui::Text("Obj Properties");
 		ImGui::DragFloat3("Cube Position", &m_CubePosition.x, 0.1f);
 		ImGui::SliderFloat("Cube Rot Speed", &m_CubeRotationSpeed, 0.0f, 100.0f);
@@ -381,14 +458,8 @@ private:
 
 	float m_ShininessFactor;
 
-	glm::vec3 m_LightPosition;
-	glm::vec3 m_LightAmbientColor;
-	glm::vec3 m_LightDiffuseColor;
-	glm::vec3 m_LightSpecularColor;
-
-	float m_LightSourceAngle;
-	float m_LightSourceOrbitRadius;
-	float m_LightSourceSpeed;
+	DirectionalLight m_DirLight;
+	std::array<PointLight, 4> m_PointLights;
 
 	bool m_ChangeColor = false;
 	float m_Time = 0.0f;
