@@ -12,10 +12,16 @@ namespace Lyra
 	PerspectiveCameraController::PerspectiveCameraController()
 		:	m_Window(Application::GetApplication().GetWindow()),
 			m_Camera(m_Window.GetAspectRatio()),
+			m_CameraInitialPos(0.0, 0.0f, 2.0f),
+			m_CameraMinSpeed(2.0f),
+			m_CameraMaxSpeed(20.0f),
+			m_CameraSpeed(10.0f),
+			m_ZoomSpeedFactor(0.005f),
+			m_LookAtSensitivity(m_ZoomSpeedFactor * m_Camera.GetFOV()),
 			m_MouseLastX(m_Window.GetWidth() / 2.0f),
 			m_MouseLastY(m_Window.GetHeight() / 2.0f)
 	{
-		m_Camera.SetPosition(m_CameraPosition);
+		m_Camera.SetPosition(m_CameraInitialPos);
 	}
 
 	void PerspectiveCameraController::OnUpdate(Timestep ts)
@@ -49,8 +55,8 @@ namespace Lyra
 
 		if (glm::length(direction) > 0.0f)
 		{
-			m_CameraPosition += (glm::normalize(direction) * m_CameraMoveSpeed * ts.GetSeconds());
-			m_Camera.SetPosition(m_CameraPosition);
+			glm::vec3 newPosition = m_Camera.GetPosition() + (glm::normalize(direction) * m_CameraSpeed * ts.GetSeconds());
+			m_Camera.SetPosition(newPosition);
 		}
 	}
 
@@ -60,6 +66,7 @@ namespace Lyra
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseMovedEvent>(LR_BIND_EVENT_FN(&PerspectiveCameraController::OnMouseMoved));
+		dispatcher.Dispatch<MouseScrolledEvent>(LR_BIND_EVENT_FN(&PerspectiveCameraController::OnMouseScrolled));
 	}
 
 	bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent& e)
@@ -86,8 +93,33 @@ namespace Lyra
 		m_MouseLastX = mouseX;
 		m_MouseLastY = mouseY;
 
-		m_Camera.ProcessMouseMovement(xOffset, yOffset);
+		xOffset *= m_LookAtSensitivity;
+		yOffset *= m_LookAtSensitivity;
 
+		m_Camera.SetRotationOffset(xOffset, yOffset, 0.0f);
+
+		return false;
+	}
+
+	bool PerspectiveCameraController::OnMouseScrolled(MouseScrolledEvent& e)
+	{
+		if (Input::IsKeyPressed(LR_KEY_LEFT_SHIFT))
+		{
+			float currentFOV = m_Camera.GetFOV();
+			m_Camera.SetFOV(currentFOV - (float)e.GetYOffset());
+			m_LookAtSensitivity = m_ZoomSpeedFactor * currentFOV;
+			LR_CORE_INFO("Sensitivity: {0} | FOV: {1}", m_LookAtSensitivity, currentFOV);
+		}
+		else
+		{
+			m_CameraSpeed = std::clamp(
+				m_CameraSpeed + static_cast<float>(e.GetYOffset()), 
+				m_CameraMinSpeed,
+				m_CameraMaxSpeed
+			);
+			LR_CORE_INFO("Cam Speed: {0}", m_CameraSpeed);
+
+		}
 		return false;
 	}
 }

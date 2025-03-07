@@ -497,7 +497,7 @@ private:
 
 	Ref<Lyra::Texture2D> m_Texture, m_TextureSpecular, m_TransparentTexture;
 
-	Lyra::PerspectiveCameraController m_CameraController;
+	Lyra::OrthographicCameraController m_CameraController;
 
 	float m_CubeRotation;
 	float m_CubeRotationSpeed;

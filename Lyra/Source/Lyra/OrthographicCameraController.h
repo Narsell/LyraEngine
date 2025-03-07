@@ -2,9 +2,8 @@
 
 #include "Lyra/Core/Window.h"
 #include "Lyra/Core/Timestep.h"
-#include "Lyra/Renderer/Camera.h"
-#include "Lyra/Events/ApplicationEvent.h"
 #include "Lyra/Events/MouseEvent.h"
+#include "Lyra/Renderer/Camera.h"
 
 
 namespace Lyra
@@ -12,24 +11,25 @@ namespace Lyra
 	class OrthographicCameraController
 	{
 	public:
-		OrthographicCameraController(bool rotation = false);
+		OrthographicCameraController(bool rotate = false);
 
 		void OnUpdate(Timestep ts);
 
 		void OnEvent(Event& e);
 
 		const OrthographicCamera& GetCamera() const { return m_Camera; }
+	private:
+		bool OnMouseScrolled(MouseScrolledEvent& e);
 
 	private:
 		Window& m_Window;
 
 		OrthographicCamera m_Camera;
-		
-		bool m_Rotation;
-		float m_CameraRotation = 0.0f;
-		float m_ZoomSpeedFactor = 1.3f;
-		float m_CameraMoveSpeed = 3.0f;
-		float m_CameraRotationSpeed = 20.f;
-		glm::vec3 m_CameraPosition = { 0.0f, 0.0f, 2.0f };
+		glm::vec3 m_CameraInitialPos;
+		float m_CameraInitialRotation;
+		bool m_ShouldRotate;
+		float m_ZoomSpeedFactor;
+		float m_CameraMinSpeed, m_CameraMaxSpeed, m_CameraSpeed;
+		float m_CameraRotationSpeed;
 	};
 }

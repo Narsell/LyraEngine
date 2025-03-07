@@ -8,40 +8,47 @@
 
 namespace Lyra
 {
-	OrthographicCameraController::OrthographicCameraController(bool rotation)
+	OrthographicCameraController::OrthographicCameraController(bool rotate)
 		:	m_Window(Application::GetApplication().GetWindow()),
 			m_Camera(m_Window.GetAspectRatio()),
-			m_Rotation(rotation)
+			m_CameraInitialPos(0.0f, 0.0f, 2.0f),
+			m_CameraInitialRotation(0.0f),
+			m_ShouldRotate(rotate),
+			m_ZoomSpeedFactor(1.3f),
+			m_CameraMinSpeed(0.5f),
+			m_CameraMaxSpeed(20.0f),
+			m_CameraSpeed(3.0f),
+			m_CameraRotationSpeed(20.0f)
 	{
-		m_Camera.SetPosition(m_CameraPosition);
+		m_Camera.SetPosition(m_CameraInitialPos);
 	}
 
 	void OrthographicCameraController::OnUpdate(Timestep ts)
 	{
 		// Offsets
-		glm::vec3 offsetPosition = {0.0f, 0.0f, 0.0f};
+		glm::vec3 direction = {0.0f, 0.0f, 0.0f};
 		float offsetRotation = 0.0f;
 
 		// Get movement input
 		if (Input::IsKeyPressed(LR_KEY_W))
 		{
-			offsetPosition.y += 1.0f;
+			direction.y += 1.0f;
 		}
 		else if (Input::IsKeyPressed(LR_KEY_S))
 		{
-			offsetPosition.y -= 1.0f;
+			direction.y -= 1.0f;
 		}
 		if (Input::IsKeyPressed(LR_KEY_D))
 		{
-			offsetPosition.x += 1.0f;
+			direction.x += 1.0f;
 		}
 		else if (Input::IsKeyPressed(LR_KEY_A))
 		{
-			offsetPosition.x -= 1.0f;
+			direction.x -= 1.0f;
 		}
 
 		// Get rotation input
-		if (m_Rotation)
+		if (m_ShouldRotate)
 		{
 			if (Input::IsKeyPressed(LR_KEY_E))
 			{
@@ -56,27 +63,48 @@ namespace Lyra
 		}
 
 		// Set offsets if they have been modified by input
-		if (offsetPosition != glm::vec3(0.0f))
+		if (glm::length(direction) > 0.0f)
 		{
-			offsetPosition = glm::normalize(offsetPosition) * (m_CameraMoveSpeed * ts);
-			m_CameraPosition = m_Camera.GetPosition() + offsetPosition;
-			m_Camera.SetPosition(m_CameraPosition);
+			glm::vec3 newPosition = m_Camera.GetPosition() + glm::normalize(direction) * (m_CameraSpeed * ts);
+			m_Camera.SetPosition(newPosition);
 		}
 
-		if (m_Rotation && offsetRotation != 0.0f)
+		if (m_ShouldRotate && offsetRotation != 0.0f)
 		{
-			m_CameraRotation = m_Camera.GetRotation() + offsetRotation;
-			m_Camera.SetRotation(m_CameraRotation);
+			float newRotation = m_Camera.GetRotation() + offsetRotation;
+			m_Camera.SetRotation(newRotation);
 		}
-
-		// This maps our movement speed to the zoom level (More zoomed in = less speed, less zoomed in = more speed)
-		m_CameraMoveSpeed = m_ZoomSpeedFactor * m_Camera.GetZoomLevel();
-
 	}
 
 	void OrthographicCameraController::OnEvent(Event& e)
 	{
 		m_Camera.OnEvent(e);
+
+		EventDispatcher eventDispatcher(e);
+		eventDispatcher.Dispatch<MouseScrolledEvent>(LR_BIND_EVENT_FN(&OrthographicCameraController::OnMouseScrolled));
 	}
+
+	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
+	{
+		/* TODO: Adjust speed min and max values based on zoom level and then clamp speed around those. */
+		if (Input::IsKeyPressed(LR_KEY_LEFT_SHIFT))
+		{
+			float currentZoom = m_Camera.GetZoomLevel();
+			m_Camera.SetZoomLevel(currentZoom - (static_cast<float>(e.GetYOffset()) / 5.0f));
+			LR_CORE_INFO("ZoomLevel: {0}", currentZoom);
+		}
+		else
+		{
+			m_CameraSpeed = std::clamp(
+				m_CameraSpeed + static_cast<float>(e.GetYOffset()),
+				m_CameraMinSpeed,
+				m_CameraMaxSpeed
+			);
+			LR_CORE_INFO("Cam Speed: {0}", m_CameraSpeed);
+		}
+		return false;
+	}
+
+
 
 }
