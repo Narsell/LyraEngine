@@ -63,6 +63,7 @@ struct PointLight
 // Because we're working in view space instead of world space, the light's direction (equal to the camera's direction) is always (0, 0, -1)
 struct SpotLight {	
 	vec3 position;
+	vec3 direction;
 
 	float innerCutoffCosine; // Inner and outer cutoff 'angles' for this spot light
 	float outerCutoffCosine;
@@ -83,7 +84,7 @@ in vec3 v_FragViewPosition;
 uniform Material u_Material;
 
 uniform DirLight u_DirLight;
-//uniform SpotLight u_SpotLight;
+uniform SpotLight u_SpotLight;
 uniform PointLight u_PointLights[N_POINT_LIGHTS];
 
 out vec4 o_Color;
@@ -128,18 +129,15 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragmentPos, vec3 v
 
 vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragmentPos)
 {
-	// Light direction is fixed in view space.
-	vec3 lightDirection = vec3(0.0, 0.0, -1.0);
-
 	// Lighting calculations inside the shader expect a vector pointing from the fragment to the source.
-	vec3 lightToFragDirection = normalize(-fragmentPos);
+	vec3 lightToFragDirection = normalize(light.position - fragmentPos);
 	
 	// --- Attenuation factor ---
 	float dist = length(fragmentPos);
 	float distAttenuation = 1.0 / (light.constAttenuation + light.linearAttenuation * dist + light.quadAttenuation * (dist * dist));
 
 	// --- Spotlight cutoff range calculation with soft edges - Cosine of angle from camera (light) to fragment
-	float cosTheta = dot(lightToFragDirection, normalize(-lightDirection));
+	float cosTheta = dot(lightToFragDirection, normalize(-light.direction));
 	float cosEpsilon = light.innerCutoffCosine - light.outerCutoffCosine;
 	float spotLightIntensity = clamp((cosTheta - light.outerCutoffCosine) / cosEpsilon, 0.0, 1.0);
 
@@ -174,6 +172,8 @@ void main()
 	{
 		result += CalculatePointLight(u_PointLights[i], normalVector, v_FragViewPosition, viewDirection);
 	}
+
+	result += CalculateSpotLight(u_SpotLight, normalVector, v_FragViewPosition);
 
 	o_Color = vec4(result, 1.0);
 
