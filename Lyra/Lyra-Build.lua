@@ -27,6 +27,7 @@ project "Lyra"
       "%{IncludeDir.ImGui}",
       "%{IncludeDir.glm}",
       "%{IncludeDir.stb_image}",
+      "%{IncludeDir.assimp}",
    }
 
    links
@@ -58,22 +59,27 @@ project "Lyra"
        }
 
    filter "configurations:Debug"
-       defines
-       {
-        "LR_DEBUG",
-        "LR_ENABLE_ASSERTS"
-       }
+       defines { "LR_DEBUG", "LR_ENABLE_ASSERTS" }
+       links { "Vendor/assimp/lib/Debug/assimp-vc143-mtd.lib" }
        runtime "Debug"
        symbols "On"
 
    filter "configurations:Release"
        defines { "LR_RELEASE" }
+       links { "Vendor/assimp/lib/Release/assimp-vc143-mt.lib" }
        runtime "Release"
        optimize "On"
        symbols "On"
 
    filter "configurations:Dist"
        defines { "LR_DIST" }
+       links { "Vendor/assimp/lib/Release/assimp-vc143-mt.dll" }
        runtime "Release"
        optimize "On"
        symbols "Off"
+
+   filter "configurations:*"
+        postbuildcommands {
+            '{MKDIR} ../Binaries/%{OutputDir}/App',
+            '{COPYDIR} ./Vendor/assimp/bin/%{cfg.buildcfg}/ ../Binaries/%{OutputDir}/App/'
+        }
