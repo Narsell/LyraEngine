@@ -77,8 +77,8 @@ namespace Lyra
 			return false;
 		}
 
-		float mouseX = e.GetMouseX();
-		float mouseY = e.GetMouseY();
+		float mouseX = static_cast<float>(e.GetMouseX());
+		float mouseY = static_cast<float>(e.GetMouseY());
 
 		if (m_FirstMouseMovement)
 		{

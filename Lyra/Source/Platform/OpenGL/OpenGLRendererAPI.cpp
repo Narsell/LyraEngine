@@ -38,7 +38,9 @@ namespace Lyra
 	{
 		for (const auto& vertexBuffer : vertexArray->GetVertexBuffers())
 		{
-			glDrawArrays(GL_TRIANGLES, 0, vertexBuffer->GetVertexCount());
+			// TODO: For some reason OpenGL receives a GLsizei (typedef int) as a count for vertex count? wut
+			// Idk just keep in mind in case this cast (uint32 to int) ever becomes a problem.
+			glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertexBuffer->GetVertexCount()));
 		}
 	}
 }

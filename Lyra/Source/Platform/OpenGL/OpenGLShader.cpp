@@ -22,6 +22,13 @@ namespace Lyra
 	OpenGLShader::OpenGLShader(const std::string& filepath)
 	{
 		std::string source = ReadFile(filepath);
+
+		if (source.empty())
+		{
+			LR_CORE_FATAL("Failed to load shader source from \"{0}\"", filepath);
+			return;
+		}
+
 		auto shaderSources = PreProcess(source);
 
 		CreateShaderProgram(shaderSources);
@@ -118,21 +125,25 @@ namespace Lyra
 			GLint maxLength = 0;
 			glGetProgramiv(m_RendererId, GL_INFO_LOG_LENGTH, &maxLength);
 
-			// The maxLength includes the NULL character
-			std::vector<char> infoLog(maxLength);
-			glGetProgramInfoLog(m_RendererId, maxLength, &maxLength, &infoLog[0]);
-
-			// We don't need the program anymore.
-			glDeleteProgram(m_RendererId);
-
-			for (auto& shaderId : glShaderIds)
+			if(maxLength > 0)
 			{
-				// Don't leak the shader either.
-				glDeleteShader(shaderId);
+				// The maxLength includes the NULL character
+				std::vector<char> infoLog(maxLength);
+				glGetProgramInfoLog(m_RendererId, maxLength, &maxLength, &infoLog[0]);
+
+				// We don't need the program anymore.
+				glDeleteProgram(m_RendererId);
+
+				for (auto& shaderId : glShaderIds)
+				{
+					// Don't leak the shader either.
+					glDeleteShader(shaderId);
+				}
+
+				LR_CORE_ERROR("{0}", infoLog.data());
 			}
 
-			LR_CORE_ERROR("{0}", infoLog.data());
-			LR_CORE_ASSERT(false, "Shader program linking failed!");
+			LR_CORE_ASSERT(false, "Shader program linkage failed!");
 			return false;
 		}
 
@@ -186,10 +197,6 @@ namespace Lyra
 			// Read stream into result string.
 			in.read(&result[0], result.size());
 			in.close();
-		}
-		else
-		{
-			LR_CORE_ERROR("Couldn't load file {0}", filepath);
 		}
 
 		return result;

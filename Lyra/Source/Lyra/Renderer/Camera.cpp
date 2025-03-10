@@ -145,7 +145,7 @@ namespace Lyra
 
 	void PerspectiveCamera::RecalculateViewMatrix()
 	{
-		// Look up Gram–Schmidt process!
+		// Look up GramSchmidt process!
 		m_Forward.x = cos(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));
 		m_Forward.y = sin(glm::radians(m_Pitch));
 		m_Forward.z = sin(glm::radians(m_Yaw)) * cos(glm::radians(m_Pitch));

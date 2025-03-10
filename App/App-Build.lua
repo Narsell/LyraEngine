@@ -50,3 +50,8 @@ project "App"
        runtime "Release"
        optimize "On"
        symbols "Off"
+
+    filter "configurations:*"
+       postbuildcommands {
+           '{COPYDIR} ./Assets ../Binaries/%{OutputDir}/%{prj.name}/Assets'
+       }
