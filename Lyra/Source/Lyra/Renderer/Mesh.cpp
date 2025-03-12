@@ -57,6 +57,7 @@ namespace Lyra
 			}
 
 			shader->UploadUniform_1i(std::format("u_Material.{0}", propertyName), i);
+			shader->UploadUniform_1f("u_Material.shininess", 32.0f);
 		}
 
 		Renderer::Submit(shader, m_VertexArray, glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)));

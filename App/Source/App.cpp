@@ -6,7 +6,7 @@ class GameLayer : public Lyra::Layer
 {
 	struct DirectionalLight
 	{
-		glm::vec3 direction = glm::vec3(-1.0f, -0.5f, 0.0f);
+		glm::vec3 direction = glm::vec3(0.0, -0.5f, -1.0f);
 
 		glm::vec3 ambient	= glm::vec3(glm::vec3(0.1f, 0.1f, 0.1f));
 		glm::vec3 diffuse	= glm::vec3(1.0f);
@@ -50,74 +50,12 @@ public:
 			m_CubeRotation(0.0f),
 			m_CubeRotationSpeed(12.0f),
 			m_CubePosition(glm::vec3(0.0f, 0.0f, 0.0f)),
-			m_ShininessFactor(32.f),
+			m_CubeShininess(32.f),
 			m_LightSourceAngle(0.0f),
 			m_LightSourceSpeed(0.7f),
 			m_Model("Assets/Models/backpack/backpack.obj")
 	{ 
-
-		/* QUAD SECTION */
-		{
-			m_QuadVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
-
-			float quadVertices[5 * 4] =
-			{
-				 0.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-				 0.5f,  0.0f,  0.0f,  1.0f,  0.0f,
-				 0.5f,  0.5f,  0.0f,  1.0f,  1.0f,
-				 0.0f,  0.5f,  0.0f,  0.0f,  1.0f
-			};
-
-			Lyra::VertexLayout quadVertexLayout
-			{
-				{"a_Position", Lyra::ShaderData::Float3},
-				{"a_TexCoord", Lyra::ShaderData::Float2}
-			};
-			Ref<Lyra::VertexBuffer> squareVertexBuffer(Lyra::VertexBuffer::Create(quadVertices, sizeof(quadVertices), quadVertexLayout));
-			m_QuadVertexArray->AddVertexBuffer(squareVertexBuffer);
-
-			uint32_t quadIndices[6] =
-			{
-				0, 1, 2, 2, 3, 0
-			};
-
-			Ref<Lyra::IndexBuffer> quadIndexBuffer(Lyra::IndexBuffer::Create(quadIndices, 6));
-			m_QuadVertexArray->AddIndexBuffer(quadIndexBuffer);
-
-			std::string quadVertexSrc = R"(
-				#version 330 core
-			
-				layout(location=0) in vec3 a_Position;
-				out vec3 v_Position;
-
-				uniform mat4 u_VP;
-				uniform mat4 u_Model;
-				uniform vec4 u_Color;
-			
-				void main()
-				{
-					v_Position = a_Position;
-					gl_Position = u_VP * u_Model * vec4(a_Position, 1.0);
-				};
-			)";
-
-			std::string quadFragmentSrc = R"(
-				#version 330 core
-			
-				out vec4 o_Color;
-				in vec3 v_Position;
-
-				uniform vec4 u_Color;
-
-				void main()
-				{
-					o_Color = u_Color;
-				};
-			)";
-
-			m_QuadShader = Lyra::Shader::Create("Quad Shader", quadVertexSrc, quadFragmentSrc);
-		}
-		
+	
 		/* PHONG MODEL CUBE SECTION */
 		{
 			/* Pos (x, y, z), Normals (x, y, z), Texture Coords (x, y) */
@@ -236,20 +174,17 @@ public:
 		}
 
 		// Shader creation
-		m_TextureShader = Lyra::Shader::Create("Assets/Shaders/Texture.glsl");
 		m_PhongShader = Lyra::Shader::Create("Assets/Shaders/PhongModel.glsl");
 		m_ModelShader = Lyra::Shader::Create("Assets/Shaders/Model.glsl");
 		m_LightSourceShader = Lyra::Shader::Create("Assets/Shaders/LightSource.glsl");
 
 		// Creating and setting textures
-		m_Texture = Lyra::Texture2D::Create("Assets/Textures/Container.png");
-		m_TextureSpecular = Lyra::Texture2D::Create("Assets/Textures/Container_specular.png");
-		m_TransparentTexture = Lyra::Texture2D::Create("Assets/Textures/TransparentGreen.png");
+		m_BoxTexture = Lyra::Texture2D::Create("Assets/Textures/Container.png");
+		m_BoxTextureSpecular = Lyra::Texture2D::Create("Assets/Textures/Container_specular.png");
 		//m_Texture->Bind(0);
 		//m_TextureSpecular->Bind(1);
-		m_TransparentTexture->Bind(2);
 
-		// Setting up point lights initial positions.
+		// Setting up point lights initial values.
 		{
 			m_PointLights[0].position = glm::vec3(-7.0f, 8.0f, -1.0f);
 			m_PointLights[0].diffuse = glm::vec3(1.0f, 0.3f, 0.2f);
@@ -284,24 +219,23 @@ public:
 
 		glm::vec3 pointLightsCenter[4] = {
 			{ -7.0f, 8.0f, -1.0   },
-			{ 7.0f, 8.0f, -1.0f	  },
+			{ 0.0f, 0.0f, -1.0f	  },
 			{ -7.0f, -8.0f, -1.0f },
 			{ 7.0f, -8.0f, -1.0f  }
 		};
 
 		/* Light source orbit */
-		//for (int i = 0; i < m_PointLights.size(); i++)
-		//{
-		//	m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
-		//	m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-		//	m_PointLights[i].position = pointLightsCenter[i] + glm::vec3(
-		//		6.0f * glm::cos(m_LightSourceAngle),
-		//		6.0f * glm::sin(m_LightSourceAngle),
-		//		0.0f
-		//	);
-
-		//}
-
+		for (int i = 0; i < m_PointLights.size(); i++)
+		{
+			m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
+			m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
+			m_PointLights[i].position = pointLightsCenter[i] + glm::vec3(
+				6.0f * glm::cos(m_LightSourceAngle),
+				6.0f * glm::sin(m_LightSourceAngle),
+				0.0f
+			);
+		}
+		
 		/* Cube rotation */
 		m_CubeRotation += m_CubeRotationSpeed * ts.GetSeconds();
 		m_CubeRotation = glm::mod(m_CubeRotation, 360.f);
@@ -315,11 +249,6 @@ public:
 
 
 		/* Actual rendering happens here */
-
-		m_TextureShader->Bind();
-
-		m_TextureShader->UploadUniform_1i("u_Texture", 2);
-		Lyra::Renderer::Submit(m_TextureShader, m_QuadVertexArray, glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f)));
 			
 		/* Render point light sources (Non-indexed) */
 		m_LightSourceShader->Bind();
@@ -335,8 +264,8 @@ public:
 
 		}
 
+		/* Render main cube (Non-indexed) */
 		//m_PhongShader->Bind();
-		///* Render main cube (Non-indexed) */
 		//Lyra::Renderer::Submit(
 		//	m_PhongShader,
 		//	m_CubeVertexArray,
@@ -344,21 +273,6 @@ public:
 		//	false
 		//);
 
-		/* Render grid of cubes */
-		//for (float y = -10; y < 10; y++)
-		//{
-		//	for (float x = -10; x < 10; x++)
-		//	{
-		//		glm::vec3 position = glm::vec3(x * 1.1f, y * 1.1f, (((int)x % 2 == 0) ? m_CubePosition.z + 1 : m_CubePosition.z - 1) - 5.0f);
-
-		//		Lyra::Renderer::Submit(
-		//			m_PhongShader,
-		//			m_CubeVertexArray,
-		//			glm::translate(glm::mat4(1.0f), position),
-		//			false
-		//		);
-		//	}
-		//}
 		m_ModelShader->Bind();
 		m_Model.Draw(m_ModelShader);
 
@@ -442,7 +356,6 @@ public:
 
 		if (ImGui::CollapsingHeader("Flash Light"))
 		{
-
 			ImGui::SliderFloat("Inner Ang", &m_SpotLight.innerCutoffAngle, 0.0f, m_SpotLight.outerCutoffAngle);
 			ImGui::SliderFloat("Outer Ang", &m_SpotLight.outerCutoffAngle, m_SpotLight.innerCutoffAngle, 90.0f);
 			ImGui::ColorEdit3("Ambient##FlashLight", &m_SpotLight.ambient.x);
@@ -453,9 +366,8 @@ public:
 			ImGui::DragFloat("Quadratic Attenuation##FlashLight", &m_SpotLight.quadAttenuation, 0.01f, 0.0f, 1.0f);
 		}
 
-		ImGui::Text("Material");
-		ImGui::SliderFloat("Shininess", &m_ShininessFactor, 2.f, 256.f);
-		ImGui::Text("Obj Properties");
+		ImGui::Text("Cube");
+		ImGui::SliderFloat("Shininess", &m_CubeShininess, 2.f, 256.f);
 		ImGui::DragFloat3("Cube Position", &m_CubePosition.x, 0.1f);
 		ImGui::SliderFloat("Cube Rot Speed", &m_CubeRotationSpeed, 0.0f, 100.0f);
 		ImGui::Text("Camera Position:");
@@ -496,25 +408,21 @@ public:
 	}
 
 private:
-	Ref<Lyra::VertexArray> m_QuadVertexArray;
+	Lyra::PerspectiveCameraController m_CameraController;
+	
+	Lyra::Model m_Model;
+	
 	Ref<Lyra::VertexArray> m_CubeVertexArray;
 	Ref<Lyra::VertexArray> m_LightSourceCubeVertexArray;
-	Ref<Lyra::Shader> m_QuadShader;
-	Ref<Lyra::Shader> m_TextureShader;
 	Ref<Lyra::Shader> m_PhongShader;
 	Ref<Lyra::Shader> m_ModelShader;
 	Ref<Lyra::Shader> m_LightSourceShader;
 
-	Lyra::Model m_Model;
-
-	Ref<Lyra::Texture2D> m_Texture, m_TextureSpecular, m_TransparentTexture;
-
-	Lyra::PerspectiveCameraController m_CameraController;
-
+	Ref<Lyra::Texture2D> m_BoxTexture, m_BoxTextureSpecular;
 	float m_CubeRotation;
 	float m_CubeRotationSpeed;
 	glm::vec3 m_CubePosition;
-	float m_ShininessFactor;
+	float m_CubeShininess;
 
 	DirectionalLight m_DirLight;
 	std::array<PointLight, 4> m_PointLights;

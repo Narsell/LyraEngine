@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <unordered_set>
 
 #include "Lyra/Core/Core.h"
 #include "Lyra/Renderer/Mesh.h"
@@ -31,9 +30,6 @@ namespace Lyra
 	private:
 		std::vector<Scope<Mesh>> m_Meshes;
 		std::string m_Directory;
-
-		std::vector<MeshTexture2D> m_TexturesLoaded;
-
 	};
 
 }

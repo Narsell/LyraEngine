@@ -4,8 +4,6 @@
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
-#include <glm/gtc/type_ptr.hpp>
-
 #include "Model.h"
 
 namespace Lyra
@@ -74,16 +72,11 @@ namespace Lyra
 		for (uint32_t i = 0; i < mesh->mNumVertices; i++)
 		{
 			Vertex vertex;
-			vertex.Position.x = mesh->mVertices[i].x;
-			vertex.Position.y = mesh->mVertices[i].y;
-			vertex.Position.z = mesh->mVertices[i].z;
-			vertex.Normal.x = mesh->mNormals[i].x;
-			vertex.Normal.y = mesh->mNormals[i].y;
-			vertex.Normal.z = mesh->mNormals[i].z;
+			vertex.Position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+			vertex.Normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
 			if (mesh->mTextureCoords[0])
 			{
-				vertex.TexCoord.x = mesh->mTextureCoords[0][i].x;
-				vertex.TexCoord.y = mesh->mTextureCoords[0][i].y;
+				vertex.TexCoord = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
 			}
 			vertices.push_back(vertex);
 		}
