@@ -52,7 +52,8 @@ public:
 			m_CubePosition(glm::vec3(0.0f, 0.0f, 0.0f)),
 			m_ShininessFactor(32.f),
 			m_LightSourceAngle(0.0f),
-			m_LightSourceSpeed(0.7f)
+			m_LightSourceSpeed(0.7f),
+			m_Model("Assets/Models/backpack/backpack.obj")
 	{ 
 
 		/* QUAD SECTION */
@@ -80,7 +81,7 @@ public:
 				0, 1, 2, 2, 3, 0
 			};
 
-			Ref<Lyra::IndexBuffer> quadIndexBuffer(Lyra::IndexBuffer::Create(quadIndices, sizeof(quadIndices)));
+			Ref<Lyra::IndexBuffer> quadIndexBuffer(Lyra::IndexBuffer::Create(quadIndices, 6));
 			m_QuadVertexArray->AddIndexBuffer(quadIndexBuffer);
 
 			std::string quadVertexSrc = R"(
@@ -237,14 +238,15 @@ public:
 		// Shader creation
 		m_TextureShader = Lyra::Shader::Create("Assets/Shaders/Texture.glsl");
 		m_PhongShader = Lyra::Shader::Create("Assets/Shaders/PhongModel.glsl");
+		m_ModelShader = Lyra::Shader::Create("Assets/Shaders/Model.glsl");
 		m_LightSourceShader = Lyra::Shader::Create("Assets/Shaders/LightSource.glsl");
 
 		// Creating and setting textures
 		m_Texture = Lyra::Texture2D::Create("Assets/Textures/Container.png");
 		m_TextureSpecular = Lyra::Texture2D::Create("Assets/Textures/Container_specular.png");
 		m_TransparentTexture = Lyra::Texture2D::Create("Assets/Textures/TransparentGreen.png");
-		m_Texture->Bind(0);
-		m_TextureSpecular->Bind(1);
+		//m_Texture->Bind(0);
+		//m_TextureSpecular->Bind(1);
 		m_TransparentTexture->Bind(2);
 
 		// Setting up point lights initial positions.
@@ -288,17 +290,17 @@ public:
 		};
 
 		/* Light source orbit */
-		for (int i = 0; i < m_PointLights.size(); i++)
-		{
-			m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
-			m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-			m_PointLights[i].position = pointLightsCenter[i] + glm::vec3(
-				6.0f * glm::cos(m_LightSourceAngle),
-				6.0f * glm::sin(m_LightSourceAngle),
-				0.0f
-			);
+		//for (int i = 0; i < m_PointLights.size(); i++)
+		//{
+		//	m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
+		//	m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
+		//	m_PointLights[i].position = pointLightsCenter[i] + glm::vec3(
+		//		6.0f * glm::cos(m_LightSourceAngle),
+		//		6.0f * glm::sin(m_LightSourceAngle),
+		//		0.0f
+		//	);
 
-		}
+		//}
 
 		/* Cube rotation */
 		m_CubeRotation += m_CubeRotationSpeed * ts.GetSeconds();
@@ -311,7 +313,13 @@ public:
 		// Set the scene variables (only camera at this point)
 		Lyra::Renderer::BeginScene(m_CameraController.GetCamera());
 
+
 		/* Actual rendering happens here */
+
+		m_TextureShader->Bind();
+
+		m_TextureShader->UploadUniform_1i("u_Texture", 2);
+		Lyra::Renderer::Submit(m_TextureShader, m_QuadVertexArray, glm::rotate(glm::mat4(1.0f), glm::radians(25.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(0.0f)));
 			
 		/* Render point light sources (Non-indexed) */
 		m_LightSourceShader->Bind();
@@ -327,67 +335,68 @@ public:
 
 		}
 
-		m_PhongShader->Bind();
-
-		/* Render main cube (Non-indexed) */
-		Lyra::Renderer::Submit(
-			m_PhongShader,
-			m_CubeVertexArray,
-			glm::rotate(glm::mat4(1.0f), glm::radians(m_CubeRotation), glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f))) * glm::translate(glm::mat4(1.0f), m_CubePosition),
-			false
-		);
+		//m_PhongShader->Bind();
+		///* Render main cube (Non-indexed) */
+		//Lyra::Renderer::Submit(
+		//	m_PhongShader,
+		//	m_CubeVertexArray,
+		//	glm::rotate(glm::mat4(1.0f), glm::radians(m_CubeRotation), glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f))) * glm::translate(glm::mat4(1.0f), m_CubePosition),
+		//	false
+		//);
 
 		/* Render grid of cubes */
-		for (float y = -10; y < 10; y++)
-		{
-			for (float x = -10; x < 10; x++)
-			{
-				glm::vec3 position = glm::vec3(x * 1.1f, y * 1.1f, (((int)x % 2 == 0) ? m_CubePosition.z + 1 : m_CubePosition.z - 1) - 5.0f);
+		//for (float y = -10; y < 10; y++)
+		//{
+		//	for (float x = -10; x < 10; x++)
+		//	{
+		//		glm::vec3 position = glm::vec3(x * 1.1f, y * 1.1f, (((int)x % 2 == 0) ? m_CubePosition.z + 1 : m_CubePosition.z - 1) - 5.0f);
 
-				Lyra::Renderer::Submit(
-					m_PhongShader,
-					m_CubeVertexArray,
-					glm::translate(glm::mat4(1.0f), position),
-					false
-				);
-			}
-		}
+		//		Lyra::Renderer::Submit(
+		//			m_PhongShader,
+		//			m_CubeVertexArray,
+		//			glm::translate(glm::mat4(1.0f), position),
+		//			false
+		//		);
+		//	}
+		//}
+		m_ModelShader->Bind();
+		m_Model.Draw(m_ModelShader);
 
 		/* Directional light uniforms */
-		m_PhongShader->UploadUniform_3f("u_DirLight.direction", glm::mat3(m_CameraController.GetCamera().GetViewMatrix()) * m_DirLight.direction);
-		m_PhongShader->UploadUniform_3f("u_DirLight.ambient", m_DirLight.ambient);
-		m_PhongShader->UploadUniform_3f("u_DirLight.diffuse", m_DirLight.diffuse);
-		m_PhongShader->UploadUniform_3f("u_DirLight.specular", m_DirLight.specular);
+		m_ModelShader->UploadUniform_3f("u_DirLight.direction", glm::mat3(m_CameraController.GetCamera().GetViewMatrix()) * m_DirLight.direction);
+		m_ModelShader->UploadUniform_3f("u_DirLight.ambient", m_DirLight.ambient);
+		m_ModelShader->UploadUniform_3f("u_DirLight.diffuse", m_DirLight.diffuse);
+		m_ModelShader->UploadUniform_3f("u_DirLight.specular", m_DirLight.specular);
 
 		/* Point light uniforms*/
 		for (int i = 0; i < m_PointLights.size(); i++)
 		{
-			m_PhongShader->UploadUniform_3f(std::format("u_PointLights[{0}].position", i), glm::vec3(m_CameraController.GetCamera().GetViewMatrix() * glm::vec4(m_PointLights[i].position, 1.0f)));
-			m_PhongShader->UploadUniform_3f(std::format("u_PointLights[{0}].ambient", i), m_PointLights[i].ambient);
-			m_PhongShader->UploadUniform_3f(std::format("u_PointLights[{0}].diffuse", i), m_PointLights[i].diffuse);
-			m_PhongShader->UploadUniform_3f(std::format("u_PointLights[{0}].specular", i), m_PointLights[i].specular);
-			m_PhongShader->UploadUniform_1f(std::format("u_PointLights[{0}].constAttenuation", i), m_PointLights[i].constAttenuation);
-			m_PhongShader->UploadUniform_1f(std::format("u_PointLights[{0}].linearAttenuation", i), m_PointLights[i].linearAttenuation);
-			m_PhongShader->UploadUniform_1f(std::format("u_PointLights[{0}].quadAttenuation", i), m_PointLights[i].quadAttenuation);
+			m_ModelShader->UploadUniform_3f(std::format("u_PointLights[{0}].position", i), glm::vec3(m_CameraController.GetCamera().GetViewMatrix() * glm::vec4(m_PointLights[i].position, 1.0f)));
+			m_ModelShader->UploadUniform_3f(std::format("u_PointLights[{0}].ambient", i), m_PointLights[i].ambient);
+			m_ModelShader->UploadUniform_3f(std::format("u_PointLights[{0}].diffuse", i), m_PointLights[i].diffuse);
+			m_ModelShader->UploadUniform_3f(std::format("u_PointLights[{0}].specular", i), m_PointLights[i].specular);
+			m_ModelShader->UploadUniform_1f(std::format("u_PointLights[{0}].constAttenuation", i), m_PointLights[i].constAttenuation);
+			m_ModelShader->UploadUniform_1f(std::format("u_PointLights[{0}].linearAttenuation", i), m_PointLights[i].linearAttenuation);
+			m_ModelShader->UploadUniform_1f(std::format("u_PointLights[{0}].quadAttenuation", i), m_PointLights[i].quadAttenuation);
 		}
 
 		/* Spot light uniforms */
-		m_PhongShader->UploadUniform_3f("u_SpotLight.position", m_SpotLight.position);
-		m_PhongShader->UploadUniform_3f("u_SpotLight.direction", m_SpotLight.direction);
-		m_PhongShader->UploadUniform_1f("u_SpotLight.innerCutoffCosine", glm::cos(glm::radians(m_SpotLight.innerCutoffAngle)));
-		m_PhongShader->UploadUniform_1f("u_SpotLight.outerCutoffCosine", glm::cos(glm::radians(m_SpotLight.outerCutoffAngle)));
-		m_PhongShader->UploadUniform_3f("u_SpotLight.ambient", m_SpotLight.ambient);
-		m_PhongShader->UploadUniform_3f("u_SpotLight.diffuse", m_SpotLight.diffuse);
-		m_PhongShader->UploadUniform_3f("u_SpotLight.specular", m_SpotLight.specular);
-		m_PhongShader->UploadUniform_1f("u_SpotLight.constAttenuation", m_SpotLight.constAttenuation);
-		m_PhongShader->UploadUniform_1f("u_SpotLight.linearAttenuation", m_SpotLight.linearAttenuation);
-		m_PhongShader->UploadUniform_1f("u_SpotLight.quadAttenuation", m_SpotLight.quadAttenuation);
+		m_ModelShader->UploadUniform_3f("u_SpotLight.position", m_SpotLight.position);
+		m_ModelShader->UploadUniform_3f("u_SpotLight.direction", m_SpotLight.direction);
+		m_ModelShader->UploadUniform_1f("u_SpotLight.innerCutoffCosine", glm::cos(glm::radians(m_SpotLight.innerCutoffAngle)));
+		m_ModelShader->UploadUniform_1f("u_SpotLight.outerCutoffCosine", glm::cos(glm::radians(m_SpotLight.outerCutoffAngle)));
+		m_ModelShader->UploadUniform_3f("u_SpotLight.ambient", m_SpotLight.ambient);
+		m_ModelShader->UploadUniform_3f("u_SpotLight.diffuse", m_SpotLight.diffuse);
+		m_ModelShader->UploadUniform_3f("u_SpotLight.specular", m_SpotLight.specular);
+		m_ModelShader->UploadUniform_1f("u_SpotLight.constAttenuation", m_SpotLight.constAttenuation);
+		m_ModelShader->UploadUniform_1f("u_SpotLight.linearAttenuation", m_SpotLight.linearAttenuation);
+		m_ModelShader->UploadUniform_1f("u_SpotLight.quadAttenuation", m_SpotLight.quadAttenuation);
 
 		/* Cube material uniforms */
-		m_PhongShader->Bind();
-		m_PhongShader->UploadUniform_1i("u_Material.diffuse", 0);
-		m_PhongShader->UploadUniform_1i("u_Material.specular", 1);
-		m_PhongShader->UploadUniform_1f("u_Material.shininess", m_ShininessFactor);
+		//m_PhongShader->Bind();
+		//m_PhongShader->UploadUniform_1i("u_Material.diffuse", 0);
+		//m_PhongShader->UploadUniform_1i("u_Material.specular", 1);
+		//m_PhongShader->UploadUniform_1f("u_Material.shininess", m_ShininessFactor);
 
 		Lyra::Renderer::EndScene();
 
@@ -493,11 +502,14 @@ private:
 	Ref<Lyra::Shader> m_QuadShader;
 	Ref<Lyra::Shader> m_TextureShader;
 	Ref<Lyra::Shader> m_PhongShader;
+	Ref<Lyra::Shader> m_ModelShader;
 	Ref<Lyra::Shader> m_LightSourceShader;
+
+	Lyra::Model m_Model;
 
 	Ref<Lyra::Texture2D> m_Texture, m_TextureSpecular, m_TransparentTexture;
 
-	Lyra::OrthographicCameraController m_CameraController;
+	Lyra::PerspectiveCameraController m_CameraController;
 
 	float m_CubeRotation;
 	float m_CubeRotationSpeed;

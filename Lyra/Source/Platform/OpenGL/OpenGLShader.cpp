@@ -99,7 +99,7 @@ namespace Lyra
 				// We don't need the shader anymore.
 				glDeleteShader(shaderId);
 
-				LR_CORE_ERROR("{0}", infoLog.data());
+				LR_CORE_ERROR("Shader {0}: {1}", m_Name, infoLog.data());
 				LR_CORE_ASSERT(false, "Shader compilation failed!");
 				return false;
 			}

@@ -73,7 +73,7 @@ project "Lyra"
 
    filter "configurations:Dist"
        defines { "LR_DIST" }
-       links { "Vendor/assimp/lib/Release/assimp-vc143-mt.dll" }
+       links { "Vendor/assimp/lib/Release/assimp-vc143-mt.lib" }
        runtime "Release"
        optimize "On"
        symbols "Off"

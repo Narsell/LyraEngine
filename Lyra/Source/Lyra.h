@@ -35,6 +35,7 @@
 #include "Lyra/Renderer/Shader.h"
 #include "Lyra/Renderer/Texture.h"
 #include "Lyra/Renderer/Camera.h"
+#include "Lyra/Renderer/Model.h"
 
 /* MATH */
 #include <glm/glm.hpp>
