@@ -19,22 +19,25 @@ namespace Lyra
 		}
 	}
 
-	Model::Model(const std::string& path)
+	Model::Model(const std::string& path, const Ref<Shader>& shader)
+		: 	m_Shader(shader)
 	{
 		LoadModel(path);
 	}
 
-	void Model::Draw(Ref<Shader>& shader)
+	void Model::Draw()
 	{
 		for (auto& mesh : m_Meshes)
 		{
-			mesh->Draw(shader);
+			mesh->Draw();
 		}
 	}
 
 	void Model::LoadModel(std::string path)
 	{
 		Assimp::Importer importer;
+
+		// TODO: Expose import settings to API (Probably another class like a model factory)
 		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -62,73 +65,97 @@ namespace Lyra
 		}
 	}
 
-	void Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
+	void Model::ProcessMesh(aiMesh* assimpMesh, const aiScene* scene)
 	{
-		std::vector<Vertex> vertices;
-		std::vector<uint32_t> indices;
-		std::vector<MeshTexture2D> textures;
-
 		/* Process vertices */
-		for (uint32_t i = 0; i < mesh->mNumVertices; i++)
+		std::vector<Vertex> vertices;
+		for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
 		{
 			Vertex vertex;
-			vertex.Position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
-			vertex.Normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
-			if (mesh->mTextureCoords[0])
+			vertex.Position = glm::vec3(assimpMesh->mVertices[i].x, assimpMesh->mVertices[i].y, assimpMesh->mVertices[i].z);
+			vertex.Normal = glm::vec3(assimpMesh->mNormals[i].x, assimpMesh->mNormals[i].y, assimpMesh->mNormals[i].z);
+			if (assimpMesh->mTextureCoords[0])
 			{
-				vertex.TexCoord = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
+				vertex.TexCoord = glm::vec2(assimpMesh->mTextureCoords[0][i].x, assimpMesh->mTextureCoords[0][i].y);
 			}
 			vertices.push_back(vertex);
 		}
 
 		/* Process indices */
-		for (uint32_t i = 0; i < mesh->mNumFaces; i++)
+		std::vector<uint32_t> indices;
+		for (uint32_t i = 0; i < assimpMesh->mNumFaces; i++)
 		{
-			aiFace face = mesh->mFaces[i];
+			aiFace face = assimpMesh->mFaces[i];
 			for (uint32_t j = 0; j < face.mNumIndices; j++)
 			{
 				indices.emplace_back(face.mIndices[j]);
 			}
 		}
 
-		/* Process materials (textures) */
-		if (mesh->mMaterialIndex >= 0)
+		/* Process materials */
+		Ref<Material> material;
+		if (assimpMesh->mMaterialIndex >= 0)
 		{
-			aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-			std::vector<MeshTexture2D> diffuseMaps = LoadMaterialTextures(material, TextureType::DIFFUSE);
-			textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+			// Get textures from assimp material
+			aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
+			std::vector<Ref<Texture2D>> textures = LoadMaterialTextures(assimpMaterial, assimpMesh);
 
-			std::vector<MeshTexture2D> specularMaps = LoadMaterialTextures(material, TextureType::SPECULAR);
-			textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-		}
-		m_Meshes.emplace_back(std::make_unique<Mesh>("DefaultName", vertices, indices, textures));
-	}
-
-	std::vector<MeshTexture2D> Model::LoadMaterialTextures(aiMaterial* material, TextureType type)
-	{
-		std::vector<MeshTexture2D> textures;
-
-		aiTextureType textureType = GetAssimpTextureType(type);
-		for (uint32_t i = 0; i < material->GetTextureCount(textureType); i++)
-		{
-			aiString filename;
-			material->GetTexture(textureType, i, &filename);
-
-			MeshTexture2D meshTexture;
-			// TODO: Check this for forward/bakwards slashes shenanigans
-			std::basic_string texturePath = std::format("{0}/{1}", m_Directory, filename.C_Str());
+			// Detect if a material with an identical hash exists.
+			Material newMaterial = Material(m_Shader, textures);
+			size_t materialHash = newMaterial.GetHash();
 			
-			bool isMeshAlreadyLoaded = Texture2D::s_TexturesLoaded.find(texturePath) != Texture2D::s_TexturesLoaded.end();
-
-			meshTexture.Texture = Texture2D::Create(texturePath);
-			meshTexture.Type = type;
-			textures.push_back(meshTexture);
-
-			if (!isMeshAlreadyLoaded)
+			if (m_Materials.find(materialHash) == m_Materials.end())
 			{
-				meshTexture.Texture->Bind(static_cast<int>(type) - 1);
+				material = make_shared<Material>(m_Shader, textures);
+				m_Materials[materialHash] = material;
+			}
+			else
+			{
+				LR_CORE_TRACE("Skipping material '{0}' from mesh '{1}', already loaded.", assimpMaterial->GetName().C_Str(), assimpMesh->mName.C_Str());
+				material = m_Materials[materialHash];
 			}
 		}
+		m_Meshes.emplace_back(std::make_unique<Mesh>("DefaultName", vertices, indices, material));
+	}
+
+	std::vector<Ref<Texture2D>> Model::LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh)
+	{
+		std::vector<Ref<Texture2D>> textures;
+
+		for (uint16_t i = 1; i < Utils::GetTotalTextureTypeCount(); i++)
+		{
+			if (!Utils::IsValidTextureType(i))
+			{
+				LR_CORE_ERROR("Trying to query texture count of TextureType enum index '{0}'. This should never happen!", i);
+				continue; 
+			}
+
+			TextureType internalTextType = static_cast<TextureType>(i);
+			aiTextureType assimpTextType = GetAssimpTextureType(internalTextType);
+			uint32_t textureCount = material->GetTextureCount(assimpTextType);
+
+			for (uint32_t i = 0; i < textureCount; i++)
+			{
+				aiString filename;
+				material->GetTexture(assimpTextType, i, &filename);
+
+				// TODO: Check this for forward/bakwards slashes shenanigans (normalize paths)
+				std::basic_string texturePath = std::format("{0}/{1}", m_Directory, filename.C_Str());
+				bool isMeshAlreadyLoaded = Texture2D::s_TexturesLoaded.find(texturePath) != Texture2D::s_TexturesLoaded.end();
+
+				Ref<Texture2D> meshTexture;
+				meshTexture = Texture2D::Create(texturePath, internalTextType);
+
+				textures.push_back(meshTexture);
+
+				if (!isMeshAlreadyLoaded)
+				{
+					LR_CORE_TRACE("{0} {1} texture map(s) loaded from mesh '{2}' and material '{3}'", textureCount, Utils::TextureTypeToString(internalTextType), assimpMesh->mName.C_Str(), material->GetName().C_Str());
+					meshTexture->Bind(Utils::GetTextureTypeSlot(meshTexture->GetType()));
+				}
+			}
+		}
+
 		return textures;
 	}
 

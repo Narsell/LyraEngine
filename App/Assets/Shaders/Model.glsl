@@ -1,5 +1,5 @@
 #type vertex
-#version 330 core
+#version 420 core
 
 layout(location=0) in vec3 a_Position;
 layout(location=1) in vec3 a_Normal;
@@ -27,11 +27,11 @@ void main()
 };
 
 #type fragment
-#version 330 core
+#version 420 core
 
 struct Material {
-    sampler2D diffuse1;
-    sampler2D specular1;
+    layout(binding = 0) sampler2D diffuse;
+    layout(binding = 1) sampler2D specular;
     float shininess;
 }; 
 
@@ -44,7 +44,7 @@ struct DirLight
 	vec3 specular;
 };
 
-#define N_POINT_LIGHTS 4  
+#define N_POINT_LIGHTS 2  
 
 struct PointLight
 {
@@ -99,9 +99,9 @@ vec3 CalculateDirLight(DirLight light, vec3 normal, vec3 viewDirection)
 	vec3 reflectDirection = reflect(-lightDirection, normal);
 	float specularFactor = pow(max(dot(viewDirection, reflectDirection), 0.0), u_Material.shininess);
 
-	vec3 diffuse  = light.diffuse  * diffuseFactor * vec3(texture(u_Material.diffuse1, v_TexCoord));
-	vec3 ambient  = light.ambient  * vec3(texture(u_Material.diffuse1, v_TexCoord));
-	vec3 specular = light.specular * specularFactor * vec3(texture(u_Material.specular1, v_TexCoord));
+	vec3 diffuse  = light.diffuse  * diffuseFactor * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 ambient  = light.ambient  * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 specular = light.specular * specularFactor * vec3(texture(u_Material.diffuse, v_TexCoord));
 
 	return diffuse + ambient + specular;
 }
@@ -119,9 +119,9 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragmentPos, vec3 v
 	float distance = length(light.position - fragmentPos);
 	float distAttenuation = 1.0 / (light.constAttenuation + light.linearAttenuation * distance + light.quadAttenuation * (distance * distance));
 
-	vec3 ambient  = distAttenuation * light.ambient  * vec3(texture(u_Material.diffuse1, v_TexCoord));
-	vec3 diffuse  = distAttenuation * light.diffuse  * diffuseFactor * vec3(texture(u_Material.diffuse1, v_TexCoord));
-	vec3 specular = distAttenuation * light.specular * specularFactor * vec3(texture(u_Material.specular1, v_TexCoord));
+	vec3 ambient  = distAttenuation * light.ambient  * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 diffuse  = distAttenuation * light.diffuse  * diffuseFactor * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 specular = distAttenuation * light.specular * specularFactor * vec3(texture(u_Material.diffuse, v_TexCoord));
 
 	return diffuse + ambient + specular;
 
@@ -153,9 +153,9 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragmentPos)
 	float specularFactor = pow(max(dot(viewDirection, reflectionDirection), 0.0), u_Material.shininess);
 
 	// --- Calculate color for each component ---
-	vec3 ambient  = distAttenuation * light.ambient  * vec3(texture(u_Material.diffuse1, v_TexCoord));
-	vec3 diffuse  = distAttenuation * light.diffuse  * spotLightIntensity * diffuseFactor * vec3(texture(u_Material.diffuse1, v_TexCoord));
-	vec3 specular = distAttenuation * light.specular * spotLightIntensity * specularFactor * vec3(texture(u_Material.specular1, v_TexCoord));
+	vec3 ambient  = distAttenuation * light.ambient  * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 diffuse  = distAttenuation * light.diffuse  * spotLightIntensity * diffuseFactor * vec3(texture(u_Material.diffuse, v_TexCoord));
+	vec3 specular = distAttenuation * light.specular * spotLightIntensity * specularFactor * vec3(texture(u_Material.diffuse, v_TexCoord));
 
 	return diffuse + ambient + specular;
 }

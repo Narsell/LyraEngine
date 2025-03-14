@@ -16,6 +16,8 @@ namespace Lyra
 	public:
 		virtual ~Shader() = default;
 
+		virtual size_t GetHash() const = 0;
+
 		virtual void UploadUniform_1i(const std::string& name, int value) = 0;
 		virtual void UploadUniform_1f(const std::string& name, float value) = 0;
 

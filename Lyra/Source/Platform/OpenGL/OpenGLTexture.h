@@ -20,7 +20,7 @@ namespace Lyra
 	class OpenGLTexture2D : public Texture2D
 	{
 	public:
-		OpenGLTexture2D(const std::string& path);
+		OpenGLTexture2D(const std::string& path, TextureType textureType = TextureType::NONE);
 		virtual ~OpenGLTexture2D();
 
 		virtual uint32_t GetWidth() const override { return m_Width; }
@@ -38,8 +38,6 @@ namespace Lyra
 		uint32_t m_RendererId;
 
 		std::string m_Path;
-
-
 
 	};
 

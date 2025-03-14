@@ -13,6 +13,8 @@ namespace Lyra
 		OpenGLShader(const std::string& filepath);
 		OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 
+		virtual size_t GetHash() const override { return std::hash<float>{}(static_cast<float>(m_RendererId)); }
+
 		virtual void Bind() override;
 		virtual void Unbind() override;
 

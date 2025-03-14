@@ -5,8 +5,8 @@
 
 namespace Lyra
 {
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
-		: m_Height(0.0f), m_Width(0.0f), m_RendererId(0), m_Path(path)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, TextureType textureType)
+		:	Texture2D(textureType), m_Height(0.0f), m_Width(0.0f), m_RendererId(0), m_Path(path)
 	{
 		int width, height, channels;
 
