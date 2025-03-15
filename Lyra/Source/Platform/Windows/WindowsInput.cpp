@@ -1,7 +1,7 @@
 #include "lrpch.h"
 
 #include "WindowsInput.h"
-#include "Lyra/Core/Application.h"
+#include "Core/Application.h"
 
 #include <GLFW/glfw3.h>
 

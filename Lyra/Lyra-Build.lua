@@ -21,6 +21,11 @@ project "Lyra"
    includedirs
    {
       "Source",
+      "Source/Lyra",
+      "Source/Lyra/Core",
+      "Source/Lyra/Engine",
+      "Source/Lyra/Scene",
+      "Source/Lyra/Tools",
       "%{IncludeDir.spdlog}",
       "%{IncludeDir.GLFW}",
       "%{IncludeDir.Glad}",

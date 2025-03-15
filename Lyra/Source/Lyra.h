@@ -9,33 +9,35 @@
 #include "Lyra/Core/Ref.h"
 
 /* INPUT SYSTEM */
-#include "Lyra/Input/Input.h"
-#include "Lyra/Input/KeyCodes.h"
-#include "Lyra/Input/MouseButtonCodes.h"
+#include "Lyra/Core/Input/Input.h"
+#include "Lyra/Core/Input/KeyCodes.h"
+#include "Lyra/Core/Input/MouseButtonCodes.h"
 
 /* EVENT SYSTEM */
-#include "Lyra/Events/KeyEvent.h"
-#include "Lyra/Events/ApplicationEvent.h"
-#include "Lyra/Events/MouseEvent.h"
+#include "Lyra/Core/Events/KeyEvent.h"
+#include "Lyra/Core/Events/ApplicationEvent.h"
+#include "Lyra/Core/Events/MouseEvent.h"
 
 /* CONTROLLERS */
-#include "Lyra/OrthographicCameraController.h"
-#include "Lyra/PerspectiveCameraController.h"
+#include "Lyra/Scene/Camera/OrthographicCameraController.h"
+#include "Lyra/Scene/Camera/PerspectiveCameraController.h"
 
 /* LAYER SYSTEM*/
-#include "Lyra/Layer/Layer.h"
-#include "Lyra/ImGui/ImGuiLayer.h"
+#include "Lyra/Engine/Layer/Layer.h"
+#include "Lyra/Engine/Layer/ImGuiLayer.h"
 
 /* RENDERER */
-#include "Lyra/Renderer/Renderer.h"
-#include "Lyra/Renderer/RenderCommand.h"
+#include "Lyra/Engine/Renderer/Renderer.h"
+#include "Lyra/Engine/Renderer/RenderCommand.h"
+#include "Lyra/Engine/Renderer/Buffer.h"
+#include "Lyra/Engine/Renderer/VertexLayout.h"
+#include "Lyra/Engine/Renderer/Shader.h"
 
-#include "Lyra/Renderer/Buffer.h"
-#include "Lyra/Renderer/VertexLayout.h"
-#include "Lyra/Renderer/Shader.h"
-#include "Lyra/Renderer/Texture.h"
-#include "Lyra/Renderer/Camera.h"
-#include "Lyra/Renderer/Model.h"
+/* SCENE ASSETS */
+#include "Lyra/Scene/Texture.h"
+#include "Lyra/Scene/Model.h"
+#include "Lyra/Scene/Camera/Camera.h"
+
 
 /* MATH */
 #include <glm/glm.hpp>

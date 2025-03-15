@@ -1,14 +1,14 @@
 #include "lrpch.h"
 
 #include "Application.h"
-#include "Lyra/Core/Core.h"
-#include "Lyra/Events/Event.h"
-#include "Lyra/Input/Input.h"
-#include "Lyra/ImGui/ImGuiLayer.h"
-#include "Lyra/Renderer/Shader.h"
-#include "Lyra/Renderer/Buffer.h"
-#include "Lyra/Renderer/Renderer.h"
-#include "Lyra/Renderer/RenderCommand.h"
+#include "Core.h"
+#include "Events/Event.h"
+#include "Input/Input.h"
+#include "Layer/ImGuiLayer.h"
+#include "Renderer/Shader.h"
+#include "Renderer/Buffer.h"
+#include "Renderer/Renderer.h"
+#include "Renderer/RenderCommand.h"
 
 /* TODO: Temporary again! */
 #include "glfw/glfw3.h"

@@ -21,8 +21,8 @@
 #include <assimp/material.h>
 #include <assimp/postprocess.h>
 
-#include "Lyra/Core/Log.h"
-#include "Lyra/Core/Ref.h"
+#include "Core/Log.h"
+#include "Core/Ref.h"
 
 #ifdef LR_PLATFORM_WINDOWS
 	#include <Windows.h>

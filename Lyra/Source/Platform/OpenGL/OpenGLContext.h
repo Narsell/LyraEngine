@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Lyra/Core/Core.h"
-#include "Lyra/Renderer/GraphicsContext.h"
+#include "Core.h"
+#include "Renderer/GraphicsContext.h"
 
 struct GLFWwindow;
 

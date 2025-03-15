@@ -4,8 +4,8 @@
 #include <functional>
 #include <string>
 
-#include "Lyra/Core/Core.h"
-#include "Lyra/Events/Event.h"
+#include "Core.h"
+#include "Events/Event.h"
 
 namespace Lyra
 {

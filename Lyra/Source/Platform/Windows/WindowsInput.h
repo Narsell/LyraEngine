@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lyra/Input/Input.h"
+#include "Input/Input.h"
 
 namespace Lyra
 {

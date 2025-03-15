@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Lyra/Core/Core.h"
-#include "Lyra/Core/Window.h"
-#include "Lyra/Events/ApplicationEvent.h"
-#include "Lyra/Layer/LayerStack.h"
-#include "Lyra/Core/Timestep.h"
-#include "Lyra/Core/Ref.h"
+#include "Core.h"
+#include "Core/Timestep.h"
+#include "Core/Ref.h"
+#include "Core/Window.h"
+#include "Events/ApplicationEvent.h"
+#include "Layer/LayerStack.h"
 
 namespace Lyra
 {

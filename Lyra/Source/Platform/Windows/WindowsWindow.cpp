@@ -3,11 +3,11 @@
 #include <GLFW/glfw3.h>
 
 #include "WindowsWindow.h"
-#include "Lyra/Input/Input.h"
-#include "Lyra/Core/Core.h"
-#include "Lyra/Events/ApplicationEvent.h"
-#include "Lyra/Events/MouseEvent.h"
-#include "Lyra/Events/KeyEvent.h"
+#include "Core.h"
+#include "Input/Input.h"
+#include "Events/ApplicationEvent.h"
+#include "Events/MouseEvent.h"
+#include "Events/KeyEvent.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 
 namespace Lyra

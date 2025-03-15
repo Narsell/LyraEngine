@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 
 #include "OpenGLContext.h"
+#include "Core/Utils.h"
 
 namespace Lyra
 {
@@ -32,6 +33,16 @@ namespace Lyra
 		LR_CORE_TRACE("  Device: {0}", (char*)glGetString(GL_RENDERER));
 		LR_CORE_TRACE("  Version: {0}", (char*)glGetString(GL_VERSION));
 
+		GLint maxTextureSlots;
+		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureSlots);
+		LR_CORE_TRACE("  Texture Slots: {0}", maxTextureSlots);
+
+		constexpr int8_t uniqueTextureTypes = Utils::Texture::GetUniqueTypeCount();
+		if (uniqueTextureTypes > maxTextureSlots)
+		{
+			LR_CORE_WARN("Rendering device only supports {0} texture slots but there are {1} unique texture types!", maxTextureSlots, uniqueTextureTypes);
+		}
+		
 	}
 
 	void OpenGLContext::SwapBuffers()

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Lyra/Core/Ref.h"
-#include "Lyra/Renderer/Buffer.h"
+#include "Core/Ref.h"
+#include "Renderer/Buffer.h"
 
 namespace Lyra
 {

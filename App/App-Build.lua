@@ -12,6 +12,11 @@ project "App"
 
 	  -- Include Lyra
 	  "../Lyra/Source",
+      "../Lyra/Source/Lyra",
+      "../Lyra/Source/Lyra/Core",
+      "../Lyra/Source/Lyra/Engine",
+      "../Lyra/Source/Lyra/Scene",
+      "../Lyra/Source/Lyra/Tools",
       "../Lyra/%{IncludeDir.spdlog}",
       "../Lyra/%{IncludeDir.glm}",
       "../Lyra/%{IncludeDir.ImGui}",

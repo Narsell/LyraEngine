@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Lyra/Renderer/Texture.h"
+#include "Scene/Texture.h"
 
 #include <glad/glad.h>
 #include <string>
