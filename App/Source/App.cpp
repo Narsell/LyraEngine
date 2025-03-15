@@ -109,15 +109,15 @@ public:
 				{"a_TexCoord", Lyra::ShaderData::Float2}
 			};
 			cubeVertexLayout.DebugPrint("Phong model cube");
-			Ref<Lyra::VertexBuffer> cubeVertexBuffer(Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout));
+			Ref<Lyra::VertexBuffer> cubeVertexBuffer = Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout);
 
-			m_CubeVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
+			m_CubeVertexArray = Lyra::VertexArray::Create();
 			m_CubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
 		}
 		
 		/* LIGHT SOURCE CUBE SECTION */
 		{
-			m_LightSourceCubeVertexArray = Ref<Lyra::VertexArray>(Lyra::VertexArray::Create());
+			m_LightSourceCubeVertexArray = Lyra::VertexArray::Create();
 
 			float cubeVertices[] = {
 				-0.5f, -0.5f, -0.5f, // Back face
@@ -168,7 +168,7 @@ public:
 				{"a_Position", Lyra::ShaderData::Float3}
 			};
 
-			Ref<Lyra::VertexBuffer> cubeVertexBuffer(Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout));
+			Ref<Lyra::VertexBuffer> cubeVertexBuffer = Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout);
 			m_LightSourceCubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
 		}
 

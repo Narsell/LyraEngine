@@ -20,10 +20,10 @@ namespace Lyra
 			{ "a_TexCoord", ShaderData::Float2},
 		};
 
-		Ref<VertexBuffer> meshVertexBuffer = Ref<VertexBuffer>(VertexBuffer::Create(glm::value_ptr(vertices[0].Position), vertices.size() * sizeof(vertices[0]), layout));
+		Ref<VertexBuffer> meshVertexBuffer = VertexBuffer::Create(glm::value_ptr(vertices[0].Position), vertices.size() * sizeof(vertices[0]), layout);
 		m_VertexArray->AddVertexBuffer(meshVertexBuffer);
 		
-		m_IndexBuffer = Ref<IndexBuffer>(IndexBuffer::Create(&indices[0], indices.size()));
+		m_IndexBuffer = IndexBuffer::Create(&indices[0], indices.size());
 		m_VertexArray->AddIndexBuffer(m_IndexBuffer);
 	}
 

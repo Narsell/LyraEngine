@@ -16,7 +16,7 @@ namespace Lyra
 		virtual const VertexLayout& GetLayout() const = 0;
 		virtual uint32_t GetVertexCount() const = 0;
 
-		static VertexBuffer* Create(float* vertices, size_t size, const VertexLayout& layout);
+		static Ref<VertexBuffer> Create(float* vertices, size_t size, const VertexLayout& layout);
 
 	};
 
@@ -31,7 +31,7 @@ namespace Lyra
 
 		virtual uint32_t GetCount() const = 0;
 
-		static IndexBuffer* Create(uint32_t* indices, uint32_t count);
+		static Ref<IndexBuffer> Create(uint32_t* indices, uint32_t count);
 	};
 
 
@@ -49,7 +49,7 @@ namespace Lyra
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const = 0;
 		virtual const Ref<IndexBuffer>& GetIndexBuffer() const = 0;
 
-		static VertexArray* Create();
+		static Ref<VertexArray> Create();
 	};
 
 }
