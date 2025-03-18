@@ -14,9 +14,9 @@ namespace Lyra
 	{
 		switch (type)
 		{
-		case Lyra::TextureType::NONE:       return aiTextureType_NONE;
-		case Lyra::TextureType::DIFFUSE:    return aiTextureType_DIFFUSE;
-		case Lyra::TextureType::SPECULAR:   return aiTextureType_SPECULAR;
+			case Lyra::TextureType::NONE:       return aiTextureType_NONE;
+			case Lyra::TextureType::DIFFUSE:    return aiTextureType_DIFFUSE;
+			case Lyra::TextureType::SPECULAR:   return aiTextureType_SPECULAR;
 		}
 	}
 
@@ -152,7 +152,7 @@ namespace Lyra
 				if (!isMeshAlreadyLoaded)
 				{
 					LR_CORE_TRACE("{0} {1} texture map(s) loaded from mesh '{2}' and material '{3}'", textureCount, Utils::Texture::TextureTypeToString(internalTextType), assimpMesh->mName.C_Str(), material->GetName().C_Str());
-					meshTexture->Bind(Utils::Texture::GetTypeSlot(meshTexture->GetType()));
+					meshTexture->Bind();
 				}
 			}
 		}

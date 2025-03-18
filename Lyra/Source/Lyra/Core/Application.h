@@ -24,7 +24,7 @@ namespace Lyra
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* overlay);
 
-		inline static Application& GetApplication() { return *s_Instance; }
+		inline static Application& Get() { return *s_Instance; }
 		inline Window& GetWindow() const { return *m_Window; }
 
 	protected:

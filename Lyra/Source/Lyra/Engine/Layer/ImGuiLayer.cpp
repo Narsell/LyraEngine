@@ -39,7 +39,7 @@ namespace Lyra
 			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 		}
 
-		Application& app = Application::GetApplication();
+		Application& app = Application::Get();
 		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
 
 		ImGui_ImplGlfw_InitForOpenGL(glfwWindow, true);
@@ -59,8 +59,8 @@ namespace Lyra
 
 	void ImGuiLayer::OnImGuiRender()
 	{
-		bool showDemoWindow = true;
-		ImGui::ShowDemoWindow(&showDemoWindow); // Show demo window! :)
+		//bool showDemoWindow = false;
+		//ImGui::ShowDemoWindow(&showDemoWindow); // Show demo window! :)
 	}
 
 	void ImGuiLayer::Begin()
@@ -72,7 +72,7 @@ namespace Lyra
 
 	void ImGuiLayer::End()
 	{
-		Application& app = Application::GetApplication();
+		Application& app = Application::Get();
 		ImGuiIO io = ImGui::GetIO();
 		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight()); // Set display size
 

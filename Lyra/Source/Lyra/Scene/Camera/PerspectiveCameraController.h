@@ -12,12 +12,12 @@ namespace Lyra
 	{
 	public:
 		PerspectiveCameraController();
+		void AttachToCamera(const Ref<PerspectiveCamera>& camera);
 
 		void OnUpdate(Timestep ts);
-
 		void OnEvent(Event& e);
 
-		const PerspectiveCamera& GetCamera() const { return m_Camera; }
+		const Ref<PerspectiveCamera>& GetCamera() const { return m_Camera; }
 	private:
 		bool OnMouseMoved(MouseMovedEvent& e);
 		bool OnMouseScrolled(MouseScrolledEvent& e);
@@ -25,7 +25,7 @@ namespace Lyra
 	private:
 		Window& m_Window;
 
-		PerspectiveCamera m_Camera;
+		Ref<PerspectiveCamera> m_Camera;
 		glm::vec3 m_CameraInitialPos;
 		float m_CameraMinSpeed, m_CameraMaxSpeed, m_CameraSpeed;
 		float m_ZoomSpeedFactor;

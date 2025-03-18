@@ -11,7 +11,7 @@ namespace Lyra
 
 	bool WindowsInput::IsKeyPressedImpl(int keycode)
 	{
-		void* nativeWindow = Application::GetApplication().GetWindow().GetNativeWindow();
+		void* nativeWindow = Application::Get().GetWindow().GetNativeWindow();
 		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(nativeWindow);
 
 		int keyState = glfwGetKey(glfwWindow, keycode);
@@ -19,7 +19,7 @@ namespace Lyra
 	}
 	bool WindowsInput::IsMouseButtonPressedImpl(int button)
 	{
-		void* nativeWindow = Application::GetApplication().GetWindow().GetNativeWindow();
+		void* nativeWindow = Application::Get().GetWindow().GetNativeWindow();
 		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(nativeWindow);
 
 		int buttonState = glfwGetMouseButton(glfwWindow, button);
@@ -28,7 +28,7 @@ namespace Lyra
 	}
 	std::pair<float, float> WindowsInput::GetMousePositionImpl()
 	{
-		void* nativeWindow = Application::GetApplication().GetWindow().GetNativeWindow();
+		void* nativeWindow = Application::Get().GetWindow().GetNativeWindow();
 		GLFWwindow* glfwWindow = static_cast<GLFWwindow*>(nativeWindow);
 
 		double xPos, yPos;

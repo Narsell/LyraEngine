@@ -4,13 +4,11 @@
 
 namespace Lyra
 {
-
 	enum class TextureType : int8_t
 	{
 		NONE = -1,
 		DIFFUSE,
 		SPECULAR,
-
 
 		COUNT = SPECULAR + 1
 	};
@@ -20,11 +18,12 @@ namespace Lyra
 	public:
 		virtual ~Texture() = default;
 
+		virtual uint32_t GetRendererId() const = 0;
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
 		virtual const std::string& GetPath() const = 0;
 
-		virtual void Bind(uint32_t slot = 0) const = 0;
+		virtual void Bind() const = 0;
 
 	};
 
@@ -33,6 +32,7 @@ namespace Lyra
 	public:
 		Texture2D(TextureType textureType = TextureType::NONE) : m_Type(textureType) {}
 		virtual ~Texture2D() = default;
+
 		TextureType GetType() const { return m_Type; }
 
 		/* Keeping count of loaded textures here... TODO: Move this to an asset manager eventually! */

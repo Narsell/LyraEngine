@@ -9,7 +9,7 @@
 namespace Lyra
 {
 	OrthographicCameraController::OrthographicCameraController(bool rotate)
-		:	m_Window(Application::GetApplication().GetWindow()),
+		:	m_Window(Application::Get().GetWindow()),
 			m_Camera(m_Window.GetAspectRatio()),
 			m_CameraInitialPos(0.0f, 0.0f, 2.0f),
 			m_CameraInitialRotation(0.0f),

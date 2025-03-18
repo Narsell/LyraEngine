@@ -10,59 +10,73 @@
 namespace Lyra
 {
 	PerspectiveCameraController::PerspectiveCameraController()
-		:	m_Window(Application::GetApplication().GetWindow()),
-			m_Camera(m_Window.GetAspectRatio()),
+		:	m_Window(Application::Get().GetWindow()),
 			m_CameraInitialPos(0.0, 0.0f, 2.0f),
 			m_CameraMinSpeed(2.0f),
 			m_CameraMaxSpeed(20.0f),
 			m_CameraSpeed(10.0f),
 			m_ZoomSpeedFactor(0.005f),
-			m_LookAtSensitivity(m_ZoomSpeedFactor * m_Camera.GetFOV()),
+			m_LookAtSensitivity(0.1f),
 			m_MouseLastX(m_Window.GetWidth() / 2.0f),
 			m_MouseLastY(m_Window.GetHeight() / 2.0f)
 	{
-		m_Camera.SetPosition(m_CameraInitialPos);
+	}
+
+	void PerspectiveCameraController::AttachToCamera(const Ref<PerspectiveCamera>& camera)
+	{
+		if (m_Camera.get())
+		{
+			LR_CORE_WARN("Camera controller tried to attach to camera but it is already attached to one.");
+			return;
+		}
+		m_Camera = camera;
+		m_LookAtSensitivity = m_ZoomSpeedFactor * m_Camera->GetFOV();
+		m_Camera->SetPosition(m_CameraInitialPos);
 	}
 
 	void PerspectiveCameraController::OnUpdate(Timestep ts)
 	{
+		if (!m_Camera.get()) return;
+
 		glm::vec3 direction = { 0.0f, 0.0f, 0.0f };
 
 		if (Input::IsKeyPressed(LR_KEY_W))
 		{
-			direction += m_Camera.GetForward();
+			direction += m_Camera->GetForward();
 		}
 		else if (Input::IsKeyPressed(LR_KEY_S))
 		{
-			direction += -m_Camera.GetForward();
+			direction += -m_Camera->GetForward();
 		}
 		if (Input::IsKeyPressed(LR_KEY_D))
 		{
-			direction += m_Camera.GetRight();
+			direction += m_Camera->GetRight();
 		}
 		else if (Input::IsKeyPressed(LR_KEY_A))
 		{
-			direction += -m_Camera.GetRight();
+			direction += -m_Camera->GetRight();
 		}
 		if (Input::IsKeyPressed(LR_KEY_SPACE))
 		{
-			direction += m_Camera.GetUp();
+			direction += m_Camera->GetUp();
 		}
 		else if (Input::IsKeyPressed(LR_KEY_LEFT_CONTROL))
 		{
-			direction += -m_Camera.GetUp();
+			direction += -m_Camera->GetUp();
 		}
 
 		if (glm::length(direction) > 0.0f)
 		{
-			glm::vec3 newPosition = m_Camera.GetPosition() + (glm::normalize(direction) * m_CameraSpeed * ts.GetSeconds());
-			m_Camera.SetPosition(newPosition);
+			glm::vec3 newPosition = m_Camera->GetPosition() + (glm::normalize(direction) * m_CameraSpeed * ts.GetSeconds());
+			m_Camera->SetPosition(newPosition);
 		}
 	}
 
 	void PerspectiveCameraController::OnEvent(Event& e)
 	{
-		m_Camera.OnEvent(e);
+		if (!m_Camera.get()) return;
+
+		m_Camera->OnEvent(e);
 
 		EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<MouseMovedEvent>(LR_BIND_EVENT_FN(&PerspectiveCameraController::OnMouseMoved));
@@ -71,6 +85,8 @@ namespace Lyra
 
 	bool PerspectiveCameraController::OnMouseMoved(MouseMovedEvent& e)
 	{
+		if (!m_Camera.get()) return false;
+
 		if (m_Window.GetMouseInputMode() == LR_CURSOR_NORMAL)
 		{
 			m_FirstMouseMovement = true;
@@ -96,17 +112,19 @@ namespace Lyra
 		xOffset *= m_LookAtSensitivity;
 		yOffset *= m_LookAtSensitivity;
 
-		m_Camera.SetRotationOffset(xOffset, yOffset, 0.0f);
+		m_Camera->SetRotationOffset(xOffset, yOffset, 0.0f);
 
 		return false;
 	}
 
 	bool PerspectiveCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
+		if (!m_Camera.get()) return false;
+
 		if (Input::IsKeyPressed(LR_KEY_LEFT_SHIFT))
 		{
-			float currentFOV = m_Camera.GetFOV();
-			m_Camera.SetFOV(currentFOV - (float)e.GetYOffset());
+			float currentFOV = m_Camera->GetFOV();
+			m_Camera->SetFOV(currentFOV - (float)e.GetYOffset());
 			m_LookAtSensitivity = m_ZoomSpeedFactor * currentFOV;
 			LR_CORE_INFO("Sensitivity: {0} | FOV: {1}", m_LookAtSensitivity, currentFOV);
 		}

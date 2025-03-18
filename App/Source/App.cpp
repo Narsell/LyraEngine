@@ -4,52 +4,12 @@
 
 class GameLayer : public Lyra::Layer
 {
-	struct DirectionalLight
-	{
-		glm::vec3 direction = glm::vec3(0.0, -0.5f, -1.0f);
-
-		glm::vec3 ambient	= glm::vec3(glm::vec3(0.1f, 0.1f, 0.1f));
-		glm::vec3 diffuse	= glm::vec3(1.0f);
-		glm::vec3 specular  = glm::vec3(1.0f);
-	};
-
-	struct PointLight
-	{
-		glm::vec3 position      = glm::vec3(0.0f, 0.0f, 0.0f);
-
-		glm::vec3 ambient       = glm::vec3(glm::vec3(0.1f, 0.1f, 0.1f));
-		glm::vec3 diffuse       = glm::vec3(1.0f);
-		glm::vec3 specular      = glm::vec3(1.0f);
-
-		float constAttenuation  = 1.0f;
-		float linearAttenuation = 0.09f;
-		float quadAttenuation   = 0.032f;
-	};
-
-	struct SpotLight
-	{
-		glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-		glm::vec3 direction = glm::vec3(0.0f, 0.0f, -1.0f);
-
-		float innerCutoffAngle  = 12.5f;
-		float outerCutoffAngle  = 17.5f;
-
-		glm::vec3 ambient		= glm::vec3(glm::vec3(0.1f, 0.1f, 0.1f));
-		glm::vec3 diffuse		= glm::vec3(1.0f);
-		glm::vec3 specular		= glm::vec3(1.0f);
-
-		float constAttenuation  = 1.0f;
-		float linearAttenuation = 0.05f;
-		float quadAttenuation   = 0.032f;
-	};
-
-
 public:
 	GameLayer()
 		:	Layer("GameLayer"),
 			m_CubeRotation(0.0f),
 			m_CubeRotationSpeed(12.0f),
-			m_CubePosition(glm::vec3(0.0f, 0.0f, 0.0f)),
+			m_CubePosition(glm::vec3(1.5f, 0.0f, 0.0f)),
 			m_CubeShininess(32.f),
 			m_LightSourceAngle(0.0f),
 			m_LightSourceSpeed(1.0f)
@@ -174,29 +134,30 @@ public:
 
 		// Shader creation
 		m_PhongShader = Lyra::Shader::Create("Assets/Shaders/PhongModel.glsl");
-		m_ModelShader = Lyra::Shader::Create("Assets/Shaders/Model.glsl");
 		m_LightSourceShader = Lyra::Shader::Create("Assets/Shaders/LightSource.glsl");
 
-		m_Model = Lyra::Model("Assets/Models/backpack/backpack.obj", m_ModelShader);
+		m_Model = Lyra::Model("Assets/Models/backpack/backpack.obj", m_PhongShader);
 
 		// Creating and setting textures
-		//m_BoxTexture = Lyra::Texture2D::Create("Assets/Textures/Container.png");
-		//m_BoxTextureSpecular = Lyra::Texture2D::Create("Assets/Textures/Container_specular.png");
-		//m_Texture->Bind(0);
-		//m_TextureSpecular->Bind(1);
+		m_BoxTextureDiffuse = Lyra::Texture2D::Create("Assets/Textures/Container.png", Lyra::TextureType::DIFFUSE);
+		m_BoxTextureSpecular = Lyra::Texture2D::Create("Assets/Textures/Container_specular.png", Lyra::TextureType::SPECULAR);
 
 		// Setting up point lights initial values.
 		{
-			m_PointLights[0].diffuse = glm::vec3(1.0f, 0.3f, 0.2f);
-			m_PointLights[0].specular = m_PointLights[0].diffuse;
-			m_PointLights[1].diffuse = glm::vec3(0.2f, 1.0f, 0.3f);
-			m_PointLights[1].specular = m_PointLights[1].diffuse;
+			m_SceneProps.PointLights[0].diffuse = glm::vec3(1.0f, 0.3f, 0.2f);
+			m_SceneProps.PointLights[0].specular = m_SceneProps.PointLights[0].diffuse;
+			m_SceneProps.PointLights[1].diffuse = glm::vec3(0.2f, 1.0f, 0.3f);
+			m_SceneProps.PointLights[1].specular = m_SceneProps.PointLights[1].diffuse;
 		}
 	}
 
 	void OnAttach() override
 	{
-		//LR_TRACE("GameLayer::OnAttach");
+		float aspectRatio = Lyra::Application::Get().GetWindow().GetAspectRatio();
+		Ref<Lyra::PerspectiveCamera> camera = std::make_shared<Lyra::PerspectiveCamera>(aspectRatio);
+
+		m_CameraController.AttachToCamera(camera);
+		m_SceneProps.Camera = camera;
 	}
 
 	void OnDetach() override
@@ -213,19 +174,18 @@ public:
 		/* Light source orbit */
 		m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
 		m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-		m_PointLights[0].position = orbitCenter + glm::vec3(
+		m_SceneProps.PointLights[0].position = orbitCenter + glm::vec3(
 			0.0f,
 			4.0f * glm::cos(m_LightSourceAngle),
 			4.0f * glm::sin(m_LightSourceAngle)
 		);
 		m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
 		m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-		m_PointLights[1].position = orbitCenter + glm::vec3(
+		m_SceneProps.PointLights[1].position = orbitCenter + glm::vec3(
 			5.0f * glm::sin(m_LightSourceAngle),
 			0.0f,
 			5.0f * glm::cos(m_LightSourceAngle)
 		);
-
 		
 		/* Cube rotation */
 		m_CubeRotation += m_CubeRotationSpeed * ts.GetSeconds();
@@ -235,76 +195,40 @@ public:
 		Lyra::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
 		Lyra::RenderCommand::Clear();
 
-		// Set the scene variables (only camera at this point)
-		Lyra::Renderer::BeginScene(m_CameraController.GetCamera());
-
+		/* Set the scene variables */
+		Lyra::Renderer::BeginScene(m_SceneProps);
 
 		/* Actual rendering happens here */
 			
 		/* Render point light sources (Non-indexed) */
 		m_LightSourceShader->Bind();
-		for (int i = 0; i < m_PointLights.size(); i++)
+		for (int i = 0; i < m_SceneProps.PointLights.size(); i++)
 		{
-			m_LightSourceShader->UploadUniform_3f("u_Color", m_PointLights[i].diffuse);
+			m_LightSourceShader->UploadUniform_3f("u_Color", m_SceneProps.PointLights[i].diffuse);
 			Lyra::Renderer::Submit(
 				m_LightSourceShader,
 				m_LightSourceCubeVertexArray,
-				glm::translate(glm::mat4(1.0f), m_PointLights[i].position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
+				glm::translate(glm::mat4(1.0f), m_SceneProps.PointLights[i].position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
 				false
 			);
 
 		}
 
-		/* Render main cube (Non-indexed) */
-		//m_PhongShader->Bind();
-		//Lyra::Renderer::Submit(
-		//	m_PhongShader,
-		//	m_CubeVertexArray,
-		//	glm::rotate(glm::mat4(1.0f), glm::radians(m_CubeRotation), glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f))) * glm::translate(glm::mat4(1.0f), m_CubePosition),
-		//	false
-		//);
-
-		m_ModelShader->Bind();
+		/* Render 3D model */
+		m_PhongShader->Bind();
 		m_Model.Draw();
 
-		/* Directional light uniforms */
-		m_ModelShader->UploadUniform_3f("u_DirLight.direction", glm::mat3(m_CameraController.GetCamera().GetViewMatrix()) * m_DirLight.direction);
-		m_ModelShader->UploadUniform_3f("u_DirLight.ambient", m_DirLight.ambient);
-		m_ModelShader->UploadUniform_3f("u_DirLight.diffuse", m_DirLight.diffuse);
-		m_ModelShader->UploadUniform_3f("u_DirLight.specular", m_DirLight.specular);
-
-		/* Point light uniforms*/
-		for (int i = 0; i < m_PointLights.size(); i++)
-		{
-			m_ModelShader->UploadUniform_3f(std::format("u_PointLights[{0}].position", i), glm::vec3(m_CameraController.GetCamera().GetViewMatrix() * glm::vec4(m_PointLights[i].position, 1.0f)));
-			m_ModelShader->UploadUniform_3f(std::format("u_PointLights[{0}].ambient", i), m_PointLights[i].ambient);
-			m_ModelShader->UploadUniform_3f(std::format("u_PointLights[{0}].diffuse", i), m_PointLights[i].diffuse);
-			m_ModelShader->UploadUniform_3f(std::format("u_PointLights[{0}].specular", i), m_PointLights[i].specular);
-			m_ModelShader->UploadUniform_1f(std::format("u_PointLights[{0}].constAttenuation", i), m_PointLights[i].constAttenuation);
-			m_ModelShader->UploadUniform_1f(std::format("u_PointLights[{0}].linearAttenuation", i), m_PointLights[i].linearAttenuation);
-			m_ModelShader->UploadUniform_1f(std::format("u_PointLights[{0}].quadAttenuation", i), m_PointLights[i].quadAttenuation);
-		}
-
-		/* Spot light uniforms */
-		m_ModelShader->UploadUniform_3f("u_SpotLight.position", m_SpotLight.position);
-		m_ModelShader->UploadUniform_3f("u_SpotLight.direction", m_SpotLight.direction);
-		m_ModelShader->UploadUniform_1f("u_SpotLight.innerCutoffCosine", glm::cos(glm::radians(m_SpotLight.innerCutoffAngle)));
-		m_ModelShader->UploadUniform_1f("u_SpotLight.outerCutoffCosine", glm::cos(glm::radians(m_SpotLight.outerCutoffAngle)));
-		m_ModelShader->UploadUniform_3f("u_SpotLight.ambient", m_SpotLight.ambient);
-		m_ModelShader->UploadUniform_3f("u_SpotLight.diffuse", m_SpotLight.diffuse);
-		m_ModelShader->UploadUniform_3f("u_SpotLight.specular", m_SpotLight.specular);
-		m_ModelShader->UploadUniform_1f("u_SpotLight.constAttenuation", m_SpotLight.constAttenuation);
-		m_ModelShader->UploadUniform_1f("u_SpotLight.linearAttenuation", m_SpotLight.linearAttenuation);
-		m_ModelShader->UploadUniform_1f("u_SpotLight.quadAttenuation", m_SpotLight.quadAttenuation);
-
-		/* Cube material uniforms */
-		//m_PhongShader->Bind();
-		//m_PhongShader->UploadUniform_1i("u_Material.diffuse", 0);
-		//m_PhongShader->UploadUniform_1i("u_Material.specular", 1);
-		//m_PhongShader->UploadUniform_1f("u_Material.shininess", m_ShininessFactor);
+		/* Render main cube (Non-indexed) */
+		m_BoxTextureDiffuse->Bind();
+		m_BoxTextureSpecular->Bind();
+		Lyra::Renderer::Submit(
+			m_PhongShader,
+			m_CubeVertexArray,
+			glm::translate(glm::mat4(1.0f), m_CubePosition) * glm::rotate(glm::mat4(1.0f), glm::radians(m_CubeRotation), glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f))),
+			false
+		);
 
 		Lyra::Renderer::EndScene();
-
 	}
 
 	void OnImGuiRender() override
@@ -314,29 +238,30 @@ public:
 		{
 			ImGui::Indent();
 
-			ImGui::DragFloat3("Direction", &m_DirLight.direction.x, 0.1f);
-			ImGui::ColorEdit3("Ambient##DirLight", &m_DirLight.ambient.x);
-			ImGui::ColorEdit3("Diffuse##DirLight", &m_DirLight.diffuse.x);
-			ImGui::ColorEdit3("Specular##DirLight", &m_DirLight.specular.x);
+			ImGui::DragFloat3("Direction", &m_SceneProps.DirLight.direction.x, 0.1f);
+			ImGui::ColorEdit3("Ambient##DirLight", &m_SceneProps.DirLight.ambient.x);
+			ImGui::ColorEdit3("Diffuse##DirLight", &m_SceneProps.DirLight.diffuse.x);
+			ImGui::ColorEdit3("Specular##DirLight", &m_SceneProps.DirLight.specular.x);
 
 			ImGui::Unindent();
 		}
 
-		for (int i = 0; i < m_PointLights.size(); ++i) {
+		for (int i = 0; i < m_SceneProps.PointLights.size(); ++i) {
 			// Push a unique ID scope for each light to avoid label conflicts
 			ImGui::PushID(i);
 
 			// Create a collapsible header with the light's index
-			if (ImGui::CollapsingHeader(("Point Light " + std::to_string(i)).c_str())) {
+			if (ImGui::CollapsingHeader(("Point Light " + std::to_string(i)).c_str()))
+			{
 				ImGui::Indent(); // Indent controls for visual hierarchy
 
-				ImGui::DragFloat3("Position", &m_PointLights[i].position.x, 0.1f);
-				ImGui::ColorEdit3("Ambient", &m_PointLights[i].ambient.r);
-				ImGui::ColorEdit3("Diffuse", &m_PointLights[i].diffuse.r);
-				ImGui::ColorEdit3("Specular", &m_PointLights[i].specular.r);
-				ImGui::DragFloat("Constant Attenuation", &m_PointLights[i].constAttenuation, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Linear Attenuation", &m_PointLights[i].linearAttenuation, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Quadratic Attenuation", &m_PointLights[i].quadAttenuation, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat3("Position", &m_SceneProps.PointLights[i].position.x, 0.1f);
+				ImGui::ColorEdit3("Ambient", &m_SceneProps.PointLights[i].ambient.r);
+				ImGui::ColorEdit3("Diffuse", &m_SceneProps.PointLights[i].diffuse.r);
+				ImGui::ColorEdit3("Specular", &m_SceneProps.PointLights[i].specular.r);
+				ImGui::DragFloat("Constant Attenuation", &m_SceneProps.PointLights[i].constAttenuation, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Linear Attenuation", &m_SceneProps.PointLights[i].linearAttenuation, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Quadratic Attenuation", &m_SceneProps.PointLights[i].quadAttenuation, 0.01f, 0.0f, 1.0f);
 
 				ImGui::Unindent();
 			}
@@ -347,16 +272,46 @@ public:
 
 		if (ImGui::CollapsingHeader("Flash Light"))
 		{
-			ImGui::SliderFloat("Inner Ang", &m_SpotLight.innerCutoffAngle, 0.0f, m_SpotLight.outerCutoffAngle);
-			ImGui::SliderFloat("Outer Ang", &m_SpotLight.outerCutoffAngle, m_SpotLight.innerCutoffAngle, 90.0f);
-			ImGui::ColorEdit3("Ambient##FlashLight", &m_SpotLight.ambient.x);
-			ImGui::ColorEdit3("Diffuse##FlashLight", &m_SpotLight.diffuse.x);
-			ImGui::ColorEdit3("Specular##FlashLight", &m_SpotLight.specular.x);
-			ImGui::DragFloat("Constant Attenuation##FlashLight", &m_SpotLight.constAttenuation, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Linear Attenuation##FlashLight", &m_SpotLight.linearAttenuation, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Quadratic Attenuation##FlashLight", &m_SpotLight.quadAttenuation, 0.01f, 0.0f, 1.0f);
+			ImGui::SliderFloat("Inner Ang", &m_SceneProps.SpotLight.innerCutoffAngle, 0.0f, m_SceneProps.SpotLight.outerCutoffAngle);
+			ImGui::SliderFloat("Outer Ang", &m_SceneProps.SpotLight.outerCutoffAngle, m_SceneProps.SpotLight.innerCutoffAngle, 90.0f);
+			ImGui::ColorEdit3("Ambient##FlashLight", &m_SceneProps.SpotLight.ambient.x);
+			ImGui::ColorEdit3("Diffuse##FlashLight", &m_SceneProps.SpotLight.diffuse.x);
+			ImGui::ColorEdit3("Specular##FlashLight", &m_SceneProps.SpotLight.specular.x);
+			ImGui::DragFloat("Constant Attenuation##FlashLight", &m_SceneProps.SpotLight.constAttenuation, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Linear Attenuation##FlashLight", &m_SceneProps.SpotLight.linearAttenuation, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Quadratic Attenuation##FlashLight", &m_SceneProps.SpotLight.quadAttenuation, 0.01f, 0.0f, 1.0f);
 		}
 
+		if (ImGui::CollapsingHeader("Backpack"))
+		{
+			ImGui::Indent();
+
+			auto& materials = m_Model.GetMaterials();
+			int materialCount = 0;
+			for (auto& [materialHash, material] : materials)
+			{
+				ImGui::PushID(materialHash);
+
+				if (ImGui::CollapsingHeader(("Material " + std::to_string(materialCount)).c_str())) 
+				{
+					ImGui::Indent();
+
+					for (auto& texture : material->GetTextures())
+					{
+						ImGui::TextColored(ImVec4(0.1f, 1.0f, 0.15f, 1.0f), Lyra::Utils::Texture::TextureTypeToString(texture->GetType()));
+						ImGui::Image(texture->GetRendererId(), ImVec2(85.f, 85.f));
+						ImGui::Text(texture->GetPath().c_str());
+						ImGui::Separator();
+					}
+
+					ImGui::Unindent();
+				}
+				materialCount++;
+				ImGui::PopID();
+			}
+			ImGui::Unindent();
+		}
+		
 		if (ImGui::CollapsingHeader("Cube"))
 		{
 			ImGui::Indent();
@@ -369,12 +324,13 @@ public:
 		}
 
 		ImGui::SeparatorText("Camera Position");
-		ImGui::Value("X", m_CameraController.GetCamera().GetPosition().x);
+		ImGui::Value("X", m_CameraController.GetCamera()->GetPosition().x);
 		ImGui::SameLine();
-		ImGui::Value("Y", m_CameraController.GetCamera().GetPosition().y);
+		ImGui::Value("Y", m_CameraController.GetCamera()->GetPosition().y);
 		ImGui::SameLine();
-		ImGui::Value("Z", m_CameraController.GetCamera().GetPosition().z);
+		ImGui::Value("Z", m_CameraController.GetCamera()->GetPosition().z);
 		ImGui::Separator();
+
 
 		ImGui::End();
 	}
@@ -392,7 +348,7 @@ public:
 		/* Toggle mouse input mode so we can use ImGui controls by pressing F1 */
 		if (e.GetKeyCode() == LR_KEY_F1)
 		{
-			Lyra::Window& window = Lyra::Application::GetApplication().GetWindow();
+			Lyra::Window& window = Lyra::Application::Get().GetWindow();
 			if (window.GetMouseInputMode() == LR_CURSOR_NORMAL)
 			{
 				window.SetMouseInputMode(LR_CURSOR_DISABLED);
@@ -414,18 +370,15 @@ private:
 	Ref<Lyra::VertexArray> m_CubeVertexArray;
 	Ref<Lyra::VertexArray> m_LightSourceCubeVertexArray;
 	Ref<Lyra::Shader> m_PhongShader;
-	Ref<Lyra::Shader> m_ModelShader;
 	Ref<Lyra::Shader> m_LightSourceShader;
 
-	Ref<Lyra::Texture2D> m_BoxTexture, m_BoxTextureSpecular;
+	Ref<Lyra::Texture2D> m_BoxTextureDiffuse, m_BoxTextureSpecular;
 	float m_CubeRotation;
 	float m_CubeRotationSpeed;
 	glm::vec3 m_CubePosition;
 	float m_CubeShininess;
 
-	DirectionalLight m_DirLight;
-	std::array<PointLight, 2> m_PointLights;
-	SpotLight m_SpotLight;
+	Lyra::SceneProps m_SceneProps;
 	float m_LightSourceAngle;
 	float m_LightSourceSpeed;
 

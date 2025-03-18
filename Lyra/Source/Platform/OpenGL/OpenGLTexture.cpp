@@ -1,7 +1,9 @@
 #include "lrpch.h"
-#include "OpenGLTexture.h"
 
 #include <stb_image.h>
+
+#include "OpenGLTexture.h"
+#include "Core/Utils.h"
 
 namespace Lyra
 {
@@ -43,9 +45,17 @@ namespace Lyra
 		glDeleteTextures(1, &m_RendererId);
 	}
 
-	void OpenGLTexture2D::Bind(uint32_t slot) const
+	void OpenGLTexture2D::Bind() const
 	{
-		glBindTextureUnit(slot, m_RendererId);
+		TextureType type = GetType();
+		if (!Utils::Texture::IsValidTextureType(type))
+		{
+			LR_CORE_WARN("Texture at path '{0}' was not given a valid type. Can't bind this texture.");
+		}
+		// TODO: Maybe I can cache this slot instead of getting it everytime, since this gets called multiple times per frame.
+		uint8_t textureSlot = Utils::Texture::GetTypeSlot(type);
+		glBindTextureUnit(textureSlot, m_RendererId);
+
 	}
 
 	GLTextureFormat OpenGLTexture2D::GetTextureFormat(int channels) const

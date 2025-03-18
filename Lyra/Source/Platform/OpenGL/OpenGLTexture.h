@@ -23,12 +23,13 @@ namespace Lyra
 		OpenGLTexture2D(const std::string& path, TextureType textureType = TextureType::NONE);
 		virtual ~OpenGLTexture2D();
 
+		virtual uint32_t GetRendererId() const { return m_RendererId; }
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
 		virtual const std::string& GetPath() const { return m_Path; }
 
 
-		virtual void Bind(uint32_t slot = 0) const override;
+		virtual void Bind() const override;
 
 	private:
 		GLTextureFormat GetTextureFormat(int channels) const;

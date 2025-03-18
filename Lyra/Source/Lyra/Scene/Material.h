@@ -12,6 +12,7 @@ namespace Lyra
 	public:
 		Material(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>> textures = {});
 
+		inline const std::vector<Ref<Texture2D>>& GetTextures() const { return m_Textures; }
 		inline const Ref<Shader>& GetShader() const { return m_Shader; }
 		inline size_t GetHash() const { return m_Hash; }
 

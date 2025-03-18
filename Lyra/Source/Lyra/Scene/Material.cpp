@@ -29,6 +29,10 @@ namespace Lyra
 
 	void Material::UpdateData()
 	{
+		for (const Ref<Texture2D>& texture : m_Textures)
+		{
+			texture->Bind();
+		}
 		//No need to upload the diffuse and specular samplers every time since we're now using layout bindings on those samplers in the shader.
 		//I will leave this here just in case :)
 		//for (const auto& texture : m_Textures)

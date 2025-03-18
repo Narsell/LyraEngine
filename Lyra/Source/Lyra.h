@@ -7,6 +7,7 @@
 #include "Lyra/Core/Timestep.h"
 #include "Lyra/Core/Log.h"
 #include "Lyra/Core/Ref.h"
+#include "Lyra/Core/Utils.h"
 
 /* INPUT SYSTEM */
 #include "Lyra/Core/Input/Input.h"
@@ -34,10 +35,11 @@
 #include "Lyra/Engine/Renderer/Shader.h"
 
 /* SCENE ASSETS */
+#include "Lyra/Scene/Scene.h"
 #include "Lyra/Scene/Texture.h"
 #include "Lyra/Scene/Model.h"
 #include "Lyra/Scene/Camera/Camera.h"
-
+#include "Lyra/Scene/Light.h"
 
 /* MATH */
 #include <glm/glm.hpp>

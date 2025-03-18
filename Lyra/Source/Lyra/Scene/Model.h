@@ -25,6 +25,9 @@ namespace Lyra
 
 		void Draw();
 
+		size_t GetNumberOfMeshes() const { return m_Meshes.size(); }
+		const std::unordered_map<size_t, Ref<Material>>& GetMaterials() const { return m_Materials; }
+
 	private:
 		void LoadModel(std::string path);
 		void ProcessNode(aiNode* node, const aiScene* scene);
