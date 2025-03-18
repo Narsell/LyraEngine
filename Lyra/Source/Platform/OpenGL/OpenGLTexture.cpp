@@ -47,15 +47,10 @@ namespace Lyra
 
 	void OpenGLTexture2D::Bind() const
 	{
-		TextureType type = GetType();
-		if (!Utils::Texture::IsValidTextureType(type))
+		if (Utils::Texture::IsValidTextureType(m_Type))
 		{
-			LR_CORE_WARN("Texture at path '{0}' was not given a valid type. Can't bind this texture.");
+			glBindTextureUnit(m_Slot, m_RendererId);
 		}
-		// TODO: Maybe I can cache this slot instead of getting it everytime, since this gets called multiple times per frame.
-		uint8_t textureSlot = Utils::Texture::GetTypeSlot(type);
-		glBindTextureUnit(textureSlot, m_RendererId);
-
 	}
 
 	GLTextureFormat OpenGLTexture2D::GetTextureFormat(int channels) const

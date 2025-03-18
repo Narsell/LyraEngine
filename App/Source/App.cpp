@@ -282,7 +282,7 @@ public:
 			ImGui::DragFloat("Quadratic Attenuation##FlashLight", &m_SceneProps.SpotLight.quadAttenuation, 0.01f, 0.0f, 1.0f);
 		}
 
-		if (ImGui::CollapsingHeader("Backpack"))
+		if (ImGui::CollapsingHeader("Backpack Model"))
 		{
 			ImGui::Indent();
 
@@ -298,7 +298,7 @@ public:
 
 					for (auto& texture : material->GetTextures())
 					{
-						ImGui::TextColored(ImVec4(0.1f, 1.0f, 0.15f, 1.0f), Lyra::Utils::Texture::TextureTypeToString(texture->GetType()));
+						ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.15f, 1.0f), texture->GetTypeAsString());
 						ImGui::Image(texture->GetRendererId(), ImVec2(85.f, 85.f));
 						ImGui::Text(texture->GetPath().c_str());
 						ImGui::Separator();
