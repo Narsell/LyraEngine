@@ -229,6 +229,8 @@ public:
 		);
 
 		Lyra::Renderer::EndScene();
+
+		m_LastFrameTime = ts.GetSeconds();
 	}
 
 	void OnImGuiRender() override
@@ -282,11 +284,12 @@ public:
 			ImGui::DragFloat("Quadratic Attenuation##FlashLight", &m_SceneProps.SpotLight.quadAttenuation, 0.01f, 0.0f, 1.0f);
 		}
 
-		if (ImGui::CollapsingHeader("Backpack Model"))
+		if (ImGui::CollapsingHeader("3D Model"))
 		{
 			ImGui::Indent();
-
 			auto& materials = m_Model.GetMaterials();
+			ImGui::Text(std::format("Materials: {}",  materials.size()).c_str());
+			ImGui::Text(std::format("Meshes: {}", m_Model.GetMeshCount()).c_str());
 			int materialCount = 0;
 			for (auto& [materialHash, material] : materials)
 			{
@@ -331,6 +334,11 @@ public:
 		ImGui::Value("Z", m_CameraController.GetCamera()->GetPosition().z);
 		ImGui::Separator();
 
+		ImGui::SeparatorText("Performance Stats");
+		ImGui::Value("Draw Calls: ", Lyra::Renderer::GetDrawCallCount());
+		ImGui::Value("FPS: ", 1.0f / m_LastFrameTime);
+		ImGui::Value("Frametime: ", m_LastFrameTime);
+		ImGui::Separator();
 
 		ImGui::End();
 	}
@@ -382,6 +390,7 @@ private:
 	float m_LightSourceAngle;
 	float m_LightSourceSpeed;
 
+	float m_LastFrameTime = 0.0f;
 	float m_Time = 0.0f;
 };
 

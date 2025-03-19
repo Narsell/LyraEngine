@@ -13,7 +13,7 @@ namespace Lyra
 		:	m_Window(Application::Get().GetWindow()),
 			m_CameraInitialPos(0.0, 0.0f, 2.0f),
 			m_CameraMinSpeed(2.0f),
-			m_CameraMaxSpeed(20.0f),
+			m_CameraMaxSpeed(60.0f),
 			m_CameraSpeed(10.0f),
 			m_ZoomSpeedFactor(0.005f),
 			m_LookAtSensitivity(0.1f),

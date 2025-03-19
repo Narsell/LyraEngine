@@ -58,6 +58,12 @@ namespace Lyra
 		GLTextureFormat textureFormat;
 		switch (channels)
 		{
+			case 1:
+			{
+				textureFormat.Internal = GL_R8;
+				textureFormat.Data = GL_RED;
+				break;
+			}
 			case 3:
 			{
 				textureFormat.Internal = GL_RGB8;
@@ -72,7 +78,7 @@ namespace Lyra
 			}
 			default:
 			{
-				LR_CORE_ASSERT(false, "Texture format not supported.");
+				LR_CORE_ASSERT(false, "Texture at '{}': Format not supported.", m_Path);
 			}
 		}
 		return textureFormat;

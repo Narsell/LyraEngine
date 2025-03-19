@@ -7,6 +7,9 @@
 namespace Lyra
 {
 	SceneProps Renderer::s_SceneProps;
+	uint32_t Renderer::s_CurrentDrawCallCount = 0;
+	uint32_t Renderer::s_LastDrawCallCount = 0;
+
 
 	void Renderer::Init()
 	{
@@ -21,11 +24,12 @@ namespace Lyra
 	void Renderer::BeginScene(const SceneProps& sceneProps)
 	{
 		s_SceneProps = sceneProps;
+		s_CurrentDrawCallCount = 0;
 	}
 
 	void Renderer::EndScene()
 	{
-
+		s_LastDrawCallCount = s_CurrentDrawCallCount;
 	}
 
 	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& modelMatrix, bool drawIndexed)
@@ -78,5 +82,6 @@ namespace Lyra
 		{
 			RenderCommand::DrawUnindexed(vertexArray);
 		}
+		s_CurrentDrawCallCount++;
 	}
 }

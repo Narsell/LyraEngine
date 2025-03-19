@@ -14,6 +14,7 @@ namespace Lyra
 	public:
 		static void Init();
 
+		static uint32_t GetDrawCallCount() { return s_LastDrawCallCount; }
 		static void OnWindowResize(uint32_t width, uint32_t height);
 
 		static void BeginScene(const SceneProps& sceneProps);
@@ -24,5 +25,8 @@ namespace Lyra
 
 	private:
 		static SceneProps s_SceneProps;
+
+		static uint32_t s_LastDrawCallCount;
+		static uint32_t s_CurrentDrawCallCount;
 	};
 }
