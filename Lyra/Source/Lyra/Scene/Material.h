@@ -25,6 +25,6 @@ namespace Lyra
 		Ref<Shader> m_Shader;
 		std::vector<Ref<Texture2D>> m_Textures;
 
-		size_t m_Hash;
+		size_t m_Hash = 0;
 	};
 }

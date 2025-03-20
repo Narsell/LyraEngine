@@ -13,14 +13,11 @@ namespace Lyra
 		m_Shader->Bind();
 		m_Shader->UploadUniform_1f("u_Material.shininess", m_Shininess);
 
-		std::string texturesHashKey;
-		texturesHashKey.reserve(256);
 		for (const Ref<Texture2D>& texture : m_Textures)
 		{
-			texturesHashKey += texture->GetPath();
+			Utils::Hash::HashCombine(m_Hash, texture->GetHash());
 		}
-
-		Utils::Hash::HashCombine(m_Hash, m_Shader->GetHash(), texturesHashKey, m_Shininess);
+		Utils::Hash::HashCombine(m_Hash, m_Shader->GetHash(), m_Shininess);
 	}
 
 	void Material::SetTexture(const Ref<Texture2D>& texture)
@@ -34,11 +31,5 @@ namespace Lyra
 		{
 			texture->Bind();
 		}
-		//No need to upload the diffuse and specular samplers every time since we're now using layout bindings on those samplers in the shader.
-		//I will leave this here just in case :)
-		//for (const auto& texture : m_Textures)
-		//{
-		//	m_Shader->UploadUniform_1i(std::format("u_Material.{0}", Utils::TextureTypeToString(texture->GetType())), Utils::GetTextureTypeSlot(texture->GetType()));
-		//}
 	}
 }

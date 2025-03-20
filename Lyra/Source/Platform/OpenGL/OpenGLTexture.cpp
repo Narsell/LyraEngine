@@ -7,16 +7,17 @@
 
 namespace Lyra
 {
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, TextureType textureType)
-		:	Texture2D(textureType), m_Path(path), m_Height(0.0f), m_Width(0.0f), m_RendererId(0)
+	OpenGLTexture2D::OpenGLTexture2D(const Texture2DProps& textureProps)
+		:	Texture2D(textureProps), Slot(static_cast<int8_t>(textureProps.Type))
 	{
 		int width, height, channels;
 
+		/* TODO: Handle this texture loading stuff in some texture/asset manager class! */
 		stbi_set_flip_vertically_on_load(1);
-		stbi_uc* data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+		stbi_uc* data = stbi_load(m_Props.Path.c_str(), &width, &height, &channels, 0);
 		if (!data)
 		{
-			LR_CORE_FATAL("Failed to load image from path \"{0}\"", path.c_str());
+			LR_CORE_FATAL("Failed to load image from path \"{0}\"", m_Props.Path.c_str());
 			return;
 		}
 
@@ -43,6 +44,8 @@ namespace Lyra
 
 		// Free texture data from CPU since we don't need it once it has been uploaded to the GPU.
 		stbi_image_free(data);
+
+		Utils::Hash::HashCombine(m_Hash, m_Props.Path, m_RendererId);
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()
@@ -52,9 +55,9 @@ namespace Lyra
 
 	void OpenGLTexture2D::Bind() const
 	{
-		if (Utils::Texture::IsValidTextureType(m_Type))
+		if (Utils::Texture::IsValidTextureType(m_Props.Type))
 		{
-			glBindTextureUnit(m_Slot, m_RendererId);
+			glBindTextureUnit(Slot, m_RendererId);
 		}
 	}
 
@@ -83,7 +86,7 @@ namespace Lyra
 			}
 			default:
 			{
-				LR_CORE_ASSERT(false, "Texture at '{}': Format not supported.", m_Path);
+				LR_CORE_ASSERT(false, "Texture at '{}': Format not supported.", m_Props.Path);
 			}
 		}
 		return textureFormat;

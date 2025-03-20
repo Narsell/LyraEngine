@@ -139,8 +139,8 @@ public:
 		m_Model = Lyra::Model("Assets/Models/backpack/backpack.obj", m_PhongShader);
 
 		// Creating and setting textures
-		m_BoxTextureDiffuse = Lyra::Texture2D::Create("Assets/Textures/Container.png", Lyra::TextureType::DIFFUSE);
-		m_BoxTextureSpecular = Lyra::Texture2D::Create("Assets/Textures/Container_specular.png", Lyra::TextureType::SPECULAR);
+		m_BoxTextureDiffuse = Lyra::Texture2D::Create({ "Assets/Textures/Container.png", Lyra::TextureType::DIFFUSE });
+		m_BoxTextureSpecular = Lyra::Texture2D::Create({ "Assets/Textures/Container_specular.png", Lyra::TextureType::SPECULAR });
 
 		// Setting up point lights initial values.
 		{
@@ -335,9 +335,9 @@ public:
 		ImGui::Separator();
 
 		ImGui::SeparatorText("Performance Stats");
-		ImGui::Value("Draw Calls: ", Lyra::Renderer::GetDrawCallCount());
-		ImGui::Value("FPS: ", 1.0f / m_LastFrameTime);
-		ImGui::Value("Frametime: ", m_LastFrameTime);
+		ImGui::Value("Draw Calls", Lyra::Renderer::GetDrawCallCount());
+		ImGui::Value("FPS", 1.0f / m_LastFrameTime);
+		ImGui::Value("Frametime", m_LastFrameTime);
 		ImGui::Separator();
 
 		ImGui::End();

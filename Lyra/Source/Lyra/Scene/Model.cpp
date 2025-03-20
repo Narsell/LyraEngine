@@ -105,7 +105,7 @@ namespace Lyra
 			
 			if (m_Materials.find(materialHash) == m_Materials.end())
 			{
-				material = make_shared<Material>(m_Shader, textures);
+				material = std::make_shared<Material>(newMaterial);
 				m_Materials[materialHash] = material;
 			}
 			else
@@ -143,7 +143,9 @@ namespace Lyra
 				bool isMeshAlreadyLoaded = Texture2D::s_TexturesLoaded.find(texturePath) != Texture2D::s_TexturesLoaded.end();
 
 				Ref<Texture2D> meshTexture;
-				meshTexture = Texture2D::Create(texturePath, internalTextType);
+
+				Texture2DProps textureProps(texturePath, internalTextType);
+				meshTexture = Texture2D::Create(textureProps);
 
 				textures.push_back(meshTexture);
 
