@@ -136,11 +136,13 @@ public:
 		m_PhongShader = Lyra::Shader::Create("Assets/Shaders/PhongModel.glsl");
 		m_LightSourceShader = Lyra::Shader::Create("Assets/Shaders/LightSource.glsl");
 
-		m_Model = Lyra::Model("Assets/Models/backpack/backpack.obj", m_PhongShader);
+		m_Model = Lyra::Model("Assets/Models/sponza/sponza.obj", m_PhongShader);
 
 		// Creating and setting textures
-		m_BoxTextureDiffuse = Lyra::Texture2D::Create({ "Assets/Textures/Container.png", Lyra::TextureType::DIFFUSE });
-		m_BoxTextureSpecular = Lyra::Texture2D::Create({ "Assets/Textures/Container_specular.png", Lyra::TextureType::SPECULAR });
+		Lyra::Texture2DProps propsDiffuse("Assets/Textures/Container.png", Lyra::TextureType::DIFFUSE);
+		Lyra::Texture2DProps propsSpecular("Assets/Textures/Container_specular.png", Lyra::TextureType::SPECULAR);
+		m_BoxTextureDiffuse = Lyra::Texture2D::Create(propsDiffuse);
+		m_BoxTextureSpecular = Lyra::Texture2D::Create(propsSpecular);
 
 		// Setting up point lights initial values.
 		{

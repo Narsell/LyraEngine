@@ -19,6 +19,24 @@ namespace Lyra
 		virtual void Bind() const = 0;
 	};
 
+	enum class TextureWrap : uint8_t
+	{
+		REPEAT,
+		MIRRORED_REPEAT,
+		CLAMP_TO_EDGE,
+		CLAMP_TO_BORDER
+	};
+
+	enum class TextureFilter : uint8_t
+	{
+		NEAREST,
+		LINEAR,
+		NEAREST_MIPMAP_NEAREST,
+		LINEAR_MIPMAP_NEAREST,
+		NEAREST_MIPMAP_LINEAR,
+		LINEAR_MIPMAP_LINEAR
+	};
+
 	struct Texture2DProps
 	{
 		Texture2DProps() = delete;
@@ -27,7 +45,18 @@ namespace Lyra
 
 		std::string Path;
 		TextureType Type = TextureType::NONE;
+
+		bool UseMipmaps = true;
+		
+		TextureFilter MinFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
+		TextureFilter MagFilter = TextureFilter::LINEAR;
+
+		TextureWrap WrapS = TextureWrap::REPEAT;
+		TextureWrap WrapT = TextureWrap::REPEAT;
+
+		glm::vec4 BorderColor = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
 	};
+
 
 	class Texture2D : public Texture
 	{

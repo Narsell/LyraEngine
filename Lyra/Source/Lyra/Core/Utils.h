@@ -17,9 +17,9 @@ namespace Lyra
 
 	namespace Utils::Texture
 	{
-
 		/* Gets the number of unique TextureType elements supported by the engine. */
 		inline constexpr int8_t GetUniqueTypeCount() { return static_cast<int8_t>(TextureType::COUNT); }
+		
 		/* Checks if the given TextureType is valid. */
 		inline bool IsValidTextureType(TextureType type)
 		{
@@ -27,11 +27,10 @@ namespace Lyra
 			return typeAsInt > static_cast<int8_t>(TextureType::NONE)
 				&& typeAsInt < static_cast<int8_t>(TextureType::COUNT);
 		}
+		
 		/* Validates if a given integer maps to a valid TextureType. */
-		inline bool IsValidTextureType(int8_t i)
-		{
-			return IsValidTextureType(static_cast<TextureType>(i));
-		}
+		inline bool IsValidTextureType(int8_t i) { return IsValidTextureType(static_cast<TextureType>(i)); }
+		
 		/* Retrieves a string representation of a given TextureType. */
 		inline const char* TextureTypeToString(TextureType type)
 		{
