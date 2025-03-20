@@ -21,7 +21,7 @@ namespace Lyra
 	}
 
 	Model::Model(const std::string& path, const Ref<Shader>& shader)
-		: 	m_Shader(shader)
+		: 	m_Shader(shader), m_Directory(path.substr(0, path.find_last_of("/")))
 	{
 		LoadModel(path);
 	}
@@ -34,7 +34,7 @@ namespace Lyra
 		}
 	}
 
-	void Model::LoadModel(std::string path)
+	void Model::LoadModel(const std::string& path)
 	{
 		Assimp::Importer importer;
 
@@ -46,8 +46,6 @@ namespace Lyra
 			LR_CORE_FATAL("Failed to load model at {0}. Ex: {1}", path, importer.GetErrorString());
 			return;
 		}
-
-		m_Directory = path.substr(0, path.find_last_of("/"));
 
 		ProcessNode(scene->mRootNode, scene);
 	}

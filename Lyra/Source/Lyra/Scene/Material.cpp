@@ -14,6 +14,7 @@ namespace Lyra
 		m_Shader->UploadUniform_1f("u_Material.shininess", m_Shininess);
 
 		std::string texturesHashKey;
+		texturesHashKey.reserve(256);
 		for (const Ref<Texture2D>& texture : m_Textures)
 		{
 			texturesHashKey += texture->GetPath();

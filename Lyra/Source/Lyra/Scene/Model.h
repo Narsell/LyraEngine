@@ -29,7 +29,7 @@ namespace Lyra
 		const std::unordered_map<size_t, Ref<Material>>& GetMaterials() const { return m_Materials; }
 
 	private:
-		void LoadModel(std::string path);
+		void LoadModel(const std::string& path);
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		void ProcessMesh(aiMesh* mesh, const aiScene* scene);
 		std::vector<Ref<Texture2D>> LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh);

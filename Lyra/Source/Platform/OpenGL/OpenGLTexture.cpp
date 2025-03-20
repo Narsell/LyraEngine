@@ -8,7 +8,7 @@
 namespace Lyra
 {
 	OpenGLTexture2D::OpenGLTexture2D(const std::string& path, TextureType textureType)
-		:	Texture2D(textureType), m_Height(0.0f), m_Width(0.0f), m_RendererId(0), m_Path(path)
+		:	Texture2D(textureType), m_Path(path), m_Height(0.0f), m_Width(0.0f), m_RendererId(0)
 	{
 		int width, height, channels;
 
@@ -26,15 +26,20 @@ namespace Lyra
 		GLTextureFormat textureFormat = GetTextureFormat(channels);
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererId);
+
+		// Texture wrapping for text coords outside of [0, 1]
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		// These param control how to handle textures that don't map 1:1 to our geometry. Minification = Shrink, Magnification = Expand.
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 		// Allocates memory in the GPU for the texture data that we want to upload.
 		glTextureStorage2D(m_RendererId, 1, textureFormat.Internal, m_Width, m_Height);
 
-		// These param control how to handle textures that don't map 1:1 to our geometry. Minification = Shrink, Magnification = Expand.
-		glTextureParameteri(m_RendererId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_RendererId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
 		// Upload data to GPU
 		glTextureSubImage2D(m_RendererId, 0, 0, 0, m_Width, m_Height, textureFormat.Data, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
 
 		// Free texture data from CPU since we don't need it once it has been uploaded to the GPU.
 		stbi_image_free(data);

@@ -12,7 +12,6 @@ namespace Lyra
 	{
 		// The format Open GL will use to allocate memory in the GPU for the texture.
 		GLenum Internal;
-
 		// The format of the texture data to upload.
 		GLenum Data;
 	};
@@ -35,11 +34,10 @@ namespace Lyra
 		GLTextureFormat GetTextureFormat(int channels) const;
 
 	private:
-		uint32_t m_Width, m_Height;
-		uint32_t m_RendererId;
-
 		std::string m_Path;
 
+		uint32_t m_Width, m_Height;
+		uint32_t m_RendererId;
 	};
 
 }

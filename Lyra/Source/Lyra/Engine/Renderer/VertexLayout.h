@@ -53,7 +53,7 @@ namespace Lyra
 
 	struct VertexElement
 	{
-		std::string Name;
+		const std::string Name;
 		ShaderData::TypeInfo TypeInfo;
 		bool Normalized;
 		uint32_t Offset;
