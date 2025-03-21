@@ -136,22 +136,24 @@ namespace Lyra
 			for (uint32_t i = 0; i < textureCount; i++)
 			{
 				aiString filename;
+
 				material->GetTexture(assimpTextType, i, &filename);
 
 				// TODO: Check this for forward/bakwards slashes shenanigans (normalize paths)
 				std::basic_string texturePath = std::format("{0}/{1}", m_Directory, filename.C_Str());
-				bool isMeshAlreadyLoaded = Texture2D::s_TexturesLoaded.find(texturePath) != Texture2D::s_TexturesLoaded.end();
+				bool isTextureAlreadyLoaded = Texture2D::s_TexturesLoaded.find(texturePath) != Texture2D::s_TexturesLoaded.end();
 
 				Ref<Texture2D> meshTexture;
 
 				Texture2DProps textureProps(texturePath, internalTextType);
+				textureProps.FlipVertically = false;
 				meshTexture = Texture2D::Create(textureProps);
 
 				textures.push_back(meshTexture);
 
-				if (!isMeshAlreadyLoaded)
+				if (!isTextureAlreadyLoaded)
 				{
-					LR_CORE_TRACE("{0} {1} texture map(s) loaded from mesh '{2}' and material '{3}'", textureCount, Utils::Texture::TextureTypeToString(internalTextType), assimpMesh->mName.C_Str(), material->GetName().C_Str());
+					LR_CORE_TRACE("{0} '{1}' texture map loaded from mesh '{2}' and material '{3}'", Utils::Texture::TextureTypeToString(internalTextType), filename.C_Str(), assimpMesh->mName.C_Str(), material->GetName().C_Str());
 					meshTexture->Bind();
 				}
 			}

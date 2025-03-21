@@ -8,6 +8,7 @@ namespace Lyra
 {
 	std::unordered_map<std::string, Ref<Texture2D>> Texture2D::s_TexturesLoaded;
 
+
 	Ref<Texture2D> Lyra::Texture2D::Create(const Texture2DProps& textureProps)
 	{
 		if (s_TexturesLoaded.find(textureProps.Path) != s_TexturesLoaded.end())

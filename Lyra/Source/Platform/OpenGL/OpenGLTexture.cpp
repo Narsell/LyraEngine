@@ -48,7 +48,7 @@ namespace Lyra
 		int width, height, channels;
 
 		/* TODO: Handle this texture loading stuff in some texture/asset manager class! */
-		stbi_set_flip_vertically_on_load(1);
+		stbi_set_flip_vertically_on_load(static_cast<int>(m_Props.FlipVertically));
 		stbi_uc* data = stbi_load(m_Props.Path.c_str(), &width, &height, &channels, 0);
 		if (!data)
 		{

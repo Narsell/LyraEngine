@@ -30,7 +30,7 @@ namespace Lyra
 	void Mesh::Draw()
 	{
 		m_Material->UpdateData();
-		Renderer::Submit(m_Material->GetShader(), m_VertexArray, glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(1.0f)));
+		Renderer::Submit(m_Material->GetShader(), m_VertexArray, glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(0.01f)));
 	}
 
 }

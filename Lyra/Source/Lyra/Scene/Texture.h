@@ -47,6 +47,7 @@ namespace Lyra
 		TextureType Type = TextureType::NONE;
 
 		bool UseMipmaps = true;
+		bool FlipVertically = true;
 		
 		TextureFilter MinFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
 		TextureFilter MagFilter = TextureFilter::LINEAR;
@@ -55,6 +56,7 @@ namespace Lyra
 		TextureWrap WrapT = TextureWrap::REPEAT;
 
 		glm::vec4 BorderColor = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
+
 	};
 
 
