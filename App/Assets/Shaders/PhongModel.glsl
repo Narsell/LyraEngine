@@ -166,8 +166,9 @@ void main()
 	vec3 normalVector = normalize(v_Normal);
 	vec3 viewDirection = normalize(-v_FragViewPosition);
 
-	vec4 textureColour = texture(u_Material.diffuse, v_TexCoord);
-	if (textureColour.a < 0.3) discard;
+	vec4 textureColor = texture(u_Material.diffuse, v_TexCoord);
+	// TODO: Maybe expose this threshold to RendererAPI as a uniform.
+	if (textureColor.a < 0.3) discard;
 
 	vec3 result = CalculateDirLight(u_DirLight, normalVector, viewDirection);
 

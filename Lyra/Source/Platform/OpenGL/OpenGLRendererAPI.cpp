@@ -13,6 +13,8 @@ namespace Lyra
 		glDepthFunc(GL_LESS);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		// TODO: We should disable/enable this dynamically when dealing with open meshes.
+		glEnable(GL_CULL_FACE);
 	}
 
 	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
