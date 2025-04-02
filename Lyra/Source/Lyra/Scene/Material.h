@@ -17,7 +17,7 @@ namespace Lyra
 		inline size_t GetHash() const { return m_Hash; }
 
 		void SetTexture(const Ref<Texture2D>& texture);
-		void UpdateData();
+		void BindTextures();
 
 	private:
 

@@ -14,8 +14,11 @@ namespace Lyra
 		virtual void Clear() override;
 
 		/* Named after DirectX */
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
-		virtual void DrawUnindexed(const Ref<VertexArray>& vertexArray) override;
+		virtual void DrawVertices(const Ref<VertexArray>& vertexArray, bool drawIndexed = true) override;
+
+	private:
+		virtual void DrawUnindexed(const Ref<VertexArray>& vertexArray);
+		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray);
 
 	};
 }

@@ -5,6 +5,7 @@
 #include "Scene/Scene.h"
 #include "RendererAPI.h"
 #include "Shader.h"
+#include "RenderCommandQueue.h"
 
 namespace Lyra
 {
@@ -20,11 +21,14 @@ namespace Lyra
 		static void BeginScene(const SceneProps& sceneProps);
 		static void EndScene();
 		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& modelMatrix = glm::mat4(1.0f), bool drawIndexed = true);
+		static void Submit(const Ref<Material>& material, const Ref<VertexArray>& vertexArray, const glm::mat4& modelMatrix = glm::mat4(1.0f), bool drawIndexed = true);
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 
 	private:
 		static SceneProps s_SceneProps;
+
+		static RenderCommandQueue s_RenderQueue;
 
 		static uint32_t s_LastDrawCallCount;
 		static uint32_t s_CurrentDrawCallCount;

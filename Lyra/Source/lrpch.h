@@ -12,6 +12,7 @@
 #include <sstream>
 #include <vector>
 #include <array>
+#include <unordered_map>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>

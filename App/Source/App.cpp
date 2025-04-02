@@ -203,32 +203,31 @@ public:
 		/* Actual rendering happens here */
 			
 		/* Render point light sources (Non-indexed) */
-		m_LightSourceShader->Bind();
-		for (int i = 0; i < m_SceneProps.PointLights.size(); i++)
-		{
-			m_LightSourceShader->UploadUniform_3f("u_Color", m_SceneProps.PointLights[i].diffuse);
-			Lyra::Renderer::Submit(
-				m_LightSourceShader,
-				m_LightSourceCubeVertexArray,
-				glm::translate(glm::mat4(1.0f), m_SceneProps.PointLights[i].position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
-				false
-			);
+		//m_LightSourceShader->Bind();
+		//for (int i = 0; i < m_SceneProps.PointLights.size(); i++)
+		//{
+		//	m_LightSourceShader->UploadUniform_3f("u_Color", m_SceneProps.PointLights[i].diffuse);
+		//	Lyra::Renderer::Submit(
+		//		m_LightSourceShader,
+		//		m_LightSourceCubeVertexArray,
+		//		glm::translate(glm::mat4(1.0f), m_SceneProps.PointLights[i].position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
+		//		false
+		//	);
 
-		}
+		//}
 
 		/* Render 3D model */
-		m_PhongShader->Bind();
 		m_Model.Draw();
 
 		/* Render main cube (Non-indexed) */
-		m_BoxTextureDiffuse->Bind();
-		m_BoxTextureSpecular->Bind();
-		Lyra::Renderer::Submit(
-			m_PhongShader,
-			m_CubeVertexArray,
-			glm::translate(glm::mat4(1.0f), m_CubePosition) * glm::rotate(glm::mat4(1.0f), glm::radians(m_CubeRotation), glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f))),
-			false
-		);
+		//m_BoxTextureDiffuse->Bind();
+		//m_BoxTextureSpecular->Bind();
+		//Lyra::Renderer::Submit(
+		//	m_PhongShader,
+		//	m_CubeVertexArray,
+		//	glm::translate(glm::mat4(1.0f), m_CubePosition) * glm::rotate(glm::mat4(1.0f), glm::radians(m_CubeRotation), glm::normalize(glm::vec3(1.0f, 1.0f, 0.0f))),
+		//	false
+		//);
 
 		Lyra::Renderer::EndScene();
 

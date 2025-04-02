@@ -23,9 +23,7 @@ namespace Lyra
 		virtual void SetClearColor(const glm::vec4& color) = 0;
 		virtual void Clear() = 0;
 
-		/* Named after DirectX */
-		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
-		virtual void DrawUnindexed(const Ref<VertexArray>& vertexArray) = 0;
+		virtual void DrawVertices(const Ref<VertexArray>& vertexArray, bool drawIndexed = true) = 0;
 
 		inline static API GetAPI() { return s_API; }
 

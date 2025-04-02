@@ -25,7 +25,7 @@ namespace Lyra
 		m_Textures.push_back(texture);
 	}
 
-	void Material::UpdateData()
+	void Material::BindTextures()
 	{
 		for (const Ref<Texture2D>& texture : m_Textures)
 		{
