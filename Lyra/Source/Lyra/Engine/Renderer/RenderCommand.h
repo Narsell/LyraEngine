@@ -3,6 +3,7 @@
 #include "Core/Ref.h"
 #include "Renderer/RendererAPI.h"
 #include "Scene/Material.h"
+#include "Scene/Scene.h"
 
 namespace Lyra
 {
@@ -16,6 +17,7 @@ namespace Lyra
 	{
 		Ref<VertexArray> vertexArray;
 		Ref<Material> material;
+		Ref<const SceneProps> sceneProps;
 		glm::mat4 transform = glm::mat4(1.0f);
 		bool drawIndexed = true;
 		RenderType renderType = RenderType::LR_OPAQUE;
@@ -25,10 +27,10 @@ namespace Lyra
 	{
 	public:
 		RenderCommand(const RenderCommandData& commandData);
-		RenderCommand(const Ref<VertexArray>& vertexArray, const Ref<Material>& material, const glm::mat4& transform, bool drawIndexed = true, RenderType renderType = RenderType::LR_OPAQUE);
+		RenderCommand(const Ref<VertexArray>& vertexArray, const Ref<Material>& material, const Ref<const SceneProps>& sceneProps, const glm::mat4& transform, bool drawIndexed = true, RenderType renderType = RenderType::LR_OPAQUE);
 		~RenderCommand() = default;
 
-		void Execute() const;
+		void Execute();
 
 		const RenderCommandData& GetData() const { return m_CommandData; }
 
@@ -38,8 +40,15 @@ namespace Lyra
 		inline static void Clear() { s_RendererAPI->Clear(); }
 
 	private:
+		void SetSceneUniforms();
+		void SetMaterialUniforms();
+		void SetEntityUniforms();
+
+	private:
 		RenderCommandData m_CommandData;
 
+		static size_t s_LastBoundMaterialHash;
+		static size_t s_LastBoundShaderHash;
 		static RendererAPI* s_RendererAPI;
 	};
 }

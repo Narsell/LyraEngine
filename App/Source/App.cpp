@@ -11,6 +11,7 @@ public:
 			m_CubeRotationSpeed(12.0f),
 			m_CubePosition(glm::vec3(1.5f, 0.0f, 0.0f)),
 			m_CubeShininess(32.f),
+			m_SceneProps(std::make_shared<Lyra::SceneProps>()),
 			m_LightSourceAngle(0.0f),
 			m_LightSourceSpeed(1.0f)
 	{ 
@@ -146,10 +147,10 @@ public:
 
 		// Setting up point lights initial values.
 		{
-			m_SceneProps.PointLights[0].diffuse = glm::vec3(1.0f, 0.3f, 0.2f);
-			m_SceneProps.PointLights[0].specular = m_SceneProps.PointLights[0].diffuse;
-			m_SceneProps.PointLights[1].diffuse = glm::vec3(0.2f, 1.0f, 0.3f);
-			m_SceneProps.PointLights[1].specular = m_SceneProps.PointLights[1].diffuse;
+			m_SceneProps->PointLights[0].diffuse = glm::vec3(1.0f, 0.3f, 0.2f);
+			m_SceneProps->PointLights[0].specular = m_SceneProps->PointLights[0].diffuse;
+			m_SceneProps->PointLights[1].diffuse = glm::vec3(0.2f, 1.0f, 0.3f);
+			m_SceneProps->PointLights[1].specular = m_SceneProps->PointLights[1].diffuse;
 		}
 	}
 
@@ -159,7 +160,7 @@ public:
 		Ref<Lyra::PerspectiveCamera> camera = std::make_shared<Lyra::PerspectiveCamera>(aspectRatio);
 
 		m_CameraController.AttachToCamera(camera);
-		m_SceneProps.Camera = camera;
+		m_SceneProps->Camera = camera;
 	}
 
 	void OnDetach() override
@@ -176,14 +177,14 @@ public:
 		/* Light source orbit */
 		m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
 		m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-		m_SceneProps.PointLights[0].position = orbitCenter + glm::vec3(
+		m_SceneProps->PointLights[0].position = orbitCenter + glm::vec3(
 			0.0f,
 			4.0f * glm::cos(m_LightSourceAngle),
 			4.0f * glm::sin(m_LightSourceAngle)
 		);
 		m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
 		m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-		m_SceneProps.PointLights[1].position = orbitCenter + glm::vec3(
+		m_SceneProps->PointLights[1].position = orbitCenter + glm::vec3(
 			5.0f * glm::sin(m_LightSourceAngle),
 			0.0f,
 			5.0f * glm::cos(m_LightSourceAngle)
@@ -204,13 +205,13 @@ public:
 			
 		/* Render point light sources (Non-indexed) */
 		//m_LightSourceShader->Bind();
-		//for (int i = 0; i < m_SceneProps.PointLights.size(); i++)
+		//for (int i = 0; i < m_SceneProps->PointLights.size(); i++)
 		//{
-		//	m_LightSourceShader->UploadUniform_3f("u_Color", m_SceneProps.PointLights[i].diffuse);
+		//	m_LightSourceShader->UploadUniform_3f("u_Color", m_SceneProps->PointLights[i].diffuse);
 		//	Lyra::Renderer::Submit(
 		//		m_LightSourceShader,
 		//		m_LightSourceCubeVertexArray,
-		//		glm::translate(glm::mat4(1.0f), m_SceneProps.PointLights[i].position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
+		//		glm::translate(glm::mat4(1.0f), m_SceneProps->PointLights[i].position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
 		//		false
 		//	);
 
@@ -241,15 +242,15 @@ public:
 		{
 			ImGui::Indent();
 
-			ImGui::DragFloat3("Direction", &m_SceneProps.DirLight.direction.x, 0.1f);
-			ImGui::ColorEdit3("Ambient##DirLight", &m_SceneProps.DirLight.ambient.x);
-			ImGui::ColorEdit3("Diffuse##DirLight", &m_SceneProps.DirLight.diffuse.x);
-			ImGui::ColorEdit3("Specular##DirLight", &m_SceneProps.DirLight.specular.x);
+			ImGui::DragFloat3("Direction", &m_SceneProps->DirLight.direction.x, 0.1f);
+			ImGui::ColorEdit3("Ambient##DirLight", &m_SceneProps->DirLight.ambient.x);
+			ImGui::ColorEdit3("Diffuse##DirLight", &m_SceneProps->DirLight.diffuse.x);
+			ImGui::ColorEdit3("Specular##DirLight", &m_SceneProps->DirLight.specular.x);
 
 			ImGui::Unindent();
 		}
 
-		for (int i = 0; i < m_SceneProps.PointLights.size(); ++i) {
+		for (int i = 0; i < m_SceneProps->PointLights.size(); ++i) {
 			// Push a unique ID scope for each light to avoid label conflicts
 			ImGui::PushID(i);
 
@@ -258,13 +259,13 @@ public:
 			{
 				ImGui::Indent(); // Indent controls for visual hierarchy
 
-				ImGui::DragFloat3("Position", &m_SceneProps.PointLights[i].position.x, 0.1f);
-				ImGui::ColorEdit3("Ambient", &m_SceneProps.PointLights[i].ambient.r);
-				ImGui::ColorEdit3("Diffuse", &m_SceneProps.PointLights[i].diffuse.r);
-				ImGui::ColorEdit3("Specular", &m_SceneProps.PointLights[i].specular.r);
-				ImGui::DragFloat("Constant Attenuation", &m_SceneProps.PointLights[i].constAttenuation, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Linear Attenuation", &m_SceneProps.PointLights[i].linearAttenuation, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Quadratic Attenuation", &m_SceneProps.PointLights[i].quadAttenuation, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat3("Position", &m_SceneProps->PointLights[i].position.x, 0.1f);
+				ImGui::ColorEdit3("Ambient", &m_SceneProps->PointLights[i].ambient.r);
+				ImGui::ColorEdit3("Diffuse", &m_SceneProps->PointLights[i].diffuse.r);
+				ImGui::ColorEdit3("Specular", &m_SceneProps->PointLights[i].specular.r);
+				ImGui::DragFloat("Constant Attenuation", &m_SceneProps->PointLights[i].constAttenuation, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Linear Attenuation", &m_SceneProps->PointLights[i].linearAttenuation, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Quadratic Attenuation", &m_SceneProps->PointLights[i].quadAttenuation, 0.01f, 0.0f, 1.0f);
 
 				ImGui::Unindent();
 			}
@@ -275,14 +276,14 @@ public:
 
 		if (ImGui::CollapsingHeader("Flash Light"))
 		{
-			ImGui::SliderFloat("Inner Ang", &m_SceneProps.SpotLight.innerCutoffAngle, 0.0f, m_SceneProps.SpotLight.outerCutoffAngle);
-			ImGui::SliderFloat("Outer Ang", &m_SceneProps.SpotLight.outerCutoffAngle, m_SceneProps.SpotLight.innerCutoffAngle, 90.0f);
-			ImGui::ColorEdit3("Ambient##FlashLight", &m_SceneProps.SpotLight.ambient.x);
-			ImGui::ColorEdit3("Diffuse##FlashLight", &m_SceneProps.SpotLight.diffuse.x);
-			ImGui::ColorEdit3("Specular##FlashLight", &m_SceneProps.SpotLight.specular.x);
-			ImGui::DragFloat("Constant Attenuation##FlashLight", &m_SceneProps.SpotLight.constAttenuation, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Linear Attenuation##FlashLight", &m_SceneProps.SpotLight.linearAttenuation, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Quadratic Attenuation##FlashLight", &m_SceneProps.SpotLight.quadAttenuation, 0.01f, 0.0f, 1.0f);
+			ImGui::SliderFloat("Inner Ang", &m_SceneProps->SpotLight.innerCutoffAngle, 0.0f, m_SceneProps->SpotLight.outerCutoffAngle);
+			ImGui::SliderFloat("Outer Ang", &m_SceneProps->SpotLight.outerCutoffAngle, m_SceneProps->SpotLight.innerCutoffAngle, 90.0f);
+			ImGui::ColorEdit3("Ambient##FlashLight", &m_SceneProps->SpotLight.ambient.x);
+			ImGui::ColorEdit3("Diffuse##FlashLight", &m_SceneProps->SpotLight.diffuse.x);
+			ImGui::ColorEdit3("Specular##FlashLight", &m_SceneProps->SpotLight.specular.x);
+			ImGui::DragFloat("Constant Attenuation##FlashLight", &m_SceneProps->SpotLight.constAttenuation, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Linear Attenuation##FlashLight", &m_SceneProps->SpotLight.linearAttenuation, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Quadratic Attenuation##FlashLight", &m_SceneProps->SpotLight.quadAttenuation, 0.01f, 0.0f, 1.0f);
 		}
 
 		if (ImGui::CollapsingHeader("3D Model"))
@@ -387,7 +388,7 @@ private:
 	glm::vec3 m_CubePosition;
 	float m_CubeShininess;
 
-	Lyra::SceneProps m_SceneProps;
+	Ref<Lyra::SceneProps> m_SceneProps;
 	float m_LightSourceAngle;
 	float m_LightSourceSpeed;
 

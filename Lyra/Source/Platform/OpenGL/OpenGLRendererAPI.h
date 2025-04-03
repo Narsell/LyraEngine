@@ -13,7 +13,6 @@ namespace Lyra
 		virtual void SetClearColor(const glm::vec4& color) override;
 		virtual void Clear() override;
 
-		/* Named after DirectX */
 		virtual void DrawVertices(const Ref<VertexArray>& vertexArray, bool drawIndexed = true) override;
 
 	private:

@@ -7,7 +7,7 @@
 namespace Lyra
 {
 	RenderCommandQueue Renderer::s_RenderQueue;
-	SceneProps Renderer::s_SceneProps;
+	Ref<const SceneProps> Renderer::s_SceneProps;
 	uint32_t Renderer::s_CurrentDrawCallCount = 0;
 	uint32_t Renderer::s_LastDrawCallCount = 0;
 
@@ -22,7 +22,7 @@ namespace Lyra
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 
-	void Renderer::BeginScene(const SceneProps& sceneProps)
+	void Renderer::BeginScene(const Ref<const SceneProps>& sceneProps)
 	{
 		s_SceneProps = sceneProps;
 		s_CurrentDrawCallCount = 0;
@@ -30,7 +30,7 @@ namespace Lyra
 
 	void Renderer::EndScene()
 	{
-		s_RenderQueue.Flush(s_SceneProps);
+		s_RenderQueue.Flush();
 		s_LastDrawCallCount = s_CurrentDrawCallCount;
 	}
 
@@ -45,7 +45,7 @@ namespace Lyra
 	void Renderer::Submit(const Ref<Material>& material, const Ref<VertexArray>& vertexArray, const glm::mat4& modelMatrix, bool drawIndexed)
 	{
 		// TODO: emplace this instead of copying over
-		RenderCommand command = RenderCommand(vertexArray, material, modelMatrix, drawIndexed, RenderType::LR_OPAQUE);
+		RenderCommand command = RenderCommand(vertexArray, material, s_SceneProps, modelMatrix, drawIndexed, RenderType::LR_OPAQUE);
 		s_RenderQueue.Enqueue(command);
 		s_CurrentDrawCallCount++;
 	}
