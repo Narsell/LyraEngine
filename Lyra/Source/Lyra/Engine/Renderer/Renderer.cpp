@@ -37,9 +37,7 @@ namespace Lyra
 
 	void Renderer::Submit(const Ref<Material>& material, const Ref<VertexArray>& vertexArray, const glm::mat4& modelMatrix, bool drawIndexed)
 	{
-		// TODO: emplace this instead of copying over
-		RenderCommand command = RenderCommand(vertexArray, material, s_Scene, modelMatrix, drawIndexed, RenderType::LR_OPAQUE);
-		s_RenderQueue.Enqueue(command);
+		s_RenderQueue.Enqueue(vertexArray, material, s_Scene, modelMatrix, drawIndexed, RenderType::LR_OPAQUE);
 		s_CurrentDrawCallCount++;
 	}
 

@@ -6,6 +6,11 @@ namespace Lyra
 {
 	void Scene::UploadUniforms(const Ref<Shader>& shader) const
 	{
+		if (!shader->IsCurrentlyBound())
+		{
+			shader->Bind();
+		}
+
 		shader->UploadUniform_Mat4f("u_VP", m_Data.camera->GetViewProjectionMatrix());
 		shader->UploadUniform_Mat4f("u_View", m_Data.camera->GetViewMatrix());
 
