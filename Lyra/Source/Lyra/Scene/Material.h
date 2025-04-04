@@ -15,9 +15,18 @@ namespace Lyra
 		inline const std::vector<Ref<Texture2D>>& GetTextures() const { return m_Textures; }
 		inline const Ref<Shader>& GetShader() const { return m_Shader; }
 		inline size_t GetHash() const { return m_Hash; }
+		inline bool IsCurrentlyBound() const { return GetHash() == s_LastBoundMaterialHash; }
 
 		void SetTexture(const Ref<Texture2D>& texture);
-		void BindTextures();
+
+		void UploadUniforms() const;
+		void BindTextures() const;
+	
+	protected:
+		static size_t s_LastBoundMaterialHash;
+
+	private:
+		void UpdateMaterialUniforms() const;
 
 	private:
 

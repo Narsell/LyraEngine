@@ -7,6 +7,8 @@
 
 namespace Lyra
 {
+	size_t Shader::s_LastBoundShaderHash = 0;
+
 	Ref<Shader> Shader::Create(const std::string& filepath)
 	{
 		switch (Renderer::GetAPI())

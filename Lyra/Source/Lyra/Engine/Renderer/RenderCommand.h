@@ -17,7 +17,7 @@ namespace Lyra
 	{
 		Ref<VertexArray> vertexArray;
 		Ref<Material> material;
-		Ref<const SceneProps> sceneProps;
+		Ref<const Scene> scene;
 		glm::mat4 transform = glm::mat4(1.0f);
 		bool drawIndexed = true;
 		RenderType renderType = RenderType::LR_OPAQUE;
@@ -27,7 +27,7 @@ namespace Lyra
 	{
 	public:
 		RenderCommand(const RenderCommandData& commandData);
-		RenderCommand(const Ref<VertexArray>& vertexArray, const Ref<Material>& material, const Ref<const SceneProps>& sceneProps, const glm::mat4& transform, bool drawIndexed = true, RenderType renderType = RenderType::LR_OPAQUE);
+		RenderCommand(const Ref<VertexArray>& vertexArray, const Ref<Material>& material, const Ref<const Scene>& scene, const glm::mat4& transform, bool drawIndexed = true, RenderType renderType = RenderType::LR_OPAQUE);
 		~RenderCommand() = default;
 
 		void Execute();
@@ -47,8 +47,6 @@ namespace Lyra
 	private:
 		RenderCommandData m_CommandData;
 
-		static size_t s_LastBoundMaterialHash;
-		static size_t s_LastBoundShaderHash;
 		static RendererAPI* s_RendererAPI;
 	};
 }

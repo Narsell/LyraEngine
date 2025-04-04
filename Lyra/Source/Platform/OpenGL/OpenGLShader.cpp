@@ -1,10 +1,11 @@
 #include "lrpch.h"
 
-#include "OpenGLShader.h"
-
 #include <fstream>
 #include <array>
 #include <filesystem>
+
+#include "OpenGLShader.h"
+#include "Core/Utils.h"
 
 namespace Lyra
 {
@@ -64,6 +65,8 @@ namespace Lyra
 				CacheActiveUniforms();
 			}
 		}
+
+		Utils::Hash::HashCombine(m_Hash, m_RendererId);
 	}
 
 	bool OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shaderSources, std::array<GLenum, 2>& outGLShaderIds)
@@ -239,6 +242,7 @@ namespace Lyra
 	void OpenGLShader::Bind()
 	{
 		glUseProgram(m_RendererId);
+		s_LastBoundShaderHash = m_Hash;
 	}
 
 	void OpenGLShader::Unbind()

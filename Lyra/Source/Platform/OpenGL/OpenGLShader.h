@@ -13,7 +13,7 @@ namespace Lyra
 		OpenGLShader(const std::string& filepath);
 		OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 
-		virtual size_t GetHash() const override { return std::hash<float>{}(static_cast<float>(m_RendererId)); }
+		virtual size_t GetHash() const override { return m_Hash; }
 
 		virtual void Bind() override;
 		virtual void Unbind() override;
@@ -41,7 +41,8 @@ namespace Lyra
 		bool UniformExists(const std::string& name) const;
 
 	private:
-		uint32_t m_RendererId;
+		uint32_t m_RendererId = 0;
+		size_t m_Hash = 0;
 
 		std::string m_Name;
 		mutable std::unordered_map<std::string, int> m_UniformLocationCache;

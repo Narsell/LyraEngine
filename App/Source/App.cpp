@@ -11,7 +11,6 @@ public:
 			m_CubeRotationSpeed(12.0f),
 			m_CubePosition(glm::vec3(1.5f, 0.0f, 0.0f)),
 			m_CubeShininess(32.f),
-			m_SceneProps(std::make_shared<Lyra::SceneProps>()),
 			m_LightSourceAngle(0.0f),
 			m_LightSourceSpeed(1.0f)
 	{ 
@@ -145,13 +144,7 @@ public:
 		m_BoxTextureDiffuse = Lyra::Texture2D::Create(propsDiffuse);
 		m_BoxTextureSpecular = Lyra::Texture2D::Create(propsSpecular);
 
-		// Setting up point lights initial values.
-		{
-			m_SceneProps->PointLights[0].diffuse = glm::vec3(1.0f, 0.3f, 0.2f);
-			m_SceneProps->PointLights[0].specular = m_SceneProps->PointLights[0].diffuse;
-			m_SceneProps->PointLights[1].diffuse = glm::vec3(0.2f, 1.0f, 0.3f);
-			m_SceneProps->PointLights[1].specular = m_SceneProps->PointLights[1].diffuse;
-		}
+
 	}
 
 	void OnAttach() override
@@ -160,7 +153,19 @@ public:
 		Ref<Lyra::PerspectiveCamera> camera = std::make_shared<Lyra::PerspectiveCamera>(aspectRatio);
 
 		m_CameraController.AttachToCamera(camera);
-		m_SceneProps->Camera = camera;
+
+		Lyra::SceneProps sceneProps;
+		sceneProps.camera = camera;
+
+		// Setting up point lights initial values.
+		{
+			sceneProps.pointLights[0].diffuse = glm::vec3(1.0f, 0.3f, 0.2f);
+			sceneProps.pointLights[0].specular = sceneProps.pointLights[0].diffuse;
+			sceneProps.pointLights[1].diffuse = glm::vec3(0.2f, 1.0f, 0.3f);
+			sceneProps.pointLights[1].specular = sceneProps.pointLights[1].diffuse;
+		}
+
+		m_Scene = std::make_shared<Lyra::Scene>(sceneProps);
 	}
 
 	void OnDetach() override
@@ -173,18 +178,19 @@ public:
 		m_Time += ts;
 		m_CameraController.OnUpdate(ts);
 
+		auto& pointLights = m_Scene->GetPointLights();
 		glm::vec3 orbitCenter = glm::vec3(0.0f, 0.0f, -1.0f);
 		/* Light source orbit */
 		m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
 		m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-		m_SceneProps->PointLights[0].position = orbitCenter + glm::vec3(
+		pointLights[0].position = orbitCenter + glm::vec3(
 			0.0f,
 			4.0f * glm::cos(m_LightSourceAngle),
 			4.0f * glm::sin(m_LightSourceAngle)
 		);
 		m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
 		m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-		m_SceneProps->PointLights[1].position = orbitCenter + glm::vec3(
+		pointLights[1].position = orbitCenter + glm::vec3(
 			5.0f * glm::sin(m_LightSourceAngle),
 			0.0f,
 			5.0f * glm::cos(m_LightSourceAngle)
@@ -199,19 +205,19 @@ public:
 		Lyra::RenderCommand::Clear();
 
 		/* Set the scene variables */
-		Lyra::Renderer::BeginScene(m_SceneProps);
+		Lyra::Renderer::BeginScene(m_Scene);
 
 		/* Actual rendering happens here */
 			
 		/* Render point light sources (Non-indexed) */
 		//m_LightSourceShader->Bind();
-		//for (int i = 0; i < m_SceneProps->PointLights.size(); i++)
+		//for (int i = 0; i < m_SceneProps->pointLights.size(); i++)
 		//{
-		//	m_LightSourceShader->UploadUniform_3f("u_Color", m_SceneProps->PointLights[i].diffuse);
+		//	m_LightSourceShader->UploadUniform_3f("u_Color", m_SceneProps->pointLights[i].diffuse);
 		//	Lyra::Renderer::Submit(
 		//		m_LightSourceShader,
 		//		m_LightSourceCubeVertexArray,
-		//		glm::translate(glm::mat4(1.0f), m_SceneProps->PointLights[i].position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
+		//		glm::translate(glm::mat4(1.0f), m_SceneProps->pointLights[i].position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
 		//		false
 		//	);
 
@@ -242,48 +248,46 @@ public:
 		{
 			ImGui::Indent();
 
-			ImGui::DragFloat3("Direction", &m_SceneProps->DirLight.direction.x, 0.1f);
-			ImGui::ColorEdit3("Ambient##DirLight", &m_SceneProps->DirLight.ambient.x);
-			ImGui::ColorEdit3("Diffuse##DirLight", &m_SceneProps->DirLight.diffuse.x);
-			ImGui::ColorEdit3("Specular##DirLight", &m_SceneProps->DirLight.specular.x);
+			ImGui::DragFloat3("Direction", &m_Scene->GetDirectionalLight().direction.x, 0.1f);
+			ImGui::ColorEdit3("Ambient##DirLight", &m_Scene->GetDirectionalLight().ambient.x);
+			ImGui::ColorEdit3("Diffuse##DirLight", &m_Scene->GetDirectionalLight().diffuse.x);
+			ImGui::ColorEdit3("Specular##DirLight", &m_Scene->GetDirectionalLight().specular.x);
 
 			ImGui::Unindent();
 		}
 
-		for (int i = 0; i < m_SceneProps->PointLights.size(); ++i) {
-			// Push a unique ID scope for each light to avoid label conflicts
+		for (int i = 0; i < m_Scene->GetPointLights().size(); ++i)
+		{
 			ImGui::PushID(i);
-
-			// Create a collapsible header with the light's index
 			if (ImGui::CollapsingHeader(("Point Light " + std::to_string(i)).c_str()))
 			{
-				ImGui::Indent(); // Indent controls for visual hierarchy
+				ImGui::Indent();
 
-				ImGui::DragFloat3("Position", &m_SceneProps->PointLights[i].position.x, 0.1f);
-				ImGui::ColorEdit3("Ambient", &m_SceneProps->PointLights[i].ambient.r);
-				ImGui::ColorEdit3("Diffuse", &m_SceneProps->PointLights[i].diffuse.r);
-				ImGui::ColorEdit3("Specular", &m_SceneProps->PointLights[i].specular.r);
-				ImGui::DragFloat("Constant Attenuation", &m_SceneProps->PointLights[i].constAttenuation, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Linear Attenuation", &m_SceneProps->PointLights[i].linearAttenuation, 0.01f, 0.0f, 1.0f);
-				ImGui::DragFloat("Quadratic Attenuation", &m_SceneProps->PointLights[i].quadAttenuation, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat3("Position", &m_Scene->GetPointLights()[i].position.x, 0.1f);
+				ImGui::ColorEdit3("Ambient", &m_Scene->GetPointLights()[i].ambient.r);
+				ImGui::ColorEdit3("Diffuse", &m_Scene->GetPointLights()[i].diffuse.r);
+				ImGui::ColorEdit3("Specular", &m_Scene->GetPointLights()[i].specular.r);
+				ImGui::DragFloat("Constant Attenuation", &m_Scene->GetPointLights()[i].constAttenuation, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Linear Attenuation", &m_Scene->GetPointLights()[i].linearAttenuation, 0.01f, 0.0f, 1.0f);
+				ImGui::DragFloat("Quadratic Attenuation", &m_Scene->GetPointLights()[i].quadAttenuation, 0.01f, 0.0f, 1.0f);
 
 				ImGui::Unindent();
 			}
 
-			ImGui::PopID(); // End unique ID scope
-			ImGui::Separator(); // Visual separation between lights
+			ImGui::PopID();
+			ImGui::Separator();
 		}
 
 		if (ImGui::CollapsingHeader("Flash Light"))
 		{
-			ImGui::SliderFloat("Inner Ang", &m_SceneProps->SpotLight.innerCutoffAngle, 0.0f, m_SceneProps->SpotLight.outerCutoffAngle);
-			ImGui::SliderFloat("Outer Ang", &m_SceneProps->SpotLight.outerCutoffAngle, m_SceneProps->SpotLight.innerCutoffAngle, 90.0f);
-			ImGui::ColorEdit3("Ambient##FlashLight", &m_SceneProps->SpotLight.ambient.x);
-			ImGui::ColorEdit3("Diffuse##FlashLight", &m_SceneProps->SpotLight.diffuse.x);
-			ImGui::ColorEdit3("Specular##FlashLight", &m_SceneProps->SpotLight.specular.x);
-			ImGui::DragFloat("Constant Attenuation##FlashLight", &m_SceneProps->SpotLight.constAttenuation, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Linear Attenuation##FlashLight", &m_SceneProps->SpotLight.linearAttenuation, 0.01f, 0.0f, 1.0f);
-			ImGui::DragFloat("Quadratic Attenuation##FlashLight", &m_SceneProps->SpotLight.quadAttenuation, 0.01f, 0.0f, 1.0f);
+			ImGui::SliderFloat("Inner Ang", &m_Scene->GetSpotLight().innerCutoffAngle, 0.0f, m_Scene->GetSpotLight().outerCutoffAngle);
+			ImGui::SliderFloat("Outer Ang", &m_Scene->GetSpotLight().outerCutoffAngle, m_Scene->GetSpotLight().innerCutoffAngle, 90.0f);
+			ImGui::ColorEdit3("Ambient##FlashLight", &m_Scene->GetSpotLight().ambient.x);
+			ImGui::ColorEdit3("Diffuse##FlashLight", &m_Scene->GetSpotLight().diffuse.x);
+			ImGui::ColorEdit3("Specular##FlashLight", &m_Scene->GetSpotLight().specular.x);
+			ImGui::DragFloat("Constant Attenuation##FlashLight", &m_Scene->GetSpotLight().constAttenuation, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Linear Attenuation##FlashLight", &m_Scene->GetSpotLight().linearAttenuation, 0.01f, 0.0f, 1.0f);
+			ImGui::DragFloat("Quadratic Attenuation##FlashLight", &m_Scene->GetSpotLight().quadAttenuation, 0.01f, 0.0f, 1.0f);
 		}
 
 		if (ImGui::CollapsingHeader("3D Model"))
@@ -388,7 +392,7 @@ private:
 	glm::vec3 m_CubePosition;
 	float m_CubeShininess;
 
-	Ref<Lyra::SceneProps> m_SceneProps;
+	Ref<Lyra::Scene> m_Scene;
 	float m_LightSourceAngle;
 	float m_LightSourceSpeed;
 

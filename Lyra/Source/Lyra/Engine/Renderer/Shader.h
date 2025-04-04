@@ -17,6 +17,7 @@ namespace Lyra
 		virtual ~Shader() = default;
 
 		virtual size_t GetHash() const = 0;
+		inline bool IsCurrentlyBound() const { return GetHash() == s_LastBoundShaderHash; }
 
 		virtual void UploadUniform_1i(const std::string& name, int value) = 0;
 		virtual void UploadUniform_1f(const std::string& name, float value) = 0;
@@ -34,6 +35,9 @@ namespace Lyra
 
 		static Ref<Shader> Create(const std::string& filepath);
 		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
+
+	protected:
+		static size_t s_LastBoundShaderHash;
 	};
 
 	class LYRA_API ShaderLibrary
@@ -46,6 +50,7 @@ namespace Lyra
 
 		Ref<Shader> Get(const std::string& name) const;
 		bool Exists(const std::string& name) const;
+
 	private:
 		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
 	};
