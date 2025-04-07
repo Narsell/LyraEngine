@@ -55,6 +55,10 @@ namespace Lyra
 	{
 		Ref<Shader> shader = m_CommandData.material->GetShader();
 
+		if (!shader->IsCurrentlyBound())
+		{
+			shader->Bind();
+		}
 		shader->UploadUniform_Mat4f("u_Model", m_CommandData.transform);
 		glm::mat3 normalMatrix = glm::transpose(glm::inverse(glm::mat3(m_CommandData.scene->GetCamera()->GetViewMatrix() * m_CommandData.transform)));
 		shader->UploadUniform_Mat3f("u_Normal", normalMatrix);

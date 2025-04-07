@@ -1,28 +1,33 @@
 #include "lrpch.h"
 
-#include "Scene/Material.h"
 #include "Core/Utils.h"
+#include "Scene/Material.h"
+#include "Scene/Texture.h"
+#include "Renderer/Shader.h"
+#include "Assets/ShaderLibrary.h"
 
 namespace Lyra
 {
-	size_t Material::s_LastBoundMaterialHash = 0;
+	size_t Material::s_LastBoundMatHash = 0;
 
-	Material::Material(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>> textures)
-		:	m_Shininess(32.0f),
-			m_Shader(shader),
-			m_Textures(textures)
+	Material::Material()
+		: m_Shininess(32.0f),
+		  m_Shader(ShaderLibrary::GetDefaultShader())
 	{
-		for (const Ref<Texture2D>& texture : m_Textures)
-		{
-			Utils::Hash::HashCombine(m_Hash, texture->GetHash());
-		}
-
-		Utils::Hash::HashCombine(m_Hash, m_Shader->GetHash(), m_Shininess);
+		SetCalculatedHash();
 	}
 
-	void Material::SetTexture(const Ref<Texture2D>& texture)
+	Material::Material(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>>& textures)
+		 : m_Shininess(32.0f),
+		   m_Shader(shader),
+		   m_Textures(textures)
 	{
-		m_Textures.push_back(texture);
+		SetCalculatedHash();
+	}
+
+	Material::Material(const std::vector<Ref<Texture2D>> textures)
+		: Material(ShaderLibrary::GetDefaultShader(), textures)
+	{
 	}
 
 	void Material::UploadUniforms() const
@@ -40,6 +45,16 @@ namespace Lyra
 		{
 			texture->Bind();
 		}
-		s_LastBoundMaterialHash = m_Hash;
+		s_LastBoundMatHash = m_Hash;
+	}
+
+	void Material::SetCalculatedHash()
+	{
+		size_t textureListHash = 0;
+		for (const Ref<Texture2D>& texture : m_Textures)
+		{
+			Utils::Hash::HashCombine(textureListHash, texture->GetHash());
+		}
+		m_Hash = Utils::Material::CalculateHash(m_Shader->GetHash(), textureListHash, m_Shininess);
 	}
 }

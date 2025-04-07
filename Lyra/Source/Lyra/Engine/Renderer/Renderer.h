@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Scene/Camera/Camera.h"
-#include "Scene/Scene.h"
 #include "RendererAPI.h"
-#include "Shader.h"
 #include "RenderCommandQueue.h"
 
 namespace Lyra
 {
+	class Material;
+	class Shader;
+	class Scene;
 
 	class Renderer
 	{

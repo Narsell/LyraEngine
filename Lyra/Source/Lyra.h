@@ -34,6 +34,12 @@
 #include "Lyra/Engine/Renderer/VertexLayout.h"
 #include "Lyra/Engine/Renderer/Shader.h"
 
+/* ASSET LIBRARIES */
+#include "Lyra/Assets/MaterialLibrary.h"
+#include "Lyra/Assets/TextureLibrary.h"
+#include "Lyra/Assets/ModelLibrary.h"
+#include "Lyra/Assets/ShaderLibrary.h"
+
 /* SCENE ASSETS */
 #include "Lyra/Scene/Scene.h"
 #include "Lyra/Scene/Texture.h"

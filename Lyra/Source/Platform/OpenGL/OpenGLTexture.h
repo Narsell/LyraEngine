@@ -18,13 +18,13 @@ namespace Lyra
 	class OpenGLTexture2D final : public Texture2D
 	{
 	public:
-		OpenGLTexture2D(const Texture2DProps& textureProps);
+		OpenGLTexture2D(const std::string& texturePath, const Texture2DProps& textureProps);
 		virtual ~OpenGLTexture2D();
 
 		virtual uint32_t GetWidth() const override { return  m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
-		virtual uint32_t GetRendererId() const { return m_RendererId; }
 		virtual size_t GetHash() const override { return m_Hash; }
+		virtual uint32_t GetRendererId() const { return m_RendererId; }
 
 		virtual void Bind() const override;
 

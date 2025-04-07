@@ -6,6 +6,12 @@
 
 #include "Model.h"
 #include "Core/Utils.h"
+#include "Assets/TextureLibrary.h"
+#include "Assets/MaterialLibrary.h"
+#include "Scene/Texture.h"
+#include "Scene/Material.h"
+#include "Scene/Mesh.h"
+
 
 namespace Lyra
 {
@@ -20,10 +26,11 @@ namespace Lyra
 		}
 	}
 
-	Model::Model(const std::string& path, const Ref<Shader>& shader)
-		: 	m_Shader(shader), m_Directory(path.substr(0, path.find_last_of("/")))
+	Model::Model(const std::string& path, const ModelProps& props)
+		: m_Directory(path.substr(0, path.find_last_of("/"))), m_Props(props) 	// TODO: look into std::filesystem::path to deal with this better.	//std::filesystem::path filepath(path);
 	{
 		LoadModel(path);
+		m_Hash = Utils::Model::CalculateHash(path, props.textureFlipOverride);
 	}
 
 	void Model::Draw()
@@ -38,7 +45,7 @@ namespace Lyra
 	{
 		Assimp::Importer importer;
 
-		// TODO: Expose import settings to API (Probably another class like a model factory)
+		// TODO: Expose import settings to API through ModelProps
 		const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
@@ -47,6 +54,7 @@ namespace Lyra
 			return;
 		}
 
+		m_Meshes.reserve(512);
 		ProcessNode(scene->mRootNode, scene);
 	}
 
@@ -92,7 +100,7 @@ namespace Lyra
 		}
 
 		/* Process materials */
-		Ref<Material> material;
+		
 		if (assimpMesh->mMaterialIndex >= 0)
 		{
 			// Get textures from assimp material
@@ -100,21 +108,16 @@ namespace Lyra
 			std::vector<Ref<Texture2D>> textures = LoadMaterialTextures(assimpMaterial, assimpMesh);
 
 			// Detect if a material with an identical hash exists.
-			Material newMaterial = Material(m_Shader, textures);
+			Material newMaterial = Material(textures);
 			size_t materialHash = newMaterial.GetHash();
-			
-			if (m_Materials.find(materialHash) == m_Materials.end())
-			{
-				material = std::make_shared<Material>(newMaterial);
-				m_Materials[materialHash] = material;
-			}
-			else
-			{
-				LR_CORE_TRACE("Skipping material '{0}' from mesh '{1}', already loaded.", assimpMaterial->GetName().C_Str(), assimpMesh->mName.C_Str());
-				material = m_Materials[materialHash];
-			}
+
+			Ref<Material> material = MaterialLibrary::Create(textures);
+			m_Meshes.emplace_back(std::make_unique<Mesh>(assimpMesh->mName.C_Str(), vertices, indices, material));
 		}
-		m_Meshes.emplace_back(std::make_unique<Mesh>("DefaultName", vertices, indices, material));
+		else
+		{
+			m_Meshes.emplace_back(std::make_unique<Mesh>(assimpMesh->mName.C_Str(), vertices, indices));
+		}
 	}
 
 	std::vector<Ref<Texture2D>> Model::LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh)
@@ -141,21 +144,11 @@ namespace Lyra
 
 				// TODO: Check this for forward/bakwards slashes shenanigans (normalize paths)
 				std::basic_string texturePath = std::format("{0}/{1}", m_Directory, filename.C_Str());
-				bool isTextureAlreadyLoaded = Texture2D::s_TexturesLoaded.find(texturePath) != Texture2D::s_TexturesLoaded.end();
-
-				Ref<Texture2D> meshTexture;
-
-				Texture2DProps textureProps(texturePath, internalTextType);
-				textureProps.FlipVertically = false;
-				meshTexture = Texture2D::Create(textureProps);
+				Texture2DProps textureProps(internalTextType);
+				textureProps.FlipVertically = m_Props.textureFlipOverride;
+				Ref<Texture2D> meshTexture = TextureLibrary::Load(texturePath, textureProps);
 
 				textures.push_back(meshTexture);
-
-				if (!isTextureAlreadyLoaded)
-				{
-					LR_CORE_TRACE("{0} '{1}' texture map loaded from mesh '{2}' and material '{3}'", Utils::Texture::TextureTypeToString(internalTextType), filename.C_Str(), assimpMesh->mName.C_Str(), material->GetName().C_Str());
-					meshTexture->Bind();
-				}
 			}
 		}
 

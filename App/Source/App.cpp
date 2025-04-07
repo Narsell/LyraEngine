@@ -132,19 +132,20 @@ public:
 			m_LightSourceCubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
 		}
 
-		// Shader creation
-		m_PhongShader = Lyra::Shader::Create("Assets/Shaders/PhongModel.glsl");
-		m_LightSourceShader = Lyra::Shader::Create("Assets/Shaders/LightSource.glsl");
+		// Set shader references
+		m_LightSourceShader = Lyra::ShaderLibrary::Load("LightSourceShader", "Assets/Shaders/LightSource.glsl");
 
-		m_Model = Lyra::Model("Assets/Models/sponza/sponza.obj", m_PhongShader);
+		Lyra::ModelProps propsInverted;
+		propsInverted.textureFlipOverride = true;
+		m_BackpackModel = Lyra::ModelLibrary::Load("Assets/Models/backpack/backpack.obj", propsInverted);
+		m_SponzaModel = Lyra::ModelLibrary::Load("Assets/Models/sponza/sponza.obj");
 
 		// Creating and setting textures
-		Lyra::Texture2DProps propsDiffuse("Assets/Textures/Container.png", Lyra::TextureType::DIFFUSE);
-		Lyra::Texture2DProps propsSpecular("Assets/Textures/Container_specular.png", Lyra::TextureType::SPECULAR);
-		m_BoxTextureDiffuse = Lyra::Texture2D::Create(propsDiffuse);
-		m_BoxTextureSpecular = Lyra::Texture2D::Create(propsSpecular);
-
-
+		Lyra::Texture2DProps propsDiffuse(Lyra::TextureType::DIFFUSE);
+		Lyra::Texture2DProps propsSpecular(Lyra::TextureType::SPECULAR);
+		
+		m_BoxTextureDiffuse = Lyra::TextureLibrary::Load("Assets/Textures/Container.png", propsDiffuse);
+		m_BoxTextureSpecular = Lyra::TextureLibrary::Load("Assets/Textures/Container_specular.png", propsSpecular);
 	}
 
 	void OnAttach() override
@@ -224,7 +225,8 @@ public:
 		//}
 
 		/* Render 3D model */
-		m_Model.Draw();
+		m_SponzaModel->Draw();
+		//m_BackpackModel->Draw();
 
 		/* Render main cube (Non-indexed) */
 		//m_BoxTextureDiffuse->Bind();
@@ -292,33 +294,33 @@ public:
 
 		if (ImGui::CollapsingHeader("3D Model"))
 		{
-			ImGui::Indent();
-			auto& materials = m_Model.GetMaterials();
-			ImGui::Text(std::format("Materials: {}",  materials.size()).c_str());
-			ImGui::Text(std::format("Meshes: {}", m_Model.GetMeshCount()).c_str());
-			int materialCount = 0;
-			for (auto& [materialHash, material] : materials)
-			{
-				ImGui::PushID(materialHash);
+			//ImGui::Indent();
+			//auto& materials = m_SponzaModel.GetMaterials();
+			//ImGui::Text(std::format("Materials: {}",  materials.size()).c_str());
+			//ImGui::Text(std::format("Meshes: {}", m_SponzaModel.GetMeshCount()).c_str());
+			//int materialCount = 0;
+			//for (auto& [materialHash, material] : materials)
+			//{
+			//	ImGui::PushID(materialHash);
 
-				if (ImGui::CollapsingHeader(("Material " + std::to_string(materialCount)).c_str())) 
-				{
-					ImGui::Indent();
+			//	if (ImGui::CollapsingHeader(("Material " + std::to_string(materialCount)).c_str())) 
+			//	{
+			//		ImGui::Indent();
 
-					for (auto& texture : material->GetTextures())
-					{
-						ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.15f, 1.0f), texture->GetTypeAsString());
-						ImGui::Image(texture->GetRendererId(), ImVec2(85.f, 85.f));
-						ImGui::Text(texture->GetPath().c_str());
-						ImGui::Separator();
-					}
+			//		for (auto& texture : material->GetTextures())
+			//		{
+			//			ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.15f, 1.0f), texture->GetTypeAsString());
+			//			ImGui::Image(texture->GetRendererId(), ImVec2(85.f, 85.f));
+			//			ImGui::Text(texture->GetPath().c_str());
+			//			ImGui::Separator();
+			//		}
 
-					ImGui::Unindent();
-				}
-				materialCount++;
-				ImGui::PopID();
-			}
-			ImGui::Unindent();
+			//		ImGui::Unindent();
+			//	}
+			//	materialCount++;
+			//	ImGui::PopID();
+			//}
+			//ImGui::Unindent();
 		}
 		
 		if (ImGui::CollapsingHeader("Cube"))
@@ -379,11 +381,11 @@ public:
 private:
 	Lyra::PerspectiveCameraController m_CameraController;
 	
-	Lyra::Model m_Model;
+	Ref<Lyra::Model> m_SponzaModel;
+	Ref<Lyra::Model> m_BackpackModel;
 	
 	Ref<Lyra::VertexArray> m_CubeVertexArray;
 	Ref<Lyra::VertexArray> m_LightSourceCubeVertexArray;
-	Ref<Lyra::Shader> m_PhongShader;
 	Ref<Lyra::Shader> m_LightSourceShader;
 
 	Ref<Lyra::Texture2D> m_BoxTextureDiffuse, m_BoxTextureSpecular;

@@ -3,28 +3,35 @@
 #include <vector>
 
 #include "Core.h"
-#include "Renderer/Shader.h"
-#include "Scene/Texture.h"
 #include "Scene/Mesh.h"
-#include "Scene/Material.h"
 
 struct aiNode;
 struct aiMesh;
 struct aiScene;
 struct aiMaterial;
 
+
 namespace Lyra
 {
+	/* Settings to control how to load the mesh */
+	struct ModelProps
+	{
+		bool textureFlipOverride = false;
+	};
+
+	struct Texture2D;
+	struct Material;
+	struct Mesh;
 
 	class LYRA_API Model
 	{
 
 	public:
-		Model() = default;
-		Model(const std::string& path, const Ref<Shader>& shader);
+		Model(const std::string& path, const ModelProps& props);
 
 		void Draw();
 
+		size_t GetHash() const { return m_Hash; }
 		size_t GetMeshCount() const { return m_Meshes.size(); }
 		const std::unordered_map<size_t, Ref<Material>>& GetMaterials() const { return m_Materials; }
 
@@ -37,8 +44,10 @@ namespace Lyra
 	private:
 		std::vector<Scope<Mesh>> m_Meshes;
 		std::unordered_map<size_t, Ref<Material>> m_Materials;
-		Ref<Shader> m_Shader;
+		ModelProps m_Props;
 		std::string m_Directory;
+
+		size_t m_Hash = 0;
 	};
 
 }

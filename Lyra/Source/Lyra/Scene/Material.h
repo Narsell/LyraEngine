@@ -2,31 +2,34 @@
 
 #include "Core.h"
 #include "Core/Ref.h"
-#include "Renderer/Shader.h"
-#include "Scene/Texture.h"
 
 namespace Lyra
 {
+	class Shader;
+	class Texture2D;
+	class MaterialLibrary;
+
 	class LYRA_API Material
 	{
+
+	friend class MaterialLibrary;
+
 	public:
-		Material(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>> textures = {});
+		Material();
+		Material(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>>& textures = {});
+		Material(const std::vector<Ref<Texture2D>> textures);
 
 		inline const std::vector<Ref<Texture2D>>& GetTextures() const { return m_Textures; }
 		inline const Ref<Shader>& GetShader() const { return m_Shader; }
 		inline size_t GetHash() const { return m_Hash; }
-		inline bool IsCurrentlyBound() const { return GetHash() == s_LastBoundMaterialHash; }
-
-		void SetTexture(const Ref<Texture2D>& texture);
+		inline bool IsCurrentlyBound() const { return GetHash() == s_LastBoundMatHash; }
 
 		void UploadUniforms() const;
 		void BindTextures() const;
-	
-	protected:
-		static size_t s_LastBoundMaterialHash;
 
 	private:
-		void UpdateMaterialUniforms() const;
+
+		void SetCalculatedHash();
 
 	private:
 
@@ -35,5 +38,6 @@ namespace Lyra
 		std::vector<Ref<Texture2D>> m_Textures;
 
 		size_t m_Hash = 0;
+		static size_t s_LastBoundMatHash;
 	};
 }

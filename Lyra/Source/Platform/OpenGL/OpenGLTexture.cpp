@@ -42,17 +42,17 @@ namespace Lyra
 		}
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const Texture2DProps& textureProps)
-		:	Texture2D(textureProps), Slot(static_cast<int8_t>(textureProps.Type))
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& texturePath, const Texture2DProps& textureProps)
+		:	Texture2D(texturePath, textureProps), Slot(static_cast<int8_t>(textureProps.Type))
 	{
 		int width, height, channels;
 
 		/* TODO: Handle this texture loading stuff in some texture/asset manager class! */
 		stbi_set_flip_vertically_on_load(static_cast<int>(m_Props.FlipVertically));
-		stbi_uc* data = stbi_load(m_Props.Path.c_str(), &width, &height, &channels, 0);
+		stbi_uc* data = stbi_load(m_Path.c_str(), &width, &height, &channels, 0);
 		if (!data)
 		{
-			LR_CORE_FATAL("Failed to load image from path \"{0}\"", m_Props.Path.c_str());
+			LR_CORE_FATAL("Failed to load image from path \"{0}\"", m_Path.c_str());
 			return;
 		}
 
@@ -90,7 +90,8 @@ namespace Lyra
 		// Free texture data from CPU since we don't need it once it has been uploaded to the GPU.
 		stbi_image_free(data);
 
-		Utils::Hash::HashCombine(m_Hash, m_Props.Path, m_RendererId);
+		// TODO: Take texture props into consideration for this texture
+		m_Hash = Utils::Texture::CalculateHash(m_Path);
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()
@@ -131,7 +132,7 @@ namespace Lyra
 			}
 			default:
 			{
-				LR_CORE_ASSERT(false, "Texture at '{}': Format not supported.", m_Props.Path);
+				LR_CORE_ASSERT(false, "Texture at '{}': Format not supported.", m_Path);
 			}
 		}
 		return textureFormat;

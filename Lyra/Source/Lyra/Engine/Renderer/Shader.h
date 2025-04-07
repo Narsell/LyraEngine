@@ -7,12 +7,16 @@
 
 #include "Core.h"
 #include "Core/Ref.h"
+#include "Assets/ShaderLibrary.h"
 
 namespace Lyra
 {
+	class ShaderLibrary;
 
 	class LYRA_API Shader
 	{
+	friend class ShaderLibrary;
+
 	public:
 		virtual ~Shader() = default;
 
@@ -33,26 +37,11 @@ namespace Lyra
 
 		virtual const std::string& GetName() const = 0;
 
-		static Ref<Shader> Create(const std::string& filepath);
-		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
-
 	protected:
 		static size_t s_LastBoundShaderHash;
-	};
-
-	class LYRA_API ShaderLibrary
-	{
-	public:
-		void Add(const std::string& name, const Ref<Shader>& shader);
-		void Add(const Ref<Shader>& shader);
-		Ref<Shader> Load(const std::string& name, const std::string& filepath);
-		Ref<Shader> Load(const std::string& filepath);
-
-		Ref<Shader> Get(const std::string& name) const;
-		bool Exists(const std::string& name) const;
 
 	private:
-		std::unordered_map<std::string, Ref<Shader>> m_Shaders;
+		static Ref<Shader> Create(const std::string& filepath);
+		static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);
 	};
-
 }

@@ -3,6 +3,7 @@
 #include "Renderer.h"
 #include "RenderCommand.h"
 #include "Shader.h"
+#include "Assets/ShaderLibrary.h"
 
 namespace Lyra
 {
@@ -11,10 +12,11 @@ namespace Lyra
 	uint32_t Renderer::s_CurrentDrawCallCount = 0;
 	uint32_t Renderer::s_LastDrawCallCount = 0;
 
-
 	void Renderer::Init()
 	{
 		RenderCommand::InitRenderer();
+		/* We want to guarantee the default shader exists. */
+		ShaderLibrary::Load("Default", "Assets/Shaders/PhongModel.glsl");
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -40,6 +42,4 @@ namespace Lyra
 		s_RenderQueue.Enqueue(vertexArray, material, s_Scene, modelMatrix, drawIndexed, RenderType::LR_OPAQUE);
 		s_CurrentDrawCallCount++;
 	}
-
-
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include "Core/Ref.h"
 #include "Core/Utils.h"
 
@@ -15,6 +17,7 @@ namespace Lyra
 		virtual uint32_t GetWidth() const = 0;
 		virtual uint32_t GetHeight() const = 0;
 		virtual const std::string& GetPath() const = 0;
+		virtual size_t GetHash() const = 0;
 
 		virtual void Bind() const = 0;
 	};
@@ -39,15 +42,13 @@ namespace Lyra
 
 	struct Texture2DProps
 	{
-		Texture2DProps() = delete;
-		Texture2DProps(const std::string& path, TextureType type = TextureType::NONE)
-			: Path(path), Type(type) {}
+		Texture2DProps() = default;
+		Texture2DProps(TextureType type) : Type(type) {}
 
-		std::string Path;
 		TextureType Type = TextureType::NONE;
 
 		bool UseMipmaps = true;
-		bool FlipVertically = true;
+		bool FlipVertically = false;
 		
 		TextureFilter MinFilter = TextureFilter::LINEAR_MIPMAP_LINEAR;
 		TextureFilter MagFilter = TextureFilter::LINEAR;
@@ -56,35 +57,33 @@ namespace Lyra
 		TextureWrap WrapT = TextureWrap::REPEAT;
 
 		glm::vec4 BorderColor = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
-
 	};
 
 
 	class Texture2D : public Texture
 	{
+
+	friend class TextureLibrary;
+
 	public:
 		virtual ~Texture2D() = default;
 
-		virtual const std::string& GetPath() const { return m_Props.Path; }
+		virtual const std::string& GetPath() const { return m_Path; }
 		virtual const TextureType& GetType() const { return m_Props.Type; }
 		virtual const char* GetTypeAsString() const { return Utils::Texture::TextureTypeToString(m_Props.Type); }
-		virtual size_t GetHash() const = 0;
 
 		/* Keeping count of loaded textures here... TODO: Move this to an asset manager eventually! */
 		static std::unordered_map<std::string, Ref<Texture2D>> s_TexturesLoaded;
-		static Ref<Texture2D> Create(const Texture2DProps& textureProps);
 
 	protected:
-		Texture2D(const Texture2DProps& textureProps)
-			:   m_Props(textureProps)
-		{
-			if (!Utils::Texture::IsValidTextureType(m_Props.Type))
-			{
-				LR_CORE_WARN("Texture at path '{0}' was not given a valid type. Won't bind this texture.");
-			}
-		}
+		Texture2D(const std::string& texturePath, const Texture2DProps& textureProps);
+
+	private:
+		static Ref<Texture2D> Create(const std::string& texturePath, const Texture2DProps& textureProps);
 
 	protected:
 		Texture2DProps m_Props;
+		const std::string m_Path;
+
 	};
 }

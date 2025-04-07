@@ -8,20 +8,22 @@ namespace Lyra
 {
 	std::unordered_map<std::string, Ref<Texture2D>> Texture2D::s_TexturesLoaded;
 
-
-	Ref<Texture2D> Lyra::Texture2D::Create(const Texture2DProps& textureProps)
+	Texture2D::Texture2D(const std::string& texturePath, const Texture2DProps& textureProps)
+		: m_Path(texturePath), m_Props(textureProps)
 	{
-		if (s_TexturesLoaded.find(textureProps.Path) != s_TexturesLoaded.end())
+		if (!Utils::Texture::IsValidTextureType(m_Props.Type))
 		{
-			return s_TexturesLoaded[textureProps.Path];
+			LR_CORE_WARN("Texture at path '{0}' was not given a valid type. Won't bind this texture.");
 		}
+	}
 
+	Ref<Texture2D> Lyra::Texture2D::Create(const std::string& texturePath, const Texture2DProps& textureProps)
+	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::OpenGL:
 			{
-				Ref<Texture2D> texture = std::make_shared<OpenGLTexture2D>(textureProps);
-				s_TexturesLoaded[textureProps.Path] = texture;
+				Ref<Texture2D> texture = std::make_shared<OpenGLTexture2D>(texturePath, textureProps);
 				return texture;
 			}
 			case RendererAPI::API::None:

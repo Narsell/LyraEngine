@@ -37,6 +37,7 @@ namespace Lyra
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
+		virtual const uint32_t GetRendererId() const { return m_RendererId; }
 		virtual uint32_t GetCount() const override { return m_Count; }
 
 	private:
@@ -57,6 +58,7 @@ namespace Lyra
 		virtual void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) override;
 		virtual void AddIndexBuffer(const Ref<IndexBuffer>& indexBuffer) override;
 
+		virtual const uint32_t GetRendererId() const { return m_RendererId; }
 		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const override { return m_VertexBuffers; }
 		virtual const Ref<IndexBuffer>& GetIndexBuffer() const override { return m_IndexBuffer; }
 
