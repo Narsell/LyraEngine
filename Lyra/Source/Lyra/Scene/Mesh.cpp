@@ -27,11 +27,13 @@ namespace Lyra
 		m_IndexBuffer = IndexBuffer::Create(&indices[0], indices.size());
 		m_VertexArray->AddIndexBuffer(m_IndexBuffer);
 
+		m_VertexCount = vertices.size();
+
 		m_Hash = Utils::Mesh::CalculateHash(m_VertexArray->GetRendererId(), m_IndexBuffer->GetRendererId(), m_Material->GetHash());
 	}
 
-	void Mesh::Draw()
+	void Mesh::Draw(const glm::mat4& transform)
 	{
-		Renderer::Submit(m_Material, m_VertexArray, glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.0f, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(0.01f)));
+		Renderer::Submit(m_Material, m_VertexArray, transform);
 	}
 }

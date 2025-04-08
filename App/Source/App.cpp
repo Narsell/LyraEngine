@@ -150,23 +150,35 @@ public:
 
 	void OnAttach() override
 	{
+		// Creating a camera and setting up the camera controller
 		float aspectRatio = Lyra::Application::Get().GetWindow().GetAspectRatio();
 		Ref<Lyra::PerspectiveCamera> camera = std::make_shared<Lyra::PerspectiveCamera>(aspectRatio);
 
 		m_CameraController.AttachToCamera(camera);
+		m_CameraController.GetCamera()->SetPosition(glm::vec3(0.0f, 1.5f, 12.0f));
 
+		// Creating scene instance
 		Lyra::SceneProps sceneProps;
 		sceneProps.camera = camera;
-
-		// Setting up point lights initial values.
 		{
 			sceneProps.pointLights[0].diffuse = glm::vec3(1.0f, 0.3f, 0.2f);
 			sceneProps.pointLights[0].specular = sceneProps.pointLights[0].diffuse;
 			sceneProps.pointLights[1].diffuse = glm::vec3(0.2f, 1.0f, 0.3f);
 			sceneProps.pointLights[1].specular = sceneProps.pointLights[1].diffuse;
 		}
-
 		m_Scene = std::make_shared<Lyra::Scene>(sceneProps);
+
+		// Creating first two entities and setting their properties!
+		m_SponzaObj = std::make_shared<Lyra::Entity>();
+		m_SponzaObj->SetModel(m_SponzaModel);
+		m_SponzaObj->SetScale(0.01f);
+		m_SponzaObj->SetYaw(90.0f);
+
+		m_BackpackObj = std::make_shared<Lyra::Entity>();
+		m_BackpackObj->SetPosition(glm::vec3(0.0f, 1.0f, 0.0f));
+		m_BackpackObj->SetScale(0.5f);
+		m_BackpackObj->SetRoll(45.0f);
+		m_BackpackObj->SetModel(m_BackpackModel);
 	}
 
 	void OnDetach() override
@@ -224,9 +236,9 @@ public:
 
 		//}
 
-		/* Render 3D model */
-		m_SponzaModel->Draw();
-		//m_BackpackModel->Draw();
+		/* Render entities */
+		m_SponzaObj->Draw();
+		m_BackpackObj->Draw();
 
 		/* Render main cube (Non-indexed) */
 		//m_BoxTextureDiffuse->Bind();
@@ -294,33 +306,31 @@ public:
 
 		if (ImGui::CollapsingHeader("3D Model"))
 		{
-			//ImGui::Indent();
-			//auto& materials = m_SponzaModel.GetMaterials();
-			//ImGui::Text(std::format("Materials: {}",  materials.size()).c_str());
-			//ImGui::Text(std::format("Meshes: {}", m_SponzaModel.GetMeshCount()).c_str());
-			//int materialCount = 0;
-			//for (auto& [materialHash, material] : materials)
-			//{
-			//	ImGui::PushID(materialHash);
+			ImGui::Indent();
+			auto& meshes = m_SponzaModel->GetMeshes();
+			ImGui::Text((std::string("Mesh count: ") + std::to_string(meshes.size())).c_str());
+			for (auto& mesh : meshes)
+			{
+				ImGui::PushID(mesh->GetHash());
 
-			//	if (ImGui::CollapsingHeader(("Material " + std::to_string(materialCount)).c_str())) 
-			//	{
-			//		ImGui::Indent();
+				if (ImGui::CollapsingHeader(mesh->GetName().data()))
+				{
+					ImGui::Indent();
+					std::string verticesLabel = std::string("Vertices: ") + std::to_string(mesh->GetVertexCount());
+					ImGui::SeparatorText(verticesLabel.c_str());
+					for (auto& texture : mesh->GetMaterial()->GetTextures())
+					{
+						ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.15f, 1.0f), texture->GetTypeAsString());
+						ImGui::Image(texture->GetRendererId(), ImVec2(85.f, 85.f));
+						ImGui::Text(texture->GetPath().c_str());
+						ImGui::Separator();
+					}
 
-			//		for (auto& texture : material->GetTextures())
-			//		{
-			//			ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.15f, 1.0f), texture->GetTypeAsString());
-			//			ImGui::Image(texture->GetRendererId(), ImVec2(85.f, 85.f));
-			//			ImGui::Text(texture->GetPath().c_str());
-			//			ImGui::Separator();
-			//		}
-
-			//		ImGui::Unindent();
-			//	}
-			//	materialCount++;
-			//	ImGui::PopID();
-			//}
-			//ImGui::Unindent();
+					ImGui::Unindent();
+				}
+				ImGui::PopID();
+			}
+			ImGui::Unindent();
 		}
 		
 		if (ImGui::CollapsingHeader("Cube"))
@@ -383,6 +393,9 @@ private:
 	
 	Ref<Lyra::Model> m_SponzaModel;
 	Ref<Lyra::Model> m_BackpackModel;
+
+	Ref<Lyra::Entity> m_SponzaObj;
+	Ref<Lyra::Entity> m_BackpackObj;
 	
 	Ref<Lyra::VertexArray> m_CubeVertexArray;
 	Ref<Lyra::VertexArray> m_LightSourceCubeVertexArray;

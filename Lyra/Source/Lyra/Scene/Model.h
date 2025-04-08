@@ -29,11 +29,11 @@ namespace Lyra
 	public:
 		Model(const std::string& path, const ModelProps& props);
 
-		void Draw();
+		void Draw(const glm::mat4& transforms);
 
 		size_t GetHash() const { return m_Hash; }
+		const std::vector<Scope<Mesh>>& GetMeshes() const { return m_Meshes; }
 		size_t GetMeshCount() const { return m_Meshes.size(); }
-		const std::unordered_map<size_t, Ref<Material>>& GetMaterials() const { return m_Materials; }
 
 	private:
 		void LoadModel(const std::string& path);
@@ -43,7 +43,7 @@ namespace Lyra
 
 	private:
 		std::vector<Scope<Mesh>> m_Meshes;
-		std::unordered_map<size_t, Ref<Material>> m_Materials;
+
 		ModelProps m_Props;
 		std::string m_Directory;
 

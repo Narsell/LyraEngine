@@ -21,8 +21,11 @@ namespace Lyra
     class LYRA_API Mesh {
     public:
         Mesh(const std::string& name, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, const Ref<Material>& material = std::make_shared<Material>());
-        void Draw();
+        void Draw(const glm::mat4& transform);
 
+        const Ref<Material>& GetMaterial() const { return m_Material; }
+        uint64_t GetVertexCount() const { return m_VertexCount; }
+        const std::string_view GetName() const { return std::string_view(m_Name.c_str(), m_Name.size()); }
         size_t GetHash() const { return m_Hash; }
     private:
 
@@ -32,6 +35,7 @@ namespace Lyra
         Ref<Material> m_Material;
 
         const std::string m_Name;
+        uint64_t m_VertexCount;
 
         size_t m_Hash = 0;
     };

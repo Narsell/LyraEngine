@@ -8,6 +8,7 @@
 #include "Lyra/Core/Log.h"
 #include "Lyra/Core/Ref.h"
 #include "Lyra/Core/Utils.h"
+#include "Lyra/Core/Entity.h"
 
 /* INPUT SYSTEM */
 #include "Lyra/Core/Input/Input.h"

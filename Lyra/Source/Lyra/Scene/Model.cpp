@@ -33,11 +33,11 @@ namespace Lyra
 		m_Hash = Utils::Model::CalculateHash(path, props.textureFlipOverride);
 	}
 
-	void Model::Draw()
+	void Model::Draw(const glm::mat4& transform)
 	{
 		for (auto& mesh : m_Meshes)
 		{
-			mesh->Draw();
+			mesh->Draw(transform);
 		}
 	}
 
