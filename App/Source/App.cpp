@@ -14,7 +14,6 @@ public:
 			m_LightSourceAngle(0.0f),
 			m_LightSourceSpeed(1.0f)
 	{ 
-	
 		/* PHONG MODEL CUBE SECTION */
 		{
 			/* Pos (x, y, z), Normals (x, y, z), Texture Coords (x, y) */
@@ -69,15 +68,15 @@ public:
 				{"a_TexCoord", Lyra::ShaderData::Float2}
 			};
 			cubeVertexLayout.DebugPrint("Phong model cube");
-			Ref<Lyra::VertexBuffer> cubeVertexBuffer = Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout);
+			Lyra::VertexBuffer* cubeVertexBuffer = Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout);
 
-			m_CubeVertexArray = Lyra::VertexArray::Create();
+			m_CubeVertexArray = Scope< Lyra::VertexArray>(Lyra::VertexArray::Create());
 			m_CubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
 		}
 		
 		/* LIGHT SOURCE CUBE SECTION */
 		{
-			m_LightSourceCubeVertexArray = Lyra::VertexArray::Create();
+			m_LightSourceCubeVertexArray = Scope< Lyra::VertexArray>(Lyra::VertexArray::Create());
 
 			float cubeVertices[] = {
 				-0.5f, -0.5f, -0.5f, // Back face
@@ -128,7 +127,7 @@ public:
 				{"a_Position", Lyra::ShaderData::Float3}
 			};
 
-			Ref<Lyra::VertexBuffer> cubeVertexBuffer = Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout);
+			Lyra::VertexBuffer* cubeVertexBuffer = Lyra::VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout);
 			m_LightSourceCubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
 		}
 
@@ -183,7 +182,6 @@ public:
 
 	void OnDetach() override
 	{
-		//LR_TRACE("GameLayer::OnDetach");
 	}
 
 	void OnUpdate(Lyra::Timestep ts) override
@@ -233,7 +231,6 @@ public:
 		//		glm::translate(glm::mat4(1.0f), m_SceneProps->pointLights[i].position) * glm::scale(glm::mat4(1.0f), glm::vec3(0.35f)),
 		//		false
 		//	);
-
 		//}
 
 		/* Render entities */
@@ -397,8 +394,8 @@ private:
 	Ref<Lyra::Entity> m_SponzaObj;
 	Ref<Lyra::Entity> m_BackpackObj;
 	
-	Ref<Lyra::VertexArray> m_CubeVertexArray;
-	Ref<Lyra::VertexArray> m_LightSourceCubeVertexArray;
+	Scope<Lyra::VertexArray> m_CubeVertexArray;
+	Scope<Lyra::VertexArray> m_LightSourceCubeVertexArray;
 	Ref<Lyra::Shader> m_LightSourceShader;
 
 	Ref<Lyra::Texture2D> m_BoxTextureDiffuse, m_BoxTextureSpecular;

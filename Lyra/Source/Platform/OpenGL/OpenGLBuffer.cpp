@@ -108,7 +108,7 @@ namespace Lyra
 		glBindVertexArray(0);
 	}
 
-	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer)
+	void OpenGLVertexArray::AddVertexBuffer(VertexBuffer* vertexBuffer)
 	{
 		/* 
 			We first bind the VAO and then the actual vertex buffer 
@@ -116,11 +116,11 @@ namespace Lyra
 		*/
 		Bind();
 		vertexBuffer->Bind();
-		m_VertexBuffers.push_back(vertexBuffer);
+		m_VertexBuffers.emplace_back(Scope<VertexBuffer>(vertexBuffer));
 		SetupLayout(vertexBuffer->GetLayout());
 	}
 
-	void OpenGLVertexArray::AddIndexBuffer(const Ref<IndexBuffer>& indexBuffer)
+	void OpenGLVertexArray::AddIndexBuffer(IndexBuffer* indexBuffer)
 	{
 		/*
 			We first bind the VAO and then the actual index buffer
@@ -128,7 +128,7 @@ namespace Lyra
 		*/
 		Bind();
 		indexBuffer->Bind();
-		m_IndexBuffer = indexBuffer;
+		m_IndexBuffer = Scope<IndexBuffer>(indexBuffer);
 	}
 
 	void OpenGLVertexArray::SetupLayout(const VertexLayout& layout) const

@@ -11,14 +11,13 @@ namespace Lyra
 	size_t Material::s_LastBoundMatHash = 0;
 
 	Material::Material()
-		: m_Shininess(32.0f),
-		  m_Shader(ShaderLibrary::GetDefaultShader())
+		: m_Shader(ShaderLibrary::GetDefaultShader())
 	{
 		SetCalculatedHash();
 	}
 
-	Material::Material(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>>& textures)
-		 : m_Shininess(32.0f),
+	Material::Material(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>>& textures, const MaterialProps& matProps)
+		 : m_Props(matProps),
 		   m_Shader(shader),
 		   m_Textures(textures)
 	{
@@ -26,7 +25,7 @@ namespace Lyra
 	}
 
 	Material::Material(const std::vector<Ref<Texture2D>> textures)
-		: Material(ShaderLibrary::GetDefaultShader(), textures)
+		: Material(ShaderLibrary::GetDefaultShader(), textures, {})
 	{
 	}
 
@@ -36,7 +35,7 @@ namespace Lyra
 		{
 			m_Shader->Bind();
 		}
-		m_Shader->UploadUniform_1f("u_Material.shininess", m_Shininess);
+		m_Shader->UploadUniform_1f("u_Material.shininess", m_Props.shininess);
 	}
 
 	void Material::BindTextures() const
@@ -55,6 +54,6 @@ namespace Lyra
 		{
 			Utils::Hash::HashCombine(textureListHash, texture->GetHash());
 		}
-		m_Hash = Utils::Material::CalculateHash(m_Shader->GetHash(), textureListHash, m_Shininess);
+		m_Hash = Utils::Material::CalculateHash(m_Shader->GetHash(), textureListHash, m_Props.shininess);
 	}
 }

@@ -11,7 +11,7 @@ namespace Lyra
 	RenderCommand::RenderCommand(const RenderCommandData& commandData)
 		: m_CommandData(commandData) {}
 
-	RenderCommand::RenderCommand(const Ref<VertexArray>& vertexArray, const Ref<Material>& material, const Ref<const Scene>& scene, const glm::mat4& transform, bool drawIndexed, RenderType renderType)
+	RenderCommand::RenderCommand(VertexArray* vertexArray, const Ref<Material>& material, const Ref<const Scene>& scene, const glm::mat4& transform, bool drawIndexed, RenderType renderType)
 	{
 		m_CommandData.vertexArray = vertexArray;
 		m_CommandData.material = material;
@@ -27,7 +27,10 @@ namespace Lyra
 		SetMaterialUniforms();
 		SetEntityUniforms();
 
-		s_RendererAPI->DrawVertices(m_CommandData.vertexArray, m_CommandData.drawIndexed);
+		if (m_CommandData.vertexArray)
+		{
+			s_RendererAPI->DrawVertices(m_CommandData.vertexArray, m_CommandData.drawIndexed);
+		}
 	}
 
 	void RenderCommand::SetSceneUniforms()

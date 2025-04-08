@@ -9,6 +9,11 @@ namespace Lyra
 	class Texture2D;
 	class MaterialLibrary;
 
+	struct MaterialProps
+	{
+		float shininess = 32.0f;
+	};
+
 	class LYRA_API Material
 	{
 
@@ -16,7 +21,7 @@ namespace Lyra
 
 	public:
 		Material();
-		Material(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>>& textures = {});
+		Material(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>>& textures, const MaterialProps& matProps);
 		Material(const std::vector<Ref<Texture2D>> textures);
 
 		inline const std::vector<Ref<Texture2D>>& GetTextures() const { return m_Textures; }
@@ -32,8 +37,7 @@ namespace Lyra
 		void SetCalculatedHash();
 
 	private:
-
-		float m_Shininess;
+		MaterialProps m_Props;
 		Ref<Shader> m_Shader;
 		std::vector<Ref<Texture2D>> m_Textures;
 

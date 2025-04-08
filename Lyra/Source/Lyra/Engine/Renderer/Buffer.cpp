@@ -6,13 +6,13 @@
 
 namespace Lyra
 {
-	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, size_t size, const VertexLayout& layout)
+	VertexBuffer* VertexBuffer::Create(float* vertices, size_t size, const VertexLayout& layout)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLVertexBuffer>(vertices, size, layout);
+				return new OpenGLVertexBuffer(vertices, size, layout);
 			}
 			case RendererAPI::API::None:
 			{
@@ -27,13 +27,13 @@ namespace Lyra
 		}
 	}
 
-	Ref<IndexBuffer> IndexBuffer::Create(uint32_t* indices, uint32_t count)
+	IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLIndexBuffer>(indices, count);
+				return new OpenGLIndexBuffer(indices, count);
 			}
 			case RendererAPI::API::None:
 			{
@@ -48,13 +48,13 @@ namespace Lyra
 		}
 	}
 
-	Ref<VertexArray> VertexArray::Create()
+	VertexArray* VertexArray::Create()
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLVertexArray>();
+				return new OpenGLVertexArray();
 			}
 			case RendererAPI::API::None:
 			{

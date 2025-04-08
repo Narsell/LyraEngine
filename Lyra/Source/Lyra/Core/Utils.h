@@ -74,7 +74,7 @@ namespace Lyra
 
 		namespace Material
 		{
-			// Shininess temp is temporary... TODO: Have some sort of material properties struct that holds that data.
+			// TODO: Gotta figure out a better way to integrate props into hash calculation!
 			inline size_t CalculateHash(size_t shaderHash, size_t materialListHash, float shininess)
 			{
 				size_t materialHash = 0;

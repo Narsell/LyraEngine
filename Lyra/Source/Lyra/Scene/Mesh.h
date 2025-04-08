@@ -30,8 +30,7 @@ namespace Lyra
     private:
 
         /* TODO: Convert these to Scope (unique_ptr) */
-        Ref<VertexArray> m_VertexArray;
-        Ref<IndexBuffer> m_IndexBuffer;
+        Scope<VertexArray> m_VertexArray;
         Ref<Material> m_Material;
 
         const std::string m_Name;

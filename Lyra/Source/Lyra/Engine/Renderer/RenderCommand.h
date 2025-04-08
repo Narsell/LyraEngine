@@ -15,7 +15,7 @@ namespace Lyra
 
 	struct RenderCommandData
 	{
-		Ref<VertexArray> vertexArray;
+		VertexArray* vertexArray = nullptr;
 		Ref<Material> material;
 		Ref<const Scene> scene;
 		glm::mat4 transform = glm::mat4(1.0f);
@@ -27,7 +27,7 @@ namespace Lyra
 	{
 	public:
 		RenderCommand(const RenderCommandData& commandData);
-		RenderCommand(const Ref<VertexArray>& vertexArray, const Ref<Material>& material, const Ref<const Scene>& scene, const glm::mat4& transform, bool drawIndexed = true, RenderType renderType = RenderType::LR_OPAQUE);
+		RenderCommand(VertexArray* vertexArray, const Ref<Material>& material, const Ref<const Scene>& scene, const glm::mat4& transform, bool drawIndexed = true, RenderType renderType = RenderType::LR_OPAQUE);
 		~RenderCommand() = default;
 
 		void Execute();

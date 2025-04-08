@@ -55,20 +55,20 @@ namespace Lyra
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
-		virtual void AddVertexBuffer(const Ref<VertexBuffer>& vertexBuffer) override;
-		virtual void AddIndexBuffer(const Ref<IndexBuffer>& indexBuffer) override;
+		virtual void AddVertexBuffer(VertexBuffer* vertexBuffer) override;
+		virtual void AddIndexBuffer(IndexBuffer* indexBuffer) override;
 
 		virtual const uint32_t GetRendererId() const { return m_RendererId; }
-		virtual const std::vector<Ref<VertexBuffer>>& GetVertexBuffers() const override { return m_VertexBuffers; }
-		virtual const Ref<IndexBuffer>& GetIndexBuffer() const override { return m_IndexBuffer; }
+		virtual const std::vector<Scope<VertexBuffer>>& GetVertexBuffers() const override { return m_VertexBuffers; }
+		virtual const Scope<IndexBuffer>& GetIndexBuffer() const override { return m_IndexBuffer; }
 
 	private:
 		/* Sets the Vertex Atrib Pointer in OpenGL for every Layout's VertexElement */
 		virtual void SetupLayout(const VertexLayout& layout) const;
 
 	private:
-		std::vector<Ref<VertexBuffer>> m_VertexBuffers;
-		Ref<IndexBuffer> m_IndexBuffer;
+		std::vector<Scope<VertexBuffer>> m_VertexBuffers;
+		Scope<IndexBuffer> m_IndexBuffer;
 
 	private:
 		uint32_t m_RendererId;

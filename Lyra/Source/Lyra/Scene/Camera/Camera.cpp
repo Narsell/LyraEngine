@@ -65,7 +65,6 @@ namespace Lyra
 
 	void OrthographicCamera::RecalculateViewMatrix()
 	{
-		// TODO: Optimize this so it only calculates what changed.
 		glm::mat4 transform = glm::mat4(1.0f);
 
 		transform = glm::translate(transform, m_Position);

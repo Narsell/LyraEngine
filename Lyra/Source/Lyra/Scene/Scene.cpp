@@ -23,14 +23,13 @@ namespace Lyra
 		/* Point light uniforms*/
 		for (int i = 0; i < m_Data.pointLights.size(); i++)
 		{
-			//TODO: Get rid of this awfully slow std::format omg
-			shader->UploadUniform_3f(std::format("u_PointLights[{0}].position", i), glm::vec3(m_Data.camera->GetViewMatrix() * glm::vec4(m_Data.pointLights[i].position, 1.0f)));
-			shader->UploadUniform_3f(std::format("u_PointLights[{0}].ambient", i), m_Data.pointLights[i].ambient);
-			shader->UploadUniform_3f(std::format("u_PointLights[{0}].diffuse", i), m_Data.pointLights[i].diffuse);
-			shader->UploadUniform_3f(std::format("u_PointLights[{0}].specular", i), m_Data.pointLights[i].specular);
-			shader->UploadUniform_1f(std::format("u_PointLights[{0}].constAttenuation", i), m_Data.pointLights[i].constAttenuation);
-			shader->UploadUniform_1f(std::format("u_PointLights[{0}].linearAttenuation", i), m_Data.pointLights[i].linearAttenuation);
-			shader->UploadUniform_1f(std::format("u_PointLights[{0}].quadAttenuation", i), m_Data.pointLights[i].quadAttenuation);
+			shader->UploadUniform_3f((std::string("u_PointLights[") + std::to_string(i) + "].position"), glm::vec3(m_Data.camera->GetViewMatrix() * glm::vec4(m_Data.pointLights[i].position, 1.0f)));
+			shader->UploadUniform_3f((std::string("u_PointLights[") + std::to_string(i) + "].ambient"), m_Data.pointLights[i].ambient);
+			shader->UploadUniform_3f((std::string("u_PointLights[") + std::to_string(i) + "].diffuse"), m_Data.pointLights[i].diffuse);
+			shader->UploadUniform_3f((std::string("u_PointLights[") + std::to_string(i) + "].specular"), m_Data.pointLights[i].specular);
+			shader->UploadUniform_1f((std::string("u_PointLights[") + std::to_string(i) + "].constAttenuation"), m_Data.pointLights[i].constAttenuation);
+			shader->UploadUniform_1f((std::string("u_PointLights[") + std::to_string(i) + "].linearAttenuation"), m_Data.pointLights[i].linearAttenuation);
+			shader->UploadUniform_1f((std::string("u_PointLights[") + std::to_string(i) + "].quadAttenuation"), m_Data.pointLights[i].quadAttenuation);
 		}
 
 		/* Spot light uniforms */

@@ -20,8 +20,7 @@ namespace Lyra
 
 		static void BeginScene(const Ref<const Scene>& scene);
 		static void EndScene();
-		static void Submit(const Ref<Shader>& shader, const Ref<VertexArray>& vertexArray, const glm::mat4& modelMatrix = glm::mat4(1.0f), bool drawIndexed = true);
-		static void Submit(const Ref<Material>& material, const Ref<VertexArray>& vertexArray, const glm::mat4& modelMatrix = glm::mat4(1.0f), bool drawIndexed = true);
+		static void Submit(const Ref<Material>& material, const Scope<VertexArray>& vertexArray, const glm::mat4& modelMatrix = glm::mat4(1.0f), bool drawIndexed = true);
 
 		inline static RendererAPI::API GetAPI() { return RendererAPI::GetAPI(); }
 
