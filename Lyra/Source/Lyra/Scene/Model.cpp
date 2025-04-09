@@ -26,11 +26,11 @@ namespace Lyra
 		}
 	}
 
-	Model::Model(const std::string& path, const ModelProps& props)
-		: m_Directory(path.substr(0, path.find_last_of("/"))), m_Props(props) 	// TODO: look into std::filesystem::path to deal with this better.	//std::filesystem::path filepath(path);
+	Model::Model(const std::filesystem::path& path, const ModelProps& props)
+		: m_Props(props), m_ModelPath(path), m_ContainingDir(path.parent_path())  	// TODO: look into std::filesystem::path to deal with this better.	//std::filesystem::path filepath(path);
 	{
-		LoadModel(path);
-		m_Hash = Utils::Model::CalculateHash(path, props.textureFlipOverride);
+		LoadModel();
+		m_Hash = Utils::Model::CalculateHash(path.string(), props.textureFlipOverride);
 	}
 
 	void Model::Draw(const glm::mat4& transform)
@@ -41,8 +41,16 @@ namespace Lyra
 		}
 	}
 
-	void Model::LoadModel(const std::string& path)
+	void Model::LoadModel()
 	{
+		const std::string path = m_ModelPath.string();
+
+		if (!std::filesystem::exists(m_ModelPath))
+		{
+			LR_CORE_FATAL("Path to model doesn't exist... '{0}'", path);
+			return;
+		}
+
 		Assimp::Importer importer;
 
 		// TODO: Expose import settings to API through ModelProps
@@ -138,12 +146,10 @@ namespace Lyra
 
 			for (uint32_t i = 0; i < textureCount; i++)
 			{
-				aiString filename;
+				aiString textureFilename;
+				material->GetTexture(assimpTextType, i, &textureFilename);
+				std::filesystem::path texturePath = m_ContainingDir / textureFilename.C_Str();
 
-				material->GetTexture(assimpTextType, i, &filename);
-
-				// TODO: Check this for forward/bakwards slashes shenanigans (normalize paths)
-				std::basic_string texturePath = std::format("{0}/{1}", m_Directory, filename.C_Str());
 				Texture2DProps textureProps(internalTextType);
 				textureProps.FlipVertically = m_Props.textureFlipOverride;
 				Ref<Texture2D> meshTexture = TextureLibrary::Load(texturePath, textureProps);

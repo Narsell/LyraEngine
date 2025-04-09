@@ -42,17 +42,41 @@ namespace Lyra
 		}
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const std::string& texturePath, const Texture2DProps& textureProps)
+	OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path& texturePath, const Texture2DProps& textureProps)
 		:	Texture2D(texturePath, textureProps), Slot(static_cast<int8_t>(textureProps.Type))
 	{
-		int width, height, channels;
+		LoadTexture();
+		// TODO: Take texture props into consideration for this texture
+		m_Hash = Utils::Texture::CalculateHash(m_Path.string());
+	}
 
-		/* TODO: Handle this texture loading stuff in some texture/asset manager class! */
+	OpenGLTexture2D::~OpenGLTexture2D()
+	{
+		glDeleteTextures(1, &m_RendererId);
+	}
+
+	void OpenGLTexture2D::Bind() const
+	{
+		if (Utils::Texture::IsValidTextureType(m_Props.Type))
+		{
+			glBindTextureUnit(Slot, m_RendererId);
+		}
+	}
+
+	void OpenGLTexture2D::LoadTexture()
+	{
+		if (!std::filesystem::exists(m_Path))
+		{
+			LR_CORE_FATAL("'Path to texture doesn't exist... '{0}'", m_Path.string());
+			return;
+		}
+
+		int width, height, channels;
 		stbi_set_flip_vertically_on_load(static_cast<int>(m_Props.FlipVertically));
-		stbi_uc* data = stbi_load(m_Path.c_str(), &width, &height, &channels, 0);
+		stbi_uc* data = stbi_load(m_Path.string().c_str(), &width, &height, &channels, 0);
 		if (!data)
 		{
-			LR_CORE_FATAL("Failed to load image from path \"{0}\"", m_Path.c_str());
+			LR_CORE_FATAL("Failed to load image from path \"{0}\"", m_Path.string());
 			return;
 		}
 
@@ -81,7 +105,7 @@ namespace Lyra
 
 		// Upload data to GPU
 		glTextureSubImage2D(m_RendererId, 0, 0, 0, m_Width, m_Height, textureFormat.Data, GL_UNSIGNED_BYTE, data);
-		
+
 		if (m_Props.UseMipmaps)
 		{
 			glGenerateMipmap(GL_TEXTURE_2D);
@@ -89,22 +113,6 @@ namespace Lyra
 
 		// Free texture data from CPU since we don't need it once it has been uploaded to the GPU.
 		stbi_image_free(data);
-
-		// TODO: Take texture props into consideration for this texture
-		m_Hash = Utils::Texture::CalculateHash(m_Path);
-	}
-
-	OpenGLTexture2D::~OpenGLTexture2D()
-	{
-		glDeleteTextures(1, &m_RendererId);
-	}
-
-	void OpenGLTexture2D::Bind() const
-	{
-		if (Utils::Texture::IsValidTextureType(m_Props.Type))
-		{
-			glBindTextureUnit(Slot, m_RendererId);
-		}
 	}
 
 	GLTextureFormat OpenGLTexture2D::GetTextureFormat(int channels) const
@@ -132,7 +140,7 @@ namespace Lyra
 			}
 			default:
 			{
-				LR_CORE_ASSERT(false, "Texture at '{}': Format not supported.", m_Path);
+				LR_CORE_ASSERT(false, "Texture at '{}': Format not supported.", m_Path.string());
 			}
 		}
 		return textureFormat;

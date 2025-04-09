@@ -136,15 +136,15 @@ public:
 
 		Lyra::ModelProps propsInverted;
 		propsInverted.textureFlipOverride = true;
-		m_BackpackModel = Lyra::ModelLibrary::Load("Assets/Models/backpack/backpack.obj", propsInverted);
-		m_SponzaModel = Lyra::ModelLibrary::Load("Assets/Models/sponza/sponza.obj");
+		m_BackpackModel = Lyra::ModelLibrary::Load("Assets\\Models\\backpack\\backpack.obj", propsInverted);
+		m_SponzaModel = Lyra::ModelLibrary::Load("Assets\\Models\\sponza\\sponza.obj");
 
 		// Creating and setting textures
 		Lyra::Texture2DProps propsDiffuse(Lyra::TextureType::DIFFUSE);
 		Lyra::Texture2DProps propsSpecular(Lyra::TextureType::SPECULAR);
 		
-		m_BoxTextureDiffuse = Lyra::TextureLibrary::Load("Assets/Textures/Container.png", propsDiffuse);
-		m_BoxTextureSpecular = Lyra::TextureLibrary::Load("Assets/Textures/Container_specular.png", propsSpecular);
+		m_BoxTextureDiffuse = Lyra::TextureLibrary::Load("Assets\\Textures\\Container.png", propsDiffuse);
+		m_BoxTextureSpecular = Lyra::TextureLibrary::Load("Assets\\Textures\\Container_specular.png", propsSpecular);
 	}
 
 	void OnAttach() override
@@ -319,7 +319,7 @@ public:
 					{
 						ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.15f, 1.0f), texture->GetTypeAsString());
 						ImGui::Image(texture->GetRendererId(), ImVec2(85.f, 85.f));
-						ImGui::Text(texture->GetPath().c_str());
+						ImGui::Text(texture->GetPath().string().c_str());
 						ImGui::Separator();
 					}
 

@@ -13,16 +13,16 @@ namespace Lyra
 {
 	std::unordered_map<size_t, Ref<Model>> ModelLibrary::s_LoadedModels;
 
-	Ref<Model>& ModelLibrary::Load(const std::string& path, const ModelProps& props)
+	Ref<Model>& ModelLibrary::Load(const std::filesystem::path& path, const ModelProps& props)
 	{
-		size_t modelHash = Utils::Model::CalculateHash(path, props.textureFlipOverride);
+		size_t modelHash = Utils::Model::CalculateHash(path.string(), props.textureFlipOverride);
 		if (s_LoadedModels.find(modelHash) == s_LoadedModels.end())
 		{
 			s_LoadedModels.emplace(modelHash, std::make_shared<Model>(path, props));
 		}
 		else
 		{
-			LR_CORE_TRACE("Model at '{0}' is currently loaded, skipping load.", path);
+			LR_CORE_TRACE("Model at '{0}' is currently loaded, skipping load.", path.string());
 		}
 		return s_LoadedModels.at(modelHash);
 	}

@@ -29,7 +29,6 @@ namespace Lyra
         size_t GetHash() const { return m_Hash; }
     private:
 
-        /* TODO: Convert these to Scope (unique_ptr) */
         Scope<VertexArray> m_VertexArray;
         Ref<Material> m_Material;
 

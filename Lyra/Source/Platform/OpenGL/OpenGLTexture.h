@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Scene/Texture.h"
-
 #include <glad/glad.h>
 #include <string>
+#include <filesystem>
+
+#include "Scene/Texture.h"
 
 namespace Lyra
 {
@@ -18,7 +19,7 @@ namespace Lyra
 	class OpenGLTexture2D final : public Texture2D
 	{
 	public:
-		OpenGLTexture2D(const std::string& texturePath, const Texture2DProps& textureProps);
+		OpenGLTexture2D(const std::filesystem::path& texturePath, const Texture2DProps& textureProps);
 		virtual ~OpenGLTexture2D();
 
 		virtual uint32_t GetWidth() const override { return  m_Width; }
@@ -29,6 +30,7 @@ namespace Lyra
 		virtual void Bind() const override;
 
 	private:
+		void LoadTexture();
 		GLTextureFormat GetTextureFormat(int channels) const;
 
 	private:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <filesystem>
 
 #include "Core.h"
 #include "Scene/Mesh.h"
@@ -27,7 +28,7 @@ namespace Lyra
 	{
 
 	public:
-		Model(const std::string& path, const ModelProps& props);
+		Model(const std::filesystem::path& path, const ModelProps& props);
 
 		void Draw(const glm::mat4& transforms);
 
@@ -36,16 +37,19 @@ namespace Lyra
 		size_t GetMeshCount() const { return m_Meshes.size(); }
 
 	private:
-		void LoadModel(const std::string& path);
+		void LoadModel();
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		void ProcessMesh(aiMesh* mesh, const aiScene* scene);
 		std::vector<Ref<Texture2D>> LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh);
 
 	private:
+		ModelProps m_Props;
 		std::vector<Scope<Mesh>> m_Meshes;
 
-		ModelProps m_Props;
-		std::string m_Directory;
+		/* Represents the path to the file storing the model data (obj, fbx, etc...). */
+		std::filesystem::path m_ModelPath;
+		/* Represents the base path where the main model file is located. */
+		std::filesystem::path m_ContainingDir;
 
 		size_t m_Hash = 0;
 	};

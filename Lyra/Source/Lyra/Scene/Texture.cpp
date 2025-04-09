@@ -8,7 +8,7 @@ namespace Lyra
 {
 	std::unordered_map<std::string, Ref<Texture2D>> Texture2D::s_TexturesLoaded;
 
-	Texture2D::Texture2D(const std::string& texturePath, const Texture2DProps& textureProps)
+	Texture2D::Texture2D(const std::filesystem::path& texturePath, const Texture2DProps& textureProps)
 		: m_Path(texturePath), m_Props(textureProps)
 	{
 		if (!Utils::Texture::IsValidTextureType(m_Props.Type))
@@ -17,14 +17,13 @@ namespace Lyra
 		}
 	}
 
-	Ref<Texture2D> Lyra::Texture2D::Create(const std::string& texturePath, const Texture2DProps& textureProps)
+	Ref<Texture2D> Lyra::Texture2D::Create(const std::filesystem::path& texturePath, const Texture2DProps& textureProps)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::OpenGL:
 			{
-				Ref<Texture2D> texture = std::make_shared<OpenGLTexture2D>(texturePath, textureProps);
-				return texture;
+				return std::make_shared<OpenGLTexture2D>(texturePath, textureProps);
 			}
 			case RendererAPI::API::None:
 			{
