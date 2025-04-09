@@ -233,8 +233,7 @@ namespace Lyra
 		bool uniformExists = m_UniformLocationCache.find(uniformName) != m_UniformLocationCache.end();
 		if (!uniformExists)
 		{
-			// TODO: Turn on this warning again once I have basic material and scene systems.
-			// LR_CORE_WARN("Uniform '{0}' doesn't exist in shader '{1}'. It won't be uploaded.", uniformName, m_Name);
+			LR_CORE_WARN("Uniform '{0}' doesn't exist in shader '{1}'. It won't be uploaded.", uniformName, m_Name);
 		}
 		return uniformExists;
 	}

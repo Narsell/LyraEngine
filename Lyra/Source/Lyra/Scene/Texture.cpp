@@ -6,8 +6,6 @@
 
 namespace Lyra
 {
-	std::unordered_map<std::string, Ref<Texture2D>> Texture2D::s_TexturesLoaded;
-
 	Texture2D::Texture2D(const std::filesystem::path& texturePath, const Texture2DProps& textureProps)
 		: m_Path(texturePath), m_Props(textureProps)
 	{

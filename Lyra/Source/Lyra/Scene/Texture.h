@@ -72,9 +72,6 @@ namespace Lyra
 		virtual const TextureType& GetType() const { return m_Props.Type; }
 		virtual const char* GetTypeAsString() const { return Utils::Texture::TextureTypeToString(m_Props.Type); }
 
-		/* Keeping count of loaded textures here... TODO: Move this to an asset manager eventually! */
-		static std::unordered_map<std::string, Ref<Texture2D>> s_TexturesLoaded;
-
 	protected:
 		Texture2D(const std::filesystem::path& texturePath, const Texture2DProps& textureProps);
 

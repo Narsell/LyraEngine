@@ -12,7 +12,7 @@ namespace Lyra
 		glDepthFunc(GL_LESS);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		// TODO: We should disable/enable this dynamically when dealing with open meshes.
+		// Beware: should disable/enable this dynamically when dealing with open meshes.
 		glEnable(GL_CULL_FACE);
 	}
 
@@ -54,7 +54,7 @@ namespace Lyra
 	{
 		for (const auto& vertexBuffer : vertexArray->GetVertexBuffers())
 		{
-			// TODO: For some reason OpenGL receives a GLsizei (typedef int) as a count for vertex count? wut
+			// For some reason OpenGL receives a GLsizei (typedef int) as a count for vertex count? wut
 			// Idk just keep in mind in case this cast (uint32 to int) ever becomes a problem.
 			glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertexBuffer->GetVertexCount()));
 		}

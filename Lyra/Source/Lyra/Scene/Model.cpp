@@ -27,7 +27,7 @@ namespace Lyra
 	}
 
 	Model::Model(const std::filesystem::path& path, const ModelProps& props)
-		: m_Props(props), m_ModelPath(path), m_ContainingDir(path.parent_path())  	// TODO: look into std::filesystem::path to deal with this better.	//std::filesystem::path filepath(path);
+		: m_Props(props), m_ModelPath(path), m_ContainingDir(path.parent_path())
 	{
 		LoadModel();
 		m_Hash = Utils::Model::CalculateHash(path.string(), props.textureFlipOverride);
