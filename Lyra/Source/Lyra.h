@@ -32,6 +32,7 @@
 #include "Lyra/Engine/Renderer/Renderer.h"
 #include "Lyra/Engine/Renderer/RenderCommand.h"
 #include "Lyra/Engine/Renderer/Buffer.h"
+#include "Lyra/Engine/Renderer/FrameBuffer.h"
 #include "Lyra/Engine/Renderer/VertexLayout.h"
 #include "Lyra/Engine/Renderer/Shader.h"
 

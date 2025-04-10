@@ -2,11 +2,13 @@
 
 #include "Renderer.h"
 #include "RenderCommand.h"
+#include "FrameBuffer.h"
 #include "Shader.h"
 #include "Assets/ShaderLibrary.h"
 
 namespace Lyra
 {
+	Ref<FrameBuffer> Renderer::s_FrameBuffer;
 	RenderCommandQueue Renderer::s_RenderQueue;
 	Ref<const Scene> Renderer::s_Scene;
 	uint32_t Renderer::s_CurrentDrawCallCount = 0;
@@ -17,6 +19,9 @@ namespace Lyra
 		RenderCommand::InitRenderer();
 		/* We want to guarantee the default shader exists. */
 		ShaderLibrary::Load("Default", "Assets/Shaders/PhongModel.glsl");
+
+		s_FrameBuffer = FrameBuffer::Create();
+		s_FrameBuffer->Bind();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)

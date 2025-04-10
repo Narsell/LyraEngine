@@ -254,6 +254,11 @@ public:
 
 	void OnImGuiRender() override
 	{
+		const Lyra::Window& window = Lyra::Application::Get().GetWindow();
+
+		ImGui::Begin("Viewport");
+		ImGui::Image(Lyra::Renderer::GetFrameBuffer()->GetColorTextureTarget(), ImVec2(window.GetWidth(), window.GetHeight()), ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
+		ImGui::End();
 		ImGui::Begin("Properties");
 		if (ImGui::CollapsingHeader("Dir Light"))
 		{
