@@ -19,8 +19,8 @@ namespace Lyra
 		static const Ref<FrameBuffer>& GetFrameBuffer() { return s_FrameBuffer; }
 		static uint32_t GetDrawCallCount() { return s_LastDrawCallCount; }
 
-		static void BeginScene(const Ref<const Scene>& scene);
-		static void EndScene();
+		static void BeginFrame(const Ref<const Scene>& scene);
+		static void EndFrame();
 		static void Submit(const Ref<Material>& material, const Scope<VertexArray>& vertexArray, const glm::mat4& modelMatrix = glm::mat4(1.0f), bool drawIndexed = true);
 		
 		static void OnWindowResize(uint32_t width, uint32_t height);

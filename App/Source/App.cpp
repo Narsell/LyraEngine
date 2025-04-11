@@ -211,12 +211,8 @@ public:
 		m_CubeRotation += m_CubeRotationSpeed * ts.GetSeconds();
 		m_CubeRotation = glm::mod(m_CubeRotation, 360.f);
 
-		/* Clearing buffers */
-		Lyra::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
-		Lyra::RenderCommand::Clear();
-
 		/* Set the scene variables */
-		Lyra::Renderer::BeginScene(m_Scene);
+		Lyra::Renderer::BeginFrame(m_Scene);
 
 		/* Actual rendering happens here */
 			
@@ -247,18 +243,58 @@ public:
 		//	false
 		//);
 
-		Lyra::Renderer::EndScene();
+		Lyra::Renderer::EndFrame();
 
 		m_LastFrameTime = ts.GetSeconds();
 	}
 
 	void OnImGuiRender() override
 	{
-		const Lyra::Window& window = Lyra::Application::Get().GetWindow();
+		static bool opt_fullscreen = true;
+		static bool opt_padding = false;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-		ImGui::Begin("Viewport");
-		ImGui::Image(Lyra::Renderer::GetFrameBuffer()->GetColorTextureTarget(), ImVec2(window.GetWidth(), window.GetHeight()), ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
+		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+		// because it would be confusing to have two docking targets within each others.
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		window_flags |= ImGuiWindowFlags_NoBackground;
+
+		bool dockOpen = true;
+		ImGui::Begin("DockSpace Demo", &dockOpen, window_flags);
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(2);
+
+		// Submit the DockSpace
+		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("Options"))
+			{
+				if (ImGui::MenuItem("Exit")) { Lyra::Application::Get().Quit(); }
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+
 		ImGui::End();
+
+		auto& window = Lyra::Application::Get().GetWindow();
+		ImGui::Begin("Viewport");
+		ImGui::Image(Lyra::Renderer::GetFrameBuffer()->GetColorTextureTarget(), ImVec2(850.0, 480.0), ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::End();
+
 		ImGui::Begin("Properties");
 		if (ImGui::CollapsingHeader("Dir Light"))
 		{
@@ -334,7 +370,7 @@ public:
 			}
 			ImGui::Unindent();
 		}
-		
+
 		if (ImGui::CollapsingHeader("Cube"))
 		{
 			ImGui::Indent();
@@ -361,6 +397,8 @@ public:
 		ImGui::Separator();
 
 		ImGui::End();
+
+		ImGui::ShowDemoWindow();
 	}
 
 	void OnEvent(Lyra::Event& e) override

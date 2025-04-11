@@ -4,6 +4,7 @@
 #include "RenderCommand.h"
 #include "FrameBuffer.h"
 #include "Shader.h"
+#include "Core/Application.h"
 #include "Assets/ShaderLibrary.h"
 
 namespace Lyra
@@ -17,11 +18,11 @@ namespace Lyra
 	void Renderer::Init()
 	{
 		RenderCommand::InitRenderer();
-		/* We want to guarantee the default shader exists. */
+		/* Create frame buffer object */
+		const Window& window = Application::Get().GetWindow();
+		s_FrameBuffer = FrameBuffer::Create(FrameBufferSpecification(window.GetWidth(), window.GetHeight()));
+		/* Guarantee the default shader exists. */
 		ShaderLibrary::Load("Default", "Assets/Shaders/PhongModel.glsl");
-
-		s_FrameBuffer = FrameBuffer::Create();
-		s_FrameBuffer->Bind();
 	}
 
 	void Renderer::OnWindowResize(uint32_t width, uint32_t height)
@@ -29,16 +30,27 @@ namespace Lyra
 		RenderCommand::SetViewport(0, 0, width, height);
 	}
 
-	void Renderer::BeginScene(const Ref<const Scene>& scene)
+	void Renderer::BeginFrame(const Ref<const Scene>& scene)
 	{
 		s_Scene = scene;
+
+		s_FrameBuffer->Bind();
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
+		RenderCommand::Clear();
+
 		s_CurrentDrawCallCount = 0;
 	}
 
-	void Renderer::EndScene()
+	void Renderer::EndFrame()
 	{
 		s_RenderQueue.Flush();
+
 		s_Scene->ClearUniformCache();
+
+		s_FrameBuffer->Unbind();
+		RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.f });
+		RenderCommand::Clear();
+
 		s_LastDrawCallCount = s_CurrentDrawCallCount;
 	}
 

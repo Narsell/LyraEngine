@@ -63,6 +63,11 @@ namespace Lyra
 		}
 	}
 
+	void Application::Quit()
+	{
+		m_Running = false;
+	}
+
 	void Application::OnEvent(Event& e)
 	{
 		// Dispatch window events

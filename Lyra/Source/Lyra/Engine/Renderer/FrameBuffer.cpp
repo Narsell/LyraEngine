@@ -6,13 +6,13 @@
 
 namespace Lyra
 {
-	Ref<FrameBuffer> FrameBuffer::Create()
+	Ref<FrameBuffer> FrameBuffer::Create(const FrameBufferSpecification& spec)
 	{
 		switch (Renderer::GetAPI())
 		{
 		case RendererAPI::API::OpenGL:
 		{
-			return std::make_shared<OpenGLFrameBuffer>();
+			return std::make_shared<OpenGLFrameBuffer>(spec);
 		}
 		case RendererAPI::API::None:
 		{

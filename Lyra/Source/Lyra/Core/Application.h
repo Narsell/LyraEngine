@@ -18,6 +18,7 @@ namespace Lyra
 		virtual ~Application();
 
 		void Run();
+		void Quit();
 
 		void OnEvent(Event& e);
 
