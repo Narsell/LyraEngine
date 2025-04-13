@@ -67,7 +67,7 @@ namespace Lyra
 	{
 		if (!std::filesystem::exists(m_Path))
 		{
-			LR_CORE_FATAL("'Path to texture doesn't exist... '{0}'", m_Path.string());
+			LR_CORE_FATAL("Path to texture doesn't exist... '{0}'", m_Path.string());
 			return;
 		}
 

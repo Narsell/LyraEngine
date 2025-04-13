@@ -18,14 +18,14 @@ namespace Lyra
 
 	Application* Application::s_Instance = nullptr;
 
-	Application::Application()
-		:m_Window(Scope<Window>(Window::Create())),
-		 m_ImGuiLayer(new ImGuiLayer())
+	Application::Application(const ApplicationProps& props)
+		: m_Window(Scope<Window>(Window::Create(props.windowProps))),
+		  m_ImGuiLayer(new ImGuiLayer())
 	{
 		LR_CORE_ASSERT(!s_Instance, "There's already an application instance!");
 		s_Instance = this;
 
-		Renderer::Init();
+		Renderer::Init(props.rendererSpec);
 
 		PushOverlay(m_ImGuiLayer);
 		m_Window->SetEventCallback(LR_BIND_EVENT_FN(&Application::OnEvent));

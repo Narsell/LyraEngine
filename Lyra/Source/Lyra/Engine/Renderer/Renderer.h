@@ -14,7 +14,7 @@ namespace Lyra
 	class Renderer
 	{
 	public:
-		static void Init();
+		static void Init(const RendererSpecification& spec);
 
 		static const Ref<FrameBuffer>& GetFrameBuffer() { return s_FrameBuffer; }
 		static uint32_t GetDrawCallCount() { return s_LastDrawCallCount; }

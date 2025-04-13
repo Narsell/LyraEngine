@@ -6,10 +6,17 @@
 #include "Core/Window.h"
 #include "Events/ApplicationEvent.h"
 #include "Layer/LayerStack.h"
+#include "Renderer/RendererAPI.h"
 
 namespace Lyra
 {
 	class ImGuiLayer;
+
+	struct ApplicationProps
+	{
+		WindowProps windowProps;
+		RendererSpecification rendererSpec;
+	};
 
 	class LYRA_API Application
 	{
@@ -29,7 +36,7 @@ namespace Lyra
 		inline Window& GetWindow() const { return *m_Window; }
 
 	protected:
-		Application();
+		Application(const ApplicationProps& props = {});
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);

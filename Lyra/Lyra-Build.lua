@@ -85,6 +85,8 @@ project "Lyra"
 
    filter "configurations:*"
         postbuildcommands {
-            '{MKDIR} ../Binaries/%{OutputDir}/App',
-            '{COPYDIR} ./Vendor/assimp/bin/%{cfg.buildcfg}/ ../Binaries/%{OutputDir}/App/'
+            '{MKDIR} ../Binaries/%{OutputDir}/LyraEditor',
+            '{MKDIR} ../Binaries/%{OutputDir}/Sandbox',
+            '{COPYDIR} ./Vendor/assimp/bin/%{cfg.buildcfg}/ ../Binaries/%{OutputDir}/LyraEditor/',
+            '{COPYDIR} ./Vendor/assimp/bin/%{cfg.buildcfg}/ ../Binaries/%{OutputDir}/Sandbox/'
         }

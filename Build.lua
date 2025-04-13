@@ -1,13 +1,3 @@
-workspace "Lyra"
-   architecture "x64"
-   configurations { "Debug", "Release", "Dist"}
-   startproject "App"
-
-   flags
-	{
-		"MultiProcessorCompile"
-	}
-
 OutputDir = "%{cfg.system}-%{cfg.architecture}/%{cfg.buildcfg}"
 
 IncludeDir = {}
@@ -21,14 +11,25 @@ IncludeDir["spdlog"] = "Vendor/spdlog/include"
 IncludeDir["stb_image"] = "Vendor/stb_image"
 IncludeDir["assimp"] = "Vendor/assimp/include"
 
-group "Dependencies"
+workspace "Lyra"
+   architecture "x64"
+   configurations { "Debug", "Release", "Dist"}
+   startproject "LyraEditor"
+
+   flags
+	{
+		"MultiProcessorCompile"
+	}
+
+   group "Dependencies"
    include "Lyra/Vendor/GLFW"
    include "Lyra/Vendor/Glad"
    include "Lyra/Vendor/imgui"
-group ""
+   group ""
 
-group "Engine"
-	include "Lyra/Lyra-Build.lua"
-group ""
+   group "Engine"
+   include "Lyra/Lyra-Build.lua"
+   include "LyraEditor/Editor-Build.lua"
+   group ""
 
-include "App/App-Build.lua"
+   include "Sandbox/Sandbox-Build.lua"

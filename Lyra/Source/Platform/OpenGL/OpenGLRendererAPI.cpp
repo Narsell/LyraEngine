@@ -5,7 +5,7 @@
 
 namespace Lyra
 {
-	void OpenGLRendererAPI::Init()
+	void OpenGLRendererAPI::Init(const RendererSpecification& spec)
 	{
 		// TODO: Expose these params to the API and make them configurable
 		glEnable(GL_DEPTH_TEST);
@@ -14,6 +14,10 @@ namespace Lyra
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		// Beware: should disable/enable this dynamically when dealing with open meshes.
 		glEnable(GL_CULL_FACE);
+		
+		// TODO: Add a flag to enable wireframe view!
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		//glDisable(GL_CULL_FACE);
 	}
 
 	void OpenGLRendererAPI::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
