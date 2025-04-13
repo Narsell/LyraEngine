@@ -3,11 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
-## Ignoring models for now because these can get heavy!
-## TODO: Store all assets in a single shared location for all projects...
-##      This will probably involve changing the working dir to a common path for assets.
-Sandbox/Assets/Models/*
-LyraEditor/Assets/Models/*
+# Still ignoring sponza for now since this is easy to get online
+#   Just in the unlikely scenario that someone would even look at this repo (yeah right)
+Assets/Models/sponza/*
 
 
 # User-specific files

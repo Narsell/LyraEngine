@@ -31,6 +31,7 @@ project "LyraEditor"
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
    objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
+   debugdir "%{wks.location}"
 
    filter "system:windows"
         systemversion "latest"
@@ -58,5 +59,5 @@ project "LyraEditor"
 
     filter "configurations:*"
        postbuildcommands {
-           '{COPYDIR} ./Assets ../Binaries/%{OutputDir}/%{prj.name}/Assets'
+           '{COPYDIR} %{wks.location}/Assets ../Binaries/%{OutputDir}/%{prj.name}/Assets'
        }
