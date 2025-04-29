@@ -115,7 +115,7 @@ namespace Lyra
 		return true;
 	}
 
-	bool OpenGLShader::Link(const std::array<GLenum, 2>& glShaderIds)
+	bool OpenGLShader::Link(const std::array<GLenum, 2>& glShaderIds) const
 	{
 		// Link our program
 		glLinkProgram(m_RendererId);

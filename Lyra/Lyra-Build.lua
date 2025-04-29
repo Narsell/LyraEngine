@@ -43,11 +43,6 @@ project "Lyra"
       "opengl32.lib",
    }
 
-   defines
-   {
-      "_CRT_SECURE_NO_WARNINGS"
-   }
-
    buildoptions { "/utf-8" }
 
    targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")

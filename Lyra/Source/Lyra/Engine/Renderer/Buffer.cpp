@@ -27,7 +27,7 @@ namespace Lyra
 		}
 	}
 
-	IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count)
+	IndexBuffer* IndexBuffer::Create(uint32_t* indices, size_t count)
 	{
 		switch (Renderer::GetAPI())
 		{

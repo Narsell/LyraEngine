@@ -13,15 +13,15 @@ namespace Lyra
 {
     struct Vertex
     {
-        glm::vec3 Position;
-        glm::vec3 Normal;
+        glm::vec3 Position = glm::vec3();
+        glm::vec3 Normal = glm::vec3();
         glm::vec2 TexCoord = glm::vec2(0.0f, 0.0f);
     };
 
     class LYRA_API Mesh {
     public:
         Mesh(const std::string& name, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, const Ref<Material>& material = std::make_shared<Material>());
-        void Draw(const glm::mat4& transform);
+        void Draw(const glm::mat4& transform) const;
 
         const Ref<Material>& GetMaterial() const { return m_Material; }
         uint64_t GetVertexCount() const { return m_VertexCount; }

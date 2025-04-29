@@ -13,12 +13,12 @@ namespace Lyra
 		/* TypeInfo contains the metadata for a given ShaderData::Type */
 		struct TypeInfo
 		{
-			Type ShaderType;
-			uint8_t Count;
-			uint32_t Size;
+			Type shaderType;
+			uint8_t count;
+			size_t size;
 
-			TypeInfo(Type shaderType, uint8_t count, uint32_t size)
-				: ShaderType(shaderType), Count(count), Size(size) {}
+			TypeInfo(Type inShaderType, uint8_t inCount, size_t inSize)
+				: shaderType(inShaderType), count(inCount), size(inSize) {}
 
 		};
 
@@ -53,16 +53,16 @@ namespace Lyra
 
 	struct VertexElement
 	{
-		const std::string Name;
-		ShaderData::TypeInfo TypeInfo;
-		bool Normalized;
-		uint32_t Offset;
+		const std::string name;
+		ShaderData::TypeInfo typeInfo;
+		bool normalized;
+		size_t offset;
 
 		VertexElement() = delete;
-		VertexElement(const std::string& name, const ShaderData::TypeInfo& typeInfo, bool normalized = false);
+		VertexElement(const std::string& inName, const ShaderData::TypeInfo& inTypeInfo, bool inNormalized = false);
 
-		uint32_t GetSize() const { return TypeInfo.Size; }
-		uint32_t GetOffset() const { return Offset; }
+		size_t GetSize() const { return typeInfo.size; }
+		size_t GetOffset() const { return offset; }
 
 	};
 
@@ -76,7 +76,7 @@ namespace Lyra
 		/*
 		* Returns the offset in bytes between two consecutive vertex elements.
 		*/
-		uint32_t GetStride() const { return m_Stride; }
+		size_t GetStride() const { return m_Stride; }
 		const std::vector<VertexElement>& GetElements() const { return m_Elements; }
 
 		void DebugPrint(const std::string& layoutName);
@@ -88,7 +88,7 @@ namespace Lyra
 	private:
 
 		std::vector<VertexElement> m_Elements;
-		uint32_t m_Stride = 0;
+		size_t m_Stride = 0;
 	};
 
 }

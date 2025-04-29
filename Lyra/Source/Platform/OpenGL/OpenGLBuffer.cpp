@@ -58,7 +58,7 @@ namespace Lyra
 	/* #### OPENGL INDEX BUFFER #### */
 	/* ############################# */
 
-	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, uint32_t count)
+	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, size_t count)
 		: m_Count(count)
 	{
 		//Create, bind and set indices to GL_ELEMENT_ARRAY_BUFFER which is the index buffer
@@ -146,10 +146,10 @@ namespace Lyra
 			glEnableVertexAttribArray(i);
 			glVertexAttribPointer(
 				i,
-				vertexElement.TypeInfo.Count,
-				GetOpenGLType(vertexElement.TypeInfo.ShaderType),
-				vertexElement.Normalized,
-				layout.GetStride(),
+				vertexElement.typeInfo.count,
+				GetOpenGLType(vertexElement.typeInfo.shaderType),
+				vertexElement.normalized,
+				static_cast<GLsizei>(layout.GetStride()),
 				reinterpret_cast<void*>(vertexElement.GetOffset())
 			);
 		}

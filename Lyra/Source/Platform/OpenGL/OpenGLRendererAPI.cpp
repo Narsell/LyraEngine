@@ -51,7 +51,7 @@ namespace Lyra
 
 	void OpenGLRendererAPI::DrawIndexed(VertexArray* vertexArray)
 	{
-		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vertexArray->GetIndexBuffer()->GetCount()), GL_UNSIGNED_INT, nullptr);
 	}
 
 	void OpenGLRendererAPI::DrawUnindexed(VertexArray* vertexArray)

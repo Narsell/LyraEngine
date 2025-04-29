@@ -306,7 +306,7 @@ public:
 			ImGui::Text((std::string("Mesh count: ") + std::to_string(meshes.size())).c_str());
 			for (auto& mesh : meshes)
 			{
-				ImGui::PushID(mesh->GetHash());
+				ImGui::PushID((int)mesh->GetHash());
 
 				if (ImGui::CollapsingHeader(mesh->GetName().data()))
 				{

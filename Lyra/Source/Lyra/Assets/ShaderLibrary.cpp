@@ -24,14 +24,14 @@ namespace Lyra
 	{
 		Ref<Shader> shader = Shader::Create(filepath);
 		Add(name, shader);
-		return shader;
+		return Get(name);
 	}
 
 	Ref<Shader>& ShaderLibrary::Load(const std::string& filepath)
 	{
 		Ref<Shader> shader = Shader::Create(filepath);
 		Add(shader);
-		return shader;
+		return Get(shader->GetName());
 	}
 
 	bool ShaderLibrary::Exists(const std::string& name)

@@ -32,7 +32,7 @@ namespace Lyra
 	private:
 		void CreateShaderProgram(const std::unordered_map<GLenum, std::string>& shaderSources);
 		bool Compile(const std::unordered_map<GLenum, std::string>& shaderSources, std::array<GLenum, 2>& glShaderIds);
-		bool Link(const std::array<GLenum, 2>& glShaderIds);
+		bool Link(const std::array<GLenum, 2>& glShaderIds) const;
 		void CacheActiveUniforms();
 
 		std::string ReadFile(const std::string& filepath) const;

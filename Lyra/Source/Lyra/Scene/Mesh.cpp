@@ -32,7 +32,7 @@ namespace Lyra
 		m_Hash = Utils::Mesh::CalculateHash(m_VertexArray->GetRendererId(), indexBuffer->GetRendererId(), m_Material->GetHash());
 	}
 
-	void Mesh::Draw(const glm::mat4& transform)
+	void Mesh::Draw(const glm::mat4& transform) const
 	{
 		Renderer::Submit(m_Material, m_VertexArray, transform);
 	}

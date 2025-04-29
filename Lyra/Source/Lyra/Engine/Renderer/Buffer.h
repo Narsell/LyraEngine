@@ -14,7 +14,7 @@ namespace Lyra
 		virtual void Unbind() const = 0;
 
 		virtual const VertexLayout& GetLayout() const = 0;
-		virtual uint32_t GetVertexCount() const = 0;
+		virtual size_t GetVertexCount() const = 0;
 
 		/* Returns pointer to heap allocated VertexBuffer. Assign this to a VertexArray instance to avoid leaks. */
 		static VertexBuffer* Create(float* vertices, size_t size, const VertexLayout& layout);
@@ -30,10 +30,10 @@ namespace Lyra
 		virtual void Unbind() const = 0;
 
 		virtual const uint32_t GetRendererId() const = 0;
-		virtual uint32_t GetCount() const = 0;
+		virtual size_t GetCount() const = 0;
 
 		/* Returns pointer to heap allocated IndexBuffer. Assign this to a VertexArray instance to avoid leaks. */
-		static IndexBuffer* Create(uint32_t* indices, uint32_t count);
+		static IndexBuffer* Create(uint32_t* indices, size_t count);
 	};
 
 

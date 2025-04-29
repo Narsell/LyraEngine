@@ -20,10 +20,12 @@ namespace Lyra
 	{
 		switch (type)
 		{
-			case Lyra::TextureType::NONE:       return aiTextureType_NONE;
 			case Lyra::TextureType::DIFFUSE:    return aiTextureType_DIFFUSE;
 			case Lyra::TextureType::SPECULAR:   return aiTextureType_SPECULAR;
+			case Lyra::TextureType::NONE:       return aiTextureType_NONE;
 		}
+		LR_CORE_WARN("Unable to map texture type {0}", (int)type);
+		return aiTextureType_NONE;
 	}
 
 	Model::Model(const std::filesystem::path& path, const ModelProps& props)
@@ -128,11 +130,11 @@ namespace Lyra
 		}
 	}
 
-	std::vector<Ref<Texture2D>> Model::LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh)
+	std::vector<Ref<Texture2D>> Model::LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh) const
 	{
 		std::vector<Ref<Texture2D>> textures;
 
-		for (uint16_t i = 0; i < Utils::Texture::GetUniqueTypeCount(); i++)
+		for (uint8_t i = 0; i < Utils::Texture::GetUniqueTypeCount(); i++)
 		{
 			if (!Utils::Texture::IsValidTextureType(i))
 			{

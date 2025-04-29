@@ -15,12 +15,12 @@ namespace Lyra
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 
-		virtual uint32_t GetVertexCount() const override { return m_VertexCount; }
+		virtual size_t GetVertexCount() const override { return m_VertexCount; }
 		virtual const VertexLayout& GetLayout() const override { return m_VertexLayout; };
 
 	private:
 		const VertexLayout& m_VertexLayout;
-		uint32_t m_VertexCount;
+		size_t m_VertexCount;
 
 	private:
 		uint32_t m_RendererId;
@@ -30,7 +30,7 @@ namespace Lyra
 	class OpenGLIndexBuffer final : public IndexBuffer
 	{
 	public:
-		OpenGLIndexBuffer(uint32_t* vertices, uint32_t count);
+		OpenGLIndexBuffer(uint32_t* vertices, size_t count);
 
 		virtual ~OpenGLIndexBuffer();
 
@@ -38,11 +38,11 @@ namespace Lyra
 		virtual void Unbind() const override;
 
 		virtual const uint32_t GetRendererId() const { return m_RendererId; }
-		virtual uint32_t GetCount() const override { return m_Count; }
+		virtual size_t GetCount() const override { return m_Count; }
 
 	private:
 		uint32_t m_RendererId;
-		uint32_t m_Count;
+		size_t m_Count;
 	};
 
 

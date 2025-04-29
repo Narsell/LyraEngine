@@ -20,9 +20,9 @@ namespace Lyra
 		bool textureFlipOverride = false;
 	};
 
-	struct Texture2D;
-	struct Material;
-	struct Mesh;
+	class Texture2D;
+	class Material;
+	class Mesh;
 
 	class LYRA_API Model
 	{
@@ -40,7 +40,7 @@ namespace Lyra
 		void LoadModel();
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		void ProcessMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<Ref<Texture2D>> LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh);
+		std::vector<Ref<Texture2D>> LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh) const;
 
 	private:
 		ModelProps m_Props;
