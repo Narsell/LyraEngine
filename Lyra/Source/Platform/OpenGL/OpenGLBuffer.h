@@ -10,7 +10,7 @@ namespace Lyra
 	public:
 		OpenGLVertexBuffer(float* vertices, size_t size, const VertexLayout& layout);
 
-		virtual ~OpenGLVertexBuffer();
+		~OpenGLVertexBuffer();
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
@@ -32,7 +32,7 @@ namespace Lyra
 	public:
 		OpenGLIndexBuffer(uint32_t* vertices, size_t count);
 
-		virtual ~OpenGLIndexBuffer();
+		~OpenGLIndexBuffer();
 
 		virtual void Bind() const override;
 		virtual void Unbind() const override;

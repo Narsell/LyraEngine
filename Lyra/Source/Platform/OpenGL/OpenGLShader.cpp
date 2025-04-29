@@ -51,6 +51,11 @@ namespace Lyra
 		CreateShaderProgram(shaderSources);
 	}
 
+	OpenGLShader::~OpenGLShader()
+	{
+		// Program should be deleted after linkage and there's no more cleanup to do here (I think?)
+	}
+
 	void OpenGLShader::CreateShaderProgram(const std::unordered_map<GLenum, std::string>& shaderSources)
 	{
 		constexpr uint8_t maxElements = 2;

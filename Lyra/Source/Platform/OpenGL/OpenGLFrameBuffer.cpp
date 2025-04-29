@@ -15,6 +15,12 @@ namespace Lyra
 		Resize();
 	}
 
+	OpenGLFrameBuffer::~OpenGLFrameBuffer()
+	{
+		glDeleteFramebuffers(1, &m_RendererId);
+		glDeleteTextures(1, &m_ColorTextTarget);
+	}
+
 	void OpenGLFrameBuffer::Resize()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererId);

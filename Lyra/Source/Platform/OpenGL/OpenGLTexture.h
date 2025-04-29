@@ -20,7 +20,7 @@ namespace Lyra
 	{
 	public:
 		OpenGLTexture2D(const std::filesystem::path& texturePath, const Texture2DProps& textureProps);
-		virtual ~OpenGLTexture2D();
+		~OpenGLTexture2D();
 
 		virtual uint32_t GetWidth() const override { return  m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }

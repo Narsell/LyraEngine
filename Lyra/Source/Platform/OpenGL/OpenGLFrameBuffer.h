@@ -9,6 +9,7 @@ namespace Lyra
 	{
 	public:
 		OpenGLFrameBuffer(const FrameBufferSpecification& spec);
+		~OpenGLFrameBuffer();
 
 		virtual void Resize() override;
 		virtual void Bind() const override;
