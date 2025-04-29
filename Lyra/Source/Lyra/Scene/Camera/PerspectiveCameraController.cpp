@@ -3,7 +3,7 @@
 #include "PerspectiveCameraController.h"
 
 #include "Core/Application.h"
-#include "Input/Input.h"
+#include "Core/Input/Input.h"
 #include "Core/Input/KeyCodes.h"
 #include "Core/Input/MouseButtonCodes.h"
 
