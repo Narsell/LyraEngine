@@ -42,8 +42,6 @@ namespace Lyra
 		virtual const char* GetName() const = 0;
 		virtual int GetCategoryFlags() const = 0;
 		virtual std::string ToString() const { return GetName(); }
-		bool IsHandled() const { return m_Handled; }
-		void SetHandled() { m_Handled = true; }
 
 		// Works by using bitwise AND operator
 		inline bool IsInCategory(EventCategory category)
@@ -51,8 +49,7 @@ namespace Lyra
 			return GetCategoryFlags() & category;
 		}
 
-	protected:
-		bool m_Handled = false;
+		bool Handled = false;
 	};
 
 	class EventDispatcher
@@ -71,7 +68,7 @@ namespace Lyra
 			{
 				//Calling callback function which returns a bool that determines if the event was handled.
 				//Since we already checked m_Event is of type T we can safely cast this.
-				m_Event.m_Handled = func(static_cast<T&>(m_Event));
+				m_Event.Handled = func(static_cast<T&>(m_Event));
 				return true;
 			}
 			return false;

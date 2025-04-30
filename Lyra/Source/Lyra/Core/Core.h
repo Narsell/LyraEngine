@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Literals.h"
+
 // Compiler intrinsic exports, for now we only support windows 
 #ifdef LR_PLATFORM_WINDOWS
 	#ifdef LR_BUILD_DLL

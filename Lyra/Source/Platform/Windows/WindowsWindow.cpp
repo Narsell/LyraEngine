@@ -65,8 +65,6 @@ namespace Lyra
 
         SetVSync(true);
         glfwSetWindowUserPointer(m_Window, &m_Data);
-        // Mouse won't be visible and it should not leave the window.
-        SetMouseInputMode(LR_CURSOR_DISABLED);
 
         // Set GLFW callbacks
         glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height)

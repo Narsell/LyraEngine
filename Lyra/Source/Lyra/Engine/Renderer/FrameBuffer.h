@@ -5,6 +5,8 @@ namespace Lyra
 	struct FrameBufferSpecification
 	{
 		uint16_t width, height;
+
+		uint16_t minWidth, minHeight = 100;
 	};
 
 	class FrameBuffer
@@ -12,7 +14,7 @@ namespace Lyra
 	public:
 		virtual ~FrameBuffer() = default;
 
-		virtual void Resize() = 0;
+		virtual void Resize(float width, float height) = 0;
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 

@@ -11,7 +11,7 @@ namespace Lyra
 		OpenGLFrameBuffer(const FrameBufferSpecification& spec);
 		~OpenGLFrameBuffer();
 
-		virtual void Resize() override;
+		virtual void Resize(float width, float height) override;
 		virtual void Bind() const override;
 		virtual void Unbind() const override;
 

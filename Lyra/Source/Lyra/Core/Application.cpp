@@ -80,12 +80,11 @@ namespace Lyra
 		for (Layer* Layer : m_LayerStack | std::views::reverse)
 		{
 			Layer->OnEvent(e);
-			if (e.IsHandled())
+			if (e.Handled)
 			{
 				break;
 			}
 		}
-
 	}
 
 	void Application::PushLayer(Layer* layer)

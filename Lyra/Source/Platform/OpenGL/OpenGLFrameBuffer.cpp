@@ -12,7 +12,7 @@ namespace Lyra
 	{
 		glCreateFramebuffers(1, &m_RendererId);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_ColorTextTarget);
-		Resize();
+		Resize(spec.width, spec.height);
 	}
 
 	OpenGLFrameBuffer::~OpenGLFrameBuffer()
@@ -21,8 +21,20 @@ namespace Lyra
 		glDeleteTextures(1, &m_ColorTextTarget);
 	}
 
-	void OpenGLFrameBuffer::Resize()
+	void OpenGLFrameBuffer::Resize(float width, float height)
 	{
+		m_Specification.width = static_cast<uint16_t>(width);
+		m_Specification.height = static_cast<uint16_t>(height);
+
+		if (m_Specification.width <= m_Specification.minWidth)
+		{
+			m_Specification.width = m_Specification.minWidth;
+		}
+		if (m_Specification.height <= m_Specification.minHeight)
+		{
+			m_Specification.height = m_Specification.minHeight;
+		}
+
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererId);
 
 		// Generate texture object

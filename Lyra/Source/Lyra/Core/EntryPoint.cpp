@@ -1,5 +1,4 @@
-#pragma once
-
+#include "lrpch.h"
 #include "Core/Application.h"
 #include "Core/Log.h"
 

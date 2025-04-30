@@ -366,20 +366,6 @@ public:
 
 	bool OnKeyPressed(const Lyra::KeyPressedEvent& e)
 	{
-		/* Toggle mouse input mode so we can use ImGui controls by pressing F1 */
-		if (e.GetKeyCode() == LR_KEY_F1)
-		{
-			Lyra::Window& window = Lyra::Application::Get().GetWindow();
-			if (window.GetMouseInputMode() == LR_CURSOR_NORMAL)
-			{
-				window.SetMouseInputMode(LR_CURSOR_DISABLED);
-			}
-			else if (window.GetMouseInputMode() == LR_CURSOR_DISABLED)
-			{
-				window.SetMouseInputMode(LR_CURSOR_NORMAL);
-			}
-			return true;
-		}
 		return false;
 	}
 

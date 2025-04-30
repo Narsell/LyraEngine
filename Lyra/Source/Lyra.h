@@ -52,6 +52,3 @@
 /* MATH */
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
-/* ENTRY POINT */
-#include "Lyra/Core/EntryPoint.h"

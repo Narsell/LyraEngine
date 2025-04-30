@@ -27,6 +27,8 @@ namespace Lyra
 		void Run();
 		void Quit();
 
+		ImGuiLayer* const GetImGuiLayer() const { return m_ImGuiLayer; }
+
 		void OnEvent(Event& e);
 
 		void PushLayer(Layer* layer);

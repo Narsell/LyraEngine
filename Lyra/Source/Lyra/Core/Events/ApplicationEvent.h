@@ -1,13 +1,14 @@
 #pragma once
 
 #include <sstream>
+#include <algorithm>
 
 #include "Core.h"
+#include "Log.h"
 #include "Event.h"
 
 namespace Lyra
 {
-
 	class LYRA_API WindowResizeEvent : public Event
 	{
 	public:
@@ -16,7 +17,11 @@ namespace Lyra
 
 		inline uint16_t GetWidth() const { return m_Width; }
 		inline uint16_t GetHeight() const { return m_Height; }
-		inline float GetAspectRatio() const { return (float)m_Width / (float)m_Height; }
+		inline float GetAspectRatio() const 
+		{ 
+			if (m_Height <= 0) { LR_CORE_WARN("Trying to set an invalid aspect ratio ({0}, {1})", m_Width, m_Height); }
+			return static_cast<float>(m_Width) / static_cast<float>(std::clamp(m_Height, 1_u16, m_Height));
+		}
 
 		std::string ToString() const override
 		{
