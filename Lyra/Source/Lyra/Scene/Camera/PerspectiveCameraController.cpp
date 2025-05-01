@@ -87,12 +87,6 @@ namespace Lyra
 	{
 		if (!m_Camera.get()) return false;
 
-		if (m_Window.GetMouseInputMode() == LR_CURSOR_NORMAL)
-		{
-			m_FirstMouseMovement = true;
-			return false;
-		}
-
 		float mouseX = static_cast<float>(e.GetMouseX());
 		float mouseY = static_cast<float>(e.GetMouseY());
 

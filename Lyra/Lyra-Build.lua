@@ -52,11 +52,11 @@ project "Lyra"
    pchsource "Source/lrpch.cpp"
 
    filter "system:windows"
-       systemversion "latest"
-       defines
-       {
-          "LR_PLATFORM_WINDOWS"
-       }
+        systemversion "latest"
+        defines
+        {
+           "LR_PLATFORM_WINDOWS"
+        }
 
    filter "configurations:Debug"
        defines { "LR_DEBUG", "LR_ENABLE_ASSERTS" }

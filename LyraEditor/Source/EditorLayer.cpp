@@ -65,8 +65,7 @@ namespace Lyra
 			m_LightSourceCubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
 		}
 
-		// Set shader references
-		m_LightSourceShader = ShaderLibrary::Load("LightSourceShader", "Assets/Shaders/LightSource.glsl");
+		ShaderLibrary::Load("LightSourceShader", "Assets/Shaders/LightSource.glsl");
 
 		ModelProps propsInverted;
 		propsInverted.textureFlipOverride = true;
@@ -124,24 +123,6 @@ namespace Lyra
 			m_CameraController.OnUpdate(ts);
 		}
 
-		auto& pointLights = m_Scene->GetPointLights();
-		glm::vec3 orbitCenter = glm::vec3(0.0f, 0.0f, -1.0f);
-		/* Light source orbit */
-		m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
-		m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-		pointLights[0].position = orbitCenter + glm::vec3(
-			0.0f,
-			4.0f * glm::cos(m_LightSourceAngle),
-			4.0f * glm::sin(m_LightSourceAngle)
-		);
-		m_LightSourceAngle += m_LightSourceSpeed * ts.GetSeconds();
-		m_LightSourceAngle = glm::mod(m_LightSourceAngle, glm::two_pi<float>());
-		pointLights[1].position = orbitCenter + glm::vec3(
-			5.0f * glm::sin(m_LightSourceAngle),
-			0.0f,
-			5.0f * glm::cos(m_LightSourceAngle)
-		);
-
 		/* Set the scene variables */
 		Renderer::BeginFrame(m_Scene);
 
@@ -154,23 +135,61 @@ namespace Lyra
 		m_LastFrameTime = ts.GetSeconds();
 	}
 
+	void EditorLayer::SetupDockspace()
+	{
+		/* DOCKING SETUP */
+		static bool opt_fullscreen = true;
+		static bool opt_padding = false;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+
+		// We are using the ImGuiWindowFlags_NoDocking flag to make the parent window not dockable into,
+		// because it would be confusing to have two docking targets within each others.
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		window_flags |= ImGuiWindowFlags_NoBackground;
+
+		bool dockOpen = true;
+		ImGui::Begin("DockSpace Demo", &dockOpen, window_flags);
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(2);
+
+		// Submit the DockSpace
+		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("Options"))
+			{
+				if (ImGui::MenuItem("Exit")) { Application::Get().Quit(); }
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+
+		ImGui::End();
+	}
+
 	void EditorLayer::OnImGuiRender()
 	{
-		auto& window = Application::Get().GetWindow();
-		ImGui::Begin("Viewport");
+		SetupDockspace();
 
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+		
 		m_ViewportHovered = ImGui::IsWindowHovered();
-		if (m_ViewportFocused != ImGui::IsWindowFocused())
+		if (m_ViewportFocused != ImGui::IsWindowFocused() && ImGui::IsWindowFocused())
 		{
 			m_ViewportFocused = ImGui::IsWindowFocused();
-			if (m_ViewportFocused || m_ViewportHovered)
-			{
-				SetEditorInputMode(EDITOR_INPUT_MODE::VIEWPORT_MODE);
-			}
-			else
-			{
-				SetEditorInputMode(EDITOR_INPUT_MODE::EDITING_MODE);
-			}
+			SetEditorInputMode(EDITOR_INPUT_MODE::VIEWPORT_MODE);
 		}
 
 		ImVec2 newViewportSize = ImGui::GetContentRegionAvail();
@@ -289,19 +308,12 @@ namespace Lyra
 
 	bool EditorLayer::OnKeyPressed(const KeyPressedEvent& e)
 	{
-		/* Toggle mouse input mode so we can use ImGui controls by pressing F1 */
-		if (e.GetKeyCode() == LR_KEY_F1)
+		// Unfocus the viewport if the key is pressed.
+		if (e.GetKeyCode() == VIEWPORT_FOCUS_TOGGLE_KEY)
 		{
-			if (!m_ViewportFocused)
-			{
-				ImGui::SetWindowFocus("Viewport");
-				SetEditorInputMode(EDITOR_INPUT_MODE::VIEWPORT_MODE);
-			}
-			else
-			{
-				ImGui::SetWindowFocus("Properties");
-				SetEditorInputMode(EDITOR_INPUT_MODE::EDITING_MODE);
-			}
+			ImGui::SetWindowFocus(nullptr);
+			m_ViewportFocused = false;
+			SetEditorInputMode(EDITOR_INPUT_MODE::EDITING_MODE);
 			return true;
 		}
 		return false;

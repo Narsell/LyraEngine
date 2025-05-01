@@ -5,6 +5,8 @@
 
 namespace Lyra
 {
+#define VIEWPORT_FOCUS_TOGGLE_KEY LR_KEY_F1
+
 	enum class EDITOR_INPUT_MODE : uint8_t
 	{
 		VIEWPORT_MODE,
@@ -21,8 +23,10 @@ namespace Lyra
 		void OnImGuiRender() override;
 		void OnEvent(Event& e) override;
 	private:
+		void SetupDockspace();
 		bool OnKeyPressed(const KeyPressedEvent& e);
 		void SetEditorInputMode(EDITOR_INPUT_MODE inputMode);
+
 
 	private:
 		PerspectiveCameraController m_CameraController;
@@ -34,7 +38,6 @@ namespace Lyra
 		Ref<Entity> m_BackpackObj;
 
 		Scope<VertexArray> m_LightSourceCubeVertexArray;
-		Ref<Shader> m_LightSourceShader;
 
 		Ref<Scene> m_Scene;
 		float m_LightSourceAngle;
