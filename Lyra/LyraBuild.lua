@@ -32,6 +32,7 @@ project "Lyra"
       "%{IncludeDir.glm}",
       "%{IncludeDir.stb_image}",
       "%{IncludeDir.assimp}",
+      "%{IncludeDir.assimp_conf}"
    }
 
    links

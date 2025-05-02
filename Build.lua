@@ -10,6 +10,7 @@ IncludeDir["glm"] = "Vendor/glm"
 IncludeDir["spdlog"] = "Vendor/spdlog/include"
 IncludeDir["stb_image"] = "Vendor/stb_image"
 IncludeDir["assimp"] = "Vendor/assimp/include"
+IncludeDir["assimp_conf"] = "Vendor/assimp/_config_headers"
 
 workspace "Lyra"
    architecture "x64"
