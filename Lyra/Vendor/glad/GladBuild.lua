@@ -1,7 +1,6 @@
 project "Glad"
     kind "StaticLib"
     language "C"
-    staticruntime "On"
 
     targetdir ("../../../Binaries/" .. OutputDir .. "/%{prj.name}")
     objdir ("../../../Intermediates/" .. OutputDir .. "/%{prj.name}")
@@ -17,15 +16,3 @@ project "Glad"
         "include/KHR/khrplatform.h",
         "src/glad.c",
     }
-
-    filter "system:windows"
-        systemversion "latest"
-
-    filter "configurations:Debug"
-        runtime "Debug"
-        symbols "On"
-
-    filter "configurations:Release"
-        runtime "Release"
-        optimize "On"
-        symbols "Off"

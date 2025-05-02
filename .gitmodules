@@ -6,7 +6,7 @@
 	url = https://github.com/Narsell/glfw
 [submodule "Lyra/Vendor/imgui"]
 	path = Lyra/Vendor/imgui
-	url = https://github.com/Narsell/imgui.git
+	url = https://github.com/Narsell/imgui
 	branch = docking
 [submodule "Lyra/Vendor/glm"]
 	path = Lyra/Vendor/glm

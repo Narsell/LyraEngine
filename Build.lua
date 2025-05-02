@@ -21,16 +21,46 @@ workspace "Lyra"
 		"MultiProcessorCompile"
 	}
 
+   -- Common configurations to all projects --
+   project "*"
+      staticruntime "On"
+
+      buildoptions { "/utf-8" }
+
+      filter "configurations:Debug"
+      defines { "LR_DEBUG", "LR_ENABLE_ASSERTS" }
+      runtime "Debug"
+      symbols "On"
+
+      filter "configurations:Release"
+      defines { "LR_RELEASE" }
+      runtime "Release"
+      optimize "On"
+      symbols "On"
+
+      filter "configurations:Dist"
+      defines { "LR_DIST" }
+      runtime "Release"
+      optimize "Full"
+      symbols "Off"
+
+      filter "system:windows"
+         systemversion "latest"
+         defines
+         {
+            "LR_PLATFORM_WINDOWS"
+         }
+
    group "Dependencies"
-   include "Lyra/Vendor/GLFW"
-   include "Lyra/Vendor/Glad"
-   include "Lyra/Vendor/imgui"
-   include "Lyra/Vendor/assimp"
+      include "Lyra/Vendor/GLFW/GLFWBuild.lua"
+      include "Lyra/Vendor/Glad/GladBuild.lua"
+      include "Lyra/Vendor/imgui/ImGuiBuild.lua"
+      include "Lyra/Vendor/assimp/AssimpBuild.lua"
    group ""
 
    group "Engine"
-   include "Lyra/Lyra-Build.lua"
-   include "LyraEditor/Editor-Build.lua"
-   group ""
+      include "Lyra/LyraBuild.lua"
+      group ""
 
-   include "Sandbox/Sandbox-Build.lua"
+   include "LyraEditor/EditorBuild.lua"
+   include "Sandbox/SandboxBuild.lua"
