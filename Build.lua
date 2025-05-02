@@ -25,6 +25,7 @@ workspace "Lyra"
    include "Lyra/Vendor/GLFW"
    include "Lyra/Vendor/Glad"
    include "Lyra/Vendor/imgui"
+   include "Lyra/Vendor/assimp"
    group ""
 
    group "Engine"

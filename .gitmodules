@@ -11,3 +11,6 @@
 [submodule "Lyra/Vendor/glm"]
 	path = Lyra/Vendor/glm
 	url = https://github.com/g-truc/glm
+[submodule "Lyra/Vendor/assimp"]
+	path = Lyra/Vendor/assimp
+	url = https://github.com/Narsell/assimp

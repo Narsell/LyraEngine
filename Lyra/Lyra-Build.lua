@@ -40,7 +40,13 @@ project "Lyra"
       "GLFW",
       "Glad",
       "ImGui",
+      "assimp",
       "opengl32.lib",
+   }
+
+   defines
+   {
+    "_CRT_SECURE_NO_WARNINGS",
    }
 
    buildoptions { "/utf-8" }
@@ -60,28 +66,17 @@ project "Lyra"
 
    filter "configurations:Debug"
        defines { "LR_DEBUG", "LR_ENABLE_ASSERTS" }
-       links { "Vendor/assimp/lib/Debug/assimp-vc143-mtd.lib" }
        runtime "Debug"
        symbols "On"
 
    filter "configurations:Release"
        defines { "LR_RELEASE" }
-       links { "Vendor/assimp/lib/Release/assimp-vc143-mt.lib" }
        runtime "Release"
        optimize "On"
        symbols "On"
 
    filter "configurations:Dist"
        defines { "LR_DIST" }
-       links { "Vendor/assimp/lib/Release/assimp-vc143-mt.lib" }
        runtime "Release"
        optimize "On"
        symbols "Off"
-
-   filter "configurations:*"
-        postbuildcommands {
-            '{MKDIR} ../Binaries/%{OutputDir}/LyraEditor',
-            '{MKDIR} ../Binaries/%{OutputDir}/Sandbox',
-            '{COPYDIR} ./Vendor/assimp/bin/%{cfg.buildcfg}/ ../Binaries/%{OutputDir}/LyraEditor/',
-            '{COPYDIR} ./Vendor/assimp/bin/%{cfg.buildcfg}/ ../Binaries/%{OutputDir}/Sandbox/'
-        }
