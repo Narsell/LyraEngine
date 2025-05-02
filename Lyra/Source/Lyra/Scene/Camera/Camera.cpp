@@ -138,7 +138,10 @@ namespace Lyra
 	bool PerspectiveCamera::OnWindowResized(WindowResizeEvent& e)
 	{
 		WindowResizeEvent& re = static_cast<WindowResizeEvent&>(e);
-		SetAspectRatio(re.GetAspectRatio());
+		if (re.GetWidth() > 0 && re.GetHeight() > 0)
+		{
+			SetAspectRatio(re.GetAspectRatio());
+		}
 		return false;
 	}
 

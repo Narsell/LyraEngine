@@ -5,6 +5,9 @@
 #include "OpenGLFrameBuffer.h"
 #include "Core/Application.h"
 
+/* TODO: Get this value from GPU */
+static const uint32_t s_MaxFrameBufferSize = 8192;
+
 namespace Lyra
 {
 	OpenGLFrameBuffer::OpenGLFrameBuffer(const FrameBufferSpecification& spec)
@@ -21,10 +24,16 @@ namespace Lyra
 		glDeleteTextures(1, &m_ColorTextTarget);
 	}
 
-	void OpenGLFrameBuffer::Resize(float width, float height)
+	void OpenGLFrameBuffer::Resize(uint16_t width, uint16_t height)
 	{
-		m_Specification.width = static_cast<uint16_t>(width);
-		m_Specification.height = static_cast<uint16_t>(height);
+		if (width == 0 || height == 0 || width > s_MaxFrameBufferSize || height > s_MaxFrameBufferSize)
+		{
+			LR_CORE_WARN("Framebuffer size out of bounds ({0}, {1})", width, height);
+			return;
+		}
+
+		m_Specification.width = width;
+		m_Specification.height = height;
 
 		if (m_Specification.width <= m_Specification.minWidth)
 		{

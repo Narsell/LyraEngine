@@ -192,10 +192,11 @@ namespace Lyra
 			SetEditorInputMode(EDITOR_INPUT_MODE::VIEWPORT_MODE);
 		}
 
-		ImVec2 newViewportSize = ImGui::GetContentRegionAvail();
-		if (m_ViewportSize != *((glm::vec2*)&newViewportSize))
+		ImVec2 availRegion = ImGui::GetContentRegionAvail();
+		glm::vec2 newViewportSize = { availRegion.x, availRegion.y };
+		if (m_ViewportSize != newViewportSize && newViewportSize.x > 0.0f && newViewportSize.y > 0.0f)
 		{
-			Renderer::GetFrameBuffer()->Resize(newViewportSize.x, newViewportSize.y);
+			Renderer::GetFrameBuffer()->Resize(static_cast<uint16_t>(newViewportSize.x), static_cast<uint16_t>(newViewportSize.y));
 			m_ViewportSize = { newViewportSize.x, newViewportSize.y };
 		}
 

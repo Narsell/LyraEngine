@@ -20,7 +20,7 @@ namespace Lyra
 		inline float GetAspectRatio() const 
 		{ 
 			if (m_Height <= 0) { LR_CORE_WARN("Trying to set an invalid aspect ratio ({0}, {1})", m_Width, m_Height); }
-			return static_cast<float>(m_Width) / static_cast<float>(std::clamp(m_Height, 1_u16, m_Height));
+			return static_cast<float>(m_Width) / static_cast<float>(m_Height > 0 ? m_Height : 1);
 		}
 
 		std::string ToString() const override

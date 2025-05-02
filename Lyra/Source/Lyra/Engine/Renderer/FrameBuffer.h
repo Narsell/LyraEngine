@@ -14,7 +14,7 @@ namespace Lyra
 	public:
 		virtual ~FrameBuffer() = default;
 
-		virtual void Resize(float width, float height) = 0;
+		virtual void Resize(uint16_t width, uint16_t height) = 0;
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;
 
