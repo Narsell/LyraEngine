@@ -26,8 +26,6 @@ workspace "Lyra"
    project "*"
       staticruntime "On"
 
-      buildoptions { "/utf-8" }
-
       filter "configurations:Debug"
       defines { "LR_DEBUG", "LR_ENABLE_ASSERTS" }
       runtime "Debug"
@@ -46,6 +44,7 @@ workspace "Lyra"
       symbols "Off"
 
       filter "system:windows"
+         buildoptions { "/utf-8" }
          systemversion "latest"
          defines
          {
@@ -54,7 +53,7 @@ workspace "Lyra"
 
    group "Dependencies"
       include "Lyra/Vendor/GLFW/GLFWBuild.lua"
-      include "Lyra/Vendor/Glad/GladBuild.lua"
+      include "Lyra/Vendor/glad/GladBuild.lua"
       include "Lyra/Vendor/imgui/ImGuiBuild.lua"
       include "Lyra/Vendor/assimp/AssimpBuild.lua"
    group ""
