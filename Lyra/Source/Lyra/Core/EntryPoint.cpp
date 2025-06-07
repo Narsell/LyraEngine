@@ -2,7 +2,7 @@
 #include "Core/Application.h"
 #include "Core/Log.h"
 
-#ifdef LR_PLATFORM_WINDOWS
+#if defined(LR_PLATFORM_WINDOWS) | defined(LR_PLATFORM_LINUX)
 
 int main(int argc, char** argv)
 {

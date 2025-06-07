@@ -51,6 +51,13 @@ workspace "Lyra"
             "LR_PLATFORM_WINDOWS"
          }
 
+      filter "system:linux"
+         systemversion "latest"
+         defines
+         {
+            "LR_PLATFORM_LINUX"
+         }
+
    group "Dependencies"
       include "Lyra/Vendor/GLFW/GLFWBuild.lua"
       include "Lyra/Vendor/glad/GladBuild.lua"

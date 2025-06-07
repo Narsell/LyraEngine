@@ -3,7 +3,11 @@ project "Sandbox"
    language "C++"
    cppdialect "C++20"
 
-   files { "Source/**.h", "Source/**.cpp" }
+   files { "Source/**.h", "Source/**.cpp", }
+   
+   targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
+   objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
+   debugdir "%{wks.location}"
 
    includedirs
    {
@@ -23,12 +27,12 @@ project "Sandbox"
 
    links
    {
-      "Lyra"
+      "Lyra",
+      "GLFW",
+      "Glad",
+      "ImGui",
+      "assimp",
    }
-
-   targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
-   objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
-   debugdir "%{wks.location}"
 
     filter "configurations:*"
        postbuildcommands {

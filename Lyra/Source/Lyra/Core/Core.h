@@ -3,12 +3,14 @@
 #include "Literals.h"
 
 // Compiler intrinsic exports, for now we only support windows 
-#ifdef LR_PLATFORM_WINDOWS
+#if defined(LR_PLATFORM_WINDOWS)
 	#ifdef LR_BUILD_DLL
 		#define LYRA_API //__declspec(dllexport) -- Disabled for now, linking statically
 	#else
 		#define LYRA_API //__declspec(dllimport) -- Disabled for now, linking statically
 	#endif
+#elif defined(LR_PLATFORM_LINUX)
+	#define LYRA_API //Temporary fix
 #else
 	#error Lyra only supports windows
 #endif

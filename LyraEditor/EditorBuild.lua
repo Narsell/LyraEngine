@@ -3,14 +3,18 @@ project "LyraEditor"
    language "C++"
    cppdialect "C++20"
 
-   files { "Source/**.h", "Source/**.cpp" }
+   files { "Source/**.h", "Source/**.cpp", }
+   
+   targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
+   objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
+   debugdir "%{wks.location}"
 
    includedirs
    {
       "Source",
 
 	  -- Include Lyra
-	  "../Lyra/Source",
+      "../Lyra/Source",
       "../Lyra/Source/Lyra",
       "../Lyra/Source/Lyra/Core",
       "../Lyra/Source/Lyra/Engine",
@@ -23,14 +27,17 @@ project "LyraEditor"
 
    links
    {
-      "Lyra"
+      "Lyra",
+      "GLFW",
+      "Glad",
+      "ImGui",
+      "assimp",
    }
 
-   targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
-   objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
-   debugdir "%{wks.location}"
-
-    filter "configurations:*"
+   filter "system:windows"
+      links { "opengl32.lib" }
+   
+   filter "configurations:*"
        postbuildcommands {
            '{COPYDIR} %{wks.location}/Assets ../Binaries/%{OutputDir}/%{prj.name}/Assets'
        }

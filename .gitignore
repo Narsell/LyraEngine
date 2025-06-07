@@ -25,6 +25,11 @@ Assets/Models/sponza/*
 # Make
 Makefile
 
+# gcc output files
+*.o
+*.d
+*.a
+
 # Files built by Visual Studio
 *.vcxproj
 *.vcxproj.user

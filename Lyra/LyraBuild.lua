@@ -3,6 +3,12 @@ project "Lyra"
    language "C++"
    cppdialect "C++20"
 
+   targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
+   objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
+
+   pchheader "lrpch.h"
+   pchsource "Source/lrpch.cpp"
+   
    files
    {
       "Source/**.h",
@@ -41,16 +47,8 @@ project "Lyra"
       "Glad",
       "ImGui",
       "assimp",
-      "opengl32.lib",
    }
 
-   defines
-   {
-    "_CRT_SECURE_NO_WARNINGS", -- stb generates some warnings about some C runtime unsafe methods ¯\_(ツ)_/¯
-   }
-
-   targetdir ("../Binaries/" .. OutputDir .. "/%{prj.name}")
-   objdir ("../Intermediates/" .. OutputDir .. "/%{prj.name}")
-
-   pchheader "lrpch.h"
-   pchsource "Source/lrpch.cpp"
+   filter "system:windows"
+      links { "opengl32.lib" }
+      defines { "_CRT_SECURE_NO_WARNINGS" }  -- stb generates some warnings about some C runtime unsafe methods ¯\_(ツ)_/¯

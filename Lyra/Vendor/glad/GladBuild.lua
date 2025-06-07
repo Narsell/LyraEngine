@@ -16,3 +16,6 @@ project "Glad"
         "include/KHR/khrplatform.h",
         "src/glad.c",
     }
+
+    filter "system:linux"
+        pic "On"
