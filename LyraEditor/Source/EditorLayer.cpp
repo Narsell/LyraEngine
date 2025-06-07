@@ -69,8 +69,8 @@ namespace Lyra
 
 		ModelProps propsInverted;
 		propsInverted.textureFlipOverride = true;
-		m_BackpackModel = ModelLibrary::Load("Assets\\Models\\backpack\\backpack.obj", propsInverted);
-		m_SponzaModel = ModelLibrary::Load("Assets\\Models\\sponza\\sponza.obj");
+		m_BackpackModel = ModelLibrary::Load("Assets/Models/backpack/backpack.obj", propsInverted);
+		m_SponzaModel = ModelLibrary::Load("Assets/Models/sponza/sponza.obj");
 
 		// Creating and setting textures
 		Texture2DProps propsDiffuse(TextureType::DIFFUSE);
