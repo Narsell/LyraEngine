@@ -7,6 +7,8 @@
 #   Just in the unlikely scenario that someone would even look at this repo (yeah right)
 Assets/Models/sponza/*
 
+#VSCode
+.vscode
 
 # User-specific files
 *.rsuser
