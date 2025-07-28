@@ -12,7 +12,7 @@ namespace Lyra
 		glDepthFunc(GL_LESS);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		// Beware: should disable/enable this dynamically when dealing with open meshes.
+		// TODO: Should disable/enable this dynamically when dealing with open meshes.
 		glEnable(GL_CULL_FACE);
 		
 		// TODO: Add a flag to enable wireframe view!

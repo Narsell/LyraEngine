@@ -64,9 +64,9 @@ namespace Lyra
 		s_LastDrawCallCount = s_CurrentDrawCallCount;
 	}
 
-	void Renderer::Submit(const Ref<Material>& material, const Scope<VertexArray>& vertexArray, const glm::mat4& modelMatrix, bool drawIndexed)
+	void Renderer::Submit(const Ref<Material>& material, const Scope<VertexArray>& vertexArray, const glm::mat4& modelMatrix, bool drawIndexed, bool submitNormal)
 	{
-		s_RenderQueue.Enqueue(vertexArray.get(), material, s_Scene, modelMatrix, drawIndexed, RenderType::LR_OPAQUE);
+		s_RenderQueue.Enqueue(vertexArray.get(), material, s_Scene, modelMatrix, drawIndexed, submitNormal, RenderType::LR_OPAQUE);
 		s_CurrentDrawCallCount++;
 	}
 }

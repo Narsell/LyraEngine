@@ -18,7 +18,9 @@ namespace Lyra
 
 		virtual void Bind() override;
 		virtual void Unbind() override;
+		virtual void SetHasLightData(bool hasLightData) override { m_HasLightData = hasLightData; }
 
+		virtual const bool HasLightData() const override { return m_HasLightData; }
 		virtual const std::string& GetName() const override { return m_Name; }
 
 		virtual void UploadUniform_1i(const std::string& name, int value) override;
@@ -46,6 +48,8 @@ namespace Lyra
 		size_t m_Hash = 0;
 
 		std::string m_Name;
+		bool m_HasLightData = true;
+
 		mutable std::unordered_map<std::string, int> m_UniformLocationCache;
 	};
 

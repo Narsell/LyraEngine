@@ -2,7 +2,7 @@
 
 #include "FrameBuffer.h"
 #include "Renderer.h"
-#include "Platform/OpenGL/OpenGLFrameBuffer.h"
+#include "Platform/OpenGL/Renderer/OpenGLFrameBuffer.h"
 
 namespace Lyra
 {

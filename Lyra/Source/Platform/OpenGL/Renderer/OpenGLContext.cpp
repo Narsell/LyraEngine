@@ -37,7 +37,7 @@ namespace Lyra
 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextureSlots);
 		LR_CORE_TRACE("  Texture Slots: {0}", maxTextureSlots);
 
-		constexpr int8_t uniqueTextureTypes = Utils::Texture::GetUniqueTypeCount();
+		constexpr int8_t uniqueTextureTypes = Utils::Texture::GetUniqueSlotCount();
 		if (uniqueTextureTypes > maxTextureSlots)
 		{
 			LR_CORE_WARN("Rendering device only supports {0} texture slots but there are {1} unique texture types!", maxTextureSlots, uniqueTextureTypes);

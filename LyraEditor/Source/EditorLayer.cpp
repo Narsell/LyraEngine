@@ -10,7 +10,7 @@ namespace Lyra
 	{
 		/* LIGHT SOURCE CUBE SECTION */
 		{
-			m_LightSourceCubeVertexArray = Scope< VertexArray>(VertexArray::Create());
+			m_LightSourceCubeVertexArray = Scope<VertexArray>(VertexArray::Create());
 
 			float cubeVertices[] = {
 				-0.5f, -0.5f, -0.5f, // Back face
@@ -63,6 +63,7 @@ namespace Lyra
 
 			VertexBuffer* cubeVertexBuffer = VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout);
 			m_LightSourceCubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
+
 		}
 
 		ShaderLibrary::Load("LightSourceShader", "Assets/Shaders/LightSource.glsl");
@@ -72,9 +73,16 @@ namespace Lyra
 		m_BackpackModel = ModelLibrary::Load("Assets/Models/backpack/backpack.obj", propsInverted);
 		m_SponzaModel = ModelLibrary::Load("Assets/Models/sponza/sponza.obj");
 
-		// Creating and setting textures
-		Texture2DProps propsDiffuse(TextureType::DIFFUSE);
-		Texture2DProps propsSpecular(TextureType::SPECULAR);
+		const std::vector<std::filesystem::path> skyboxTextures = 
+		{
+			"Assets/Textures/Skybox/right.jpg",
+			"Assets/Textures/Skybox/left.jpg",
+			"Assets/Textures/Skybox/top.jpg",
+			"Assets/Textures/Skybox/bottom.jpg",
+			"Assets/Textures/Skybox/front.jpg",
+			"Assets/Textures/Skybox/back.jpg",
+		};
+		m_Skybox = std::make_shared<Skybox>(skyboxTextures);
 	}
 
 	void EditorLayer::OnAttach()
@@ -127,6 +135,7 @@ namespace Lyra
 		Renderer::BeginFrame(m_Scene);
 
 		/* Render entities */
+		m_Skybox->Draw();
 		m_SponzaObj->Draw();
 		m_BackpackObj->Draw();
 
@@ -267,7 +276,7 @@ namespace Lyra
 					ImGui::SeparatorText(verticesLabel.c_str());
 					for (auto& texture : mesh->GetMaterial()->GetTextures())
 					{
-						ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.15f, 1.0f), texture->GetTypeAsString());
+						//ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.15f, 1.0f), texture->);
 						ImGui::Image(texture->GetRendererId(), ImVec2(85.f, 85.f));
 						ImGui::Text(texture->GetPath().string().c_str());
 						ImGui::Separator();

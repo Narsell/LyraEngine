@@ -1,16 +1,20 @@
 #pragma once
 
+#include <vector>
+#include <filesystem>
+
 #include "Core/Log.h"
 
 namespace Lyra
 {
-	
-	enum class TextureType : int8_t
+
+	/// @brief Enum used to set the shader's texture slot. 
+	enum class TextureSlot : int8_t
 	{
 		NONE = -1,
 		DIFFUSE,
 		SPECULAR,
-
+		
 		COUNT = SPECULAR + 1
 	};
 
@@ -36,36 +40,52 @@ namespace Lyra
 
 		namespace Texture
 		{
-			inline size_t CalculateHash(const std::string& path)
+			inline size_t CalculateHash(const std::filesystem::path& path)
 			{
 				size_t textureHash = 0;
-				Hash::HashCombine(textureHash, path);
+				Hash::HashCombine(textureHash, path.string());
 				return textureHash;
 			}
-			/* Gets the number of unique TextureType elements supported by the engine. */
-			inline constexpr int8_t GetUniqueTypeCount() { return static_cast<int8_t>(TextureType::COUNT); }
 
-			/* Checks if the given TextureType is valid. */
-			inline bool IsValidTextureType(TextureType type)
+			inline size_t CalculateListHash(const std::vector<std::filesystem::path>& paths)
 			{
-				int8_t typeAsInt = static_cast<int8_t>(type);
-				return typeAsInt > static_cast<int8_t>(TextureType::NONE)
-					&& typeAsInt < static_cast<int8_t>(TextureType::COUNT);
+				size_t combinedHash = 0;
+				for (const auto& path : paths)
+				{
+					Hash::HashCombine(combinedHash, path.string());
+				}
+				return combinedHash;
 			}
 
-			/* Validates if a given integer maps to a valid TextureType. */
-			inline bool IsValidTextureType(int8_t i) { return IsValidTextureType(static_cast<TextureType>(i)); }
+			inline constexpr int8_t GetSlotAsInt(TextureSlot slot) { return static_cast<int8_t>(slot); }
+			inline constexpr TextureSlot GetSlotAsEnum(int8_t slot) { return static_cast<TextureSlot>(slot); }
+			
+			/* Gets the number of unique TextureSlot elements supported by the engine. */
+			inline constexpr int8_t GetUniqueSlotCount() { return GetSlotAsInt(TextureSlot::COUNT); }
 
-			/* Retrieves a string representation of a given TextureType. */
-			inline const char* TextureTypeToString(TextureType type)
+			/* Checks if the given texture slot is valid. */
+			inline bool IsValidTextureSlot(int8_t shaderSlot) 
 			{
-				switch (type)
+				return shaderSlot > GetSlotAsInt(TextureSlot::NONE)
+					&& shaderSlot < GetSlotAsInt(TextureSlot::COUNT);
+			}
+			
+			/* Checks if the given texture slot is valid. */
+			inline bool IsValidTextureSlot(TextureSlot shaderSlot)
+			{
+				return IsValidTextureSlot(static_cast<int8_t>(shaderSlot));
+			}
+
+			/* Retrieves a string representation of a given TextureSlot. */
+			inline const char* GetTextureSlotAsString(TextureSlot slot)
+			{
+				switch (slot)
 				{
-				case TextureType::DIFFUSE: return "diffuse";
-				case TextureType::SPECULAR: return "specular";
+				case TextureSlot::DIFFUSE: return "diffuse";
+				case TextureSlot::SPECULAR: return "specular";
 				default:
 				{
-					LR_CORE_ERROR("Invalid TextureType: {0}!", static_cast<int>(type));
+					LR_CORE_ERROR("Invalid TextureSlot: {0}!", static_cast<int>(slot));
 					return "invalid";
 				}
 				}

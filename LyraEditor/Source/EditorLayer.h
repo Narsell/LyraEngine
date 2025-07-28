@@ -36,9 +36,10 @@ namespace Lyra
 
 		Ref<Entity> m_SponzaObj;
 		Ref<Entity> m_BackpackObj;
-
+		Ref<Skybox> m_Skybox;
+		
 		Scope<VertexArray> m_LightSourceCubeVertexArray;
-
+		
 		Ref<Scene> m_Scene;
 		float m_LightSourceAngle;
 		float m_LightSourceSpeed;

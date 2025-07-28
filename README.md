@@ -17,7 +17,7 @@ A 3D game engine made for learning purposes.
 **Rendering:**
 - OpenGL API support - Abstracted away from Lyra Renderer API.
 - Framebuffers.
-- Depht testing.
+- Depth testing.
 - Face culling.
 - Phong shading model.
 - Movable camera - Orthographic and Perspective.
@@ -25,7 +25,7 @@ A 3D game engine made for learning purposes.
 - Demo sponza scene.
 
 ## Supported Platforms
-Lyra Engine runs on Linux (gcc) and Windows (msvc).
+Lyra Engine is compatible with Linux (gcc) and Windows (msvc).
 
 ## How to Run
 Coming soon...

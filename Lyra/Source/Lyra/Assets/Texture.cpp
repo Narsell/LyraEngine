@@ -1,21 +1,19 @@
 #include "lrpch.h"
 
-#include "Shader.h"
-#include "Core/Ref.h"
+#include "Texture.h"
 #include "Renderer/Renderer.h"
-#include "Platform/OpenGL/Assets/OpenGLShader.h"
+#include "Platform/OpenGL/Assets/OpenGLTexture.h"
+#include "Platform/OpenGL/Assets/OpenGLCubemap.h"
 
 namespace Lyra
 {
-	size_t Shader::s_LastBoundShaderHash = 0;
-
-	Ref<Shader> Shader::Create(const std::string& filepath)
+	Ref<Texture2D> Texture2D::Create(const std::filesystem::path& texturePath, const TextureProps& textureProps)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLShader>(filepath);
+				return std::make_shared<OpenGLTexture2D>(texturePath, textureProps);
 			}
 			case RendererAPI::API::None:
 			{
@@ -30,13 +28,13 @@ namespace Lyra
 		}
 	}
 
-	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+	Ref<CubemapTexture> CubemapTexture::Create(const std::vector<std::filesystem::path>& texturePaths, const TextureProps& textureProps)
 	{
 		switch (Renderer::GetAPI())
 		{
 			case RendererAPI::API::OpenGL:
 			{
-				return std::make_shared<OpenGLShader>(name, vertexSrc, fragmentSrc);
+				return std::make_shared<OpenGLCubemap>(texturePaths, textureProps);
 			}
 			case RendererAPI::API::None:
 			{

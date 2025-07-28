@@ -42,12 +42,13 @@
 #include "Lyra/Assets/ModelLibrary.h"
 #include "Lyra/Assets/ShaderLibrary.h"
 
-/* SCENE ASSETS */
+/* SCENE ASSETS AND ENTITIES */
+#include "Lyra/Assets/Texture.h"
 #include "Lyra/Scene/Scene.h"
-#include "Lyra/Scene/Texture.h"
 #include "Lyra/Scene/Model.h"
 #include "Lyra/Scene/Camera/Camera.h"
 #include "Lyra/Scene/Light.h"
+#include "Lyra/Scene/Skybox.h"
 
 /* MATH */
 #include <glm/glm.hpp>

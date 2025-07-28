@@ -7,7 +7,7 @@
 #include "Core.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Buffer.h"
-#include "Scene/Material.h"
+#include "Assets/Material.h"
 
 namespace Lyra
 {

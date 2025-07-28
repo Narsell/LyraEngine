@@ -2,7 +2,7 @@
 
 #include "Core/Ref.h"
 #include "Renderer/RendererAPI.h"
-#include "Scene/Material.h"
+#include "Assets/Material.h"
 #include "Scene/Scene.h"
 
 namespace Lyra
@@ -20,6 +20,7 @@ namespace Lyra
 		Ref<const Scene> scene;
 		glm::mat4 transform = glm::mat4(1.0f);
 		bool drawIndexed = true;
+		bool submitNormal = true;
 		RenderType renderType = RenderType::LR_OPAQUE;
 	};
 
@@ -27,7 +28,7 @@ namespace Lyra
 	{
 	public:
 		RenderCommand(const RenderCommandData& commandData);
-		RenderCommand(VertexArray* vertexArray, const Ref<Material>& material, const Ref<const Scene>& scene, const glm::mat4& transform, bool drawIndexed = true, RenderType renderType = RenderType::LR_OPAQUE);
+		RenderCommand(VertexArray* vertexArray, const Ref<Material>& material, const Ref<const Scene>& scene, const glm::mat4& transform, bool drawIndexed = true, bool submitNormal = true, RenderType renderType = RenderType::LR_OPAQUE);
 		~RenderCommand() = default;
 
 		void Execute();

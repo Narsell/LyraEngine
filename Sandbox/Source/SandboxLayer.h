@@ -142,11 +142,11 @@ public:
 		m_SponzaModel = Lyra::ModelLibrary::Load("Assets\\Models\\sponza\\sponza.obj");
 
 		// Creating and setting textures
-		Lyra::Texture2DProps propsDiffuse(Lyra::TextureType::DIFFUSE);
-		Lyra::Texture2DProps propsSpecular(Lyra::TextureType::SPECULAR);
+		Lyra::TextureProps propsDiffuse(Lyra::TextureSlot::DIFFUSE);
+		Lyra::TextureProps propsSpecular(Lyra::TextureSlot::SPECULAR);
 
-		m_BoxTextureDiffuse = Lyra::TextureLibrary::Load("Assets\\Textures\\Container.png", propsDiffuse);
-		m_BoxTextureSpecular = Lyra::TextureLibrary::Load("Assets\\Textures\\Container_specular.png", propsSpecular);
+		m_BoxTextureDiffuse = Lyra::TextureLibrary::Load2DTexture("Assets\\Textures\\Container.png", propsDiffuse);
+		m_BoxTextureSpecular = Lyra::TextureLibrary::Load2DTexture("Assets\\Textures\\Container_specular.png", propsSpecular);
 	}
 
 	void OnAttach() override
@@ -315,7 +315,7 @@ public:
 					ImGui::SeparatorText(verticesLabel.c_str());
 					for (auto& texture : mesh->GetMaterial()->GetTextures())
 					{
-						ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.15f, 1.0f), texture->GetTypeAsString());
+						ImGui::TextColored(ImVec4(0.2f, 0.9f, 0.15f, 1.0f), texture->GetSlotAsString());
 						ImGui::Image(texture->GetRendererId(), ImVec2(85.f, 85.f));
 						ImGui::Text(texture->GetPath().string().c_str());
 						ImGui::Separator();

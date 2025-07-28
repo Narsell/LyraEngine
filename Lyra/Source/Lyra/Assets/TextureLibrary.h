@@ -4,7 +4,7 @@
 #include <string>
 #include <filesystem>
 
-#include "Scene/Texture.h"
+#include "Assets/Texture.h"
 
 namespace Lyra
 {
@@ -14,9 +14,10 @@ namespace Lyra
 		TextureLibrary() = delete;
 		~TextureLibrary() = default;
 
-		static Ref<Texture2D>& Load(const std::filesystem::path& texturePath, const Texture2DProps& textureProps);
+		static Ref<Texture2D> Load2DTexture(const std::filesystem::path& texturePath, const TextureProps& textureProps);
+		static Ref<CubemapTexture> LoadCubemapTexture(const std::vector<std::filesystem::path>& texturePaths, const TextureProps& textureProps);
 
 	private:
-		static std::unordered_map<std::size_t, Ref<Texture2D>> s_TexturesLoaded;
+		static std::unordered_map<std::size_t, Ref<Texture>> s_TexturesLoaded;
 	};
 }

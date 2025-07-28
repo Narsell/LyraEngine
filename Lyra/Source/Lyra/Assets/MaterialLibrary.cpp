@@ -4,16 +4,16 @@
 #include "Core/Utils.h"
 #include "Renderer/Shader.h"
 #include "Assets/ShaderLibrary.h"
-#include "Scene/Texture.h"
+#include "Assets/Texture.h"
 
 namespace Lyra
 {
 	std::unordered_map<size_t, Ref<Material>> MaterialLibrary::s_LoadedMaterials;
 
-	Ref<Material>& MaterialLibrary::Create(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>> textures, const MaterialProps& matProps)
+	Ref<Material>& MaterialLibrary::Create(const Ref<Shader>& shader, const std::vector<Ref<Texture>>& textures, const MaterialProps& matProps)
 	{
 		size_t textureListHash = 0;
-		for (const Ref<Texture2D>& texture : textures)
+		for (const Ref<Texture>& texture : textures)
 		{
 			Utils::Hash::HashCombine(textureListHash, texture->GetHash());
 		}
@@ -25,7 +25,7 @@ namespace Lyra
 		return s_LoadedMaterials.at(materialHash);
 	}
 
-	Ref<Material>& MaterialLibrary::Create(const std::vector<Ref<Texture2D>> textures, const MaterialProps& matProps)
+	Ref<Material>& MaterialLibrary::Create(const std::vector<Ref<Texture>>& textures, const MaterialProps& matProps)
 	{
 		return MaterialLibrary::Create(ShaderLibrary::GetDefaultShader(), textures, matProps);
 	}

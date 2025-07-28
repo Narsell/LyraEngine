@@ -8,21 +8,21 @@
 #include "Core/Utils.h"
 #include "Assets/TextureLibrary.h"
 #include "Assets/MaterialLibrary.h"
-#include "Scene/Texture.h"
-#include "Scene/Material.h"
-#include "Scene/Mesh.h"
+#include "Assets/Texture.h"
+#include "Assets/Material.h"
+#include "Assets/Mesh.h"
 
 
 namespace Lyra
 {
 
-	static aiTextureType GetAssimpTextureType(TextureType type)
+	static aiTextureType GetAssimpTextureType(TextureSlot type)
 	{
 		switch (type)
 		{
-			case Lyra::TextureType::DIFFUSE:    return aiTextureType_DIFFUSE;
-			case Lyra::TextureType::SPECULAR:   return aiTextureType_SPECULAR;
-			case Lyra::TextureType::NONE:       return aiTextureType_NONE;
+			case Lyra::TextureSlot::DIFFUSE:    return aiTextureType_DIFFUSE;
+			case Lyra::TextureSlot::SPECULAR:   return aiTextureType_SPECULAR;
+			case Lyra::TextureSlot::NONE:       return aiTextureType_NONE;
 		}
 		LR_CORE_WARN("Unable to map texture type {0}", (int)type);
 		return aiTextureType_NONE;
@@ -115,11 +115,7 @@ namespace Lyra
 		{
 			// Get textures from assimp material
 			aiMaterial* assimpMaterial = scene->mMaterials[assimpMesh->mMaterialIndex];
-			std::vector<Ref<Texture2D>> textures = LoadMaterialTextures(assimpMaterial, assimpMesh);
-
-			// Detect if a material with an identical hash exists.
-			Material newMaterial = Material(textures);
-			size_t materialHash = newMaterial.GetHash();
+			const std::vector<Ref<Texture>> textures = LoadMaterialTextures(assimpMaterial, assimpMesh);
 
 			Ref<Material> material = MaterialLibrary::Create(textures);
 			m_Meshes.emplace_back(std::make_unique<Mesh>(assimpMesh->mName.C_Str(), vertices, indices, material));
@@ -130,19 +126,19 @@ namespace Lyra
 		}
 	}
 
-	std::vector<Ref<Texture2D>> Model::LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh) const
+	std::vector<Ref<Texture>> Model::LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh) const
 	{
-		std::vector<Ref<Texture2D>> textures;
+		std::vector<Ref<Texture>> textures;
 
-		for (uint8_t i = 0; i < Utils::Texture::GetUniqueTypeCount(); i++)
+		for (uint8_t i = 0; i < Utils::Texture::GetUniqueSlotCount(); i++)
 		{
-			if (!Utils::Texture::IsValidTextureType(i))
+			if (!Utils::Texture::IsValidTextureSlot(i))
 			{
-				LR_CORE_ERROR("Trying to query texture count of TextureType enum index '{0}'. This should never happen!", i);
+				LR_CORE_ERROR("Trying to query texture count of TextureSlot enum index '{0}'. This should never happen!", i);
 				continue; 
 			}
 
-			TextureType internalTextType = static_cast<TextureType>(i);
+			TextureSlot internalTextType = Utils::Texture::GetSlotAsEnum(i);
 			aiTextureType assimpTextType = GetAssimpTextureType(internalTextType);
 			uint32_t textureCount = material->GetTextureCount(assimpTextType);
 
@@ -152,9 +148,9 @@ namespace Lyra
 				material->GetTexture(assimpTextType, i, &textureFilename);
 				std::filesystem::path texturePath = m_ContainingDir / textureFilename.C_Str();
 
-				Texture2DProps textureProps(internalTextType);
+				TextureProps textureProps(internalTextType);
 				textureProps.FlipVertically = m_Props.textureFlipOverride;
-				Ref<Texture2D> meshTexture = TextureLibrary::Load(texturePath, textureProps);
+				Ref<Texture2D> meshTexture = TextureLibrary::Load2DTexture(texturePath, textureProps);
 
 				textures.push_back(meshTexture);
 			}

@@ -4,7 +4,7 @@
 #include <filesystem>
 
 #include "Core.h"
-#include "Scene/Mesh.h"
+#include "Assets/Mesh.h"
 
 struct aiNode;
 struct aiMesh;
@@ -20,7 +20,7 @@ namespace Lyra
 		bool textureFlipOverride = false;
 	};
 
-	class Texture2D;
+	class Texture;
 	class Material;
 	class Mesh;
 
@@ -40,7 +40,7 @@ namespace Lyra
 		void LoadModel();
 		void ProcessNode(aiNode* node, const aiScene* scene);
 		void ProcessMesh(aiMesh* mesh, const aiScene* scene);
-		std::vector<Ref<Texture2D>> LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh) const;
+		std::vector<Ref<Texture>> LoadMaterialTextures(aiMaterial* material, aiMesh* assimpMesh) const;
 
 	private:
 		ModelProps m_Props;

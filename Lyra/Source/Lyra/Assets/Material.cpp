@@ -1,8 +1,8 @@
 #include "lrpch.h"
 
 #include "Core/Utils.h"
-#include "Scene/Material.h"
-#include "Scene/Texture.h"
+#include "Assets/Material.h"
+#include "Assets/Texture.h"
 #include "Renderer/Shader.h"
 #include "Assets/ShaderLibrary.h"
 
@@ -16,7 +16,7 @@ namespace Lyra
 		SetCalculatedHash();
 	}
 
-	Material::Material(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>>& textures, const MaterialProps& matProps)
+	Material::Material(const Ref<Shader>& shader, const std::vector<Ref<Texture>>& textures, const MaterialProps& matProps)
 		 : m_Props(matProps),
 		   m_Shader(shader),
 		   m_Textures(textures)
@@ -24,7 +24,7 @@ namespace Lyra
 		SetCalculatedHash();
 	}
 
-	Material::Material(const std::vector<Ref<Texture2D>> textures)
+	Material::Material(const std::vector<Ref<Texture>> textures)
 		: Material(ShaderLibrary::GetDefaultShader(), textures, {})
 	{
 	}
@@ -40,7 +40,7 @@ namespace Lyra
 
 	void Material::BindTextures() const
 	{
-		for (const Ref<Texture2D>& texture : m_Textures)
+		for (const Ref<Texture>& texture : m_Textures)
 		{
 			texture->Bind();
 		}
@@ -49,8 +49,9 @@ namespace Lyra
 
 	void Material::SetCalculatedHash()
 	{
+		// TODO: Make Utils::Hash more useful by inclusing texture, material, etc.. hash creation functions.
 		size_t textureListHash = 0;
-		for (const Ref<Texture2D>& texture : m_Textures)
+		for (const Ref<Texture>& texture : m_Textures)
 		{
 			Utils::Hash::HashCombine(textureListHash, texture->GetHash());
 		}

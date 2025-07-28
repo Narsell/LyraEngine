@@ -3,12 +3,12 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Scene/Material.h"
+#include "Assets/Material.h"
 
 namespace Lyra
 {
 	class Shader;
-	class Texture2D;
+	class Texture;
 
 	class MaterialLibrary
 	{
@@ -16,8 +16,8 @@ namespace Lyra
 		MaterialLibrary() = delete;
 		~MaterialLibrary() = default;
 
-		static Ref<Material>& Create(const Ref<Shader>& shader, const std::vector<Ref<Texture2D>> textures = {}, const MaterialProps& matProps = {});
-		static Ref<Material>& Create(const std::vector<Ref<Texture2D>> textures, const MaterialProps& matProps = {});
+		static Ref<Material>& Create(const Ref<Shader>& shader, const std::vector<Ref<Texture>>& textures = {}, const MaterialProps& matProps = {});
+		static Ref<Material>& Create(const std::vector<Ref<Texture>>& textures, const MaterialProps& matProps = {});
 		static Ref<Material>& Create(const MaterialProps& matProps = {});
 
 	private:
