@@ -7,10 +7,15 @@
 
 namespace Lyra
 {
+	// Note: Not sure if LR_SKYBOX would be a render type.
+	// Rendering a skybox doesn't feel fundamentally as diferent to guarentee a different rendering type or mode.
+	// It just removes translation from the view matrix and scales transforms proportional to the camera's render distance.
+	// But it will do for now.
 	enum class RenderType : uint8_t
 	{
 		LR_OPAQUE = 0,
-		LR_TRANSPARENT
+		LR_TRANSPARENT,
+		LR_SKYBOX
 	};
 
 	struct RenderCommandData
@@ -20,7 +25,6 @@ namespace Lyra
 		Ref<const Scene> scene;
 		glm::mat4 transform = glm::mat4(1.0f);
 		bool drawIndexed = true;
-		bool submitNormal = true;
 		RenderType renderType = RenderType::LR_OPAQUE;
 	};
 
@@ -28,7 +32,8 @@ namespace Lyra
 	{
 	public:
 		RenderCommand(const RenderCommandData& commandData);
-		RenderCommand(VertexArray* vertexArray, const Ref<Material>& material, const Ref<const Scene>& scene, const glm::mat4& transform, bool drawIndexed = true, bool submitNormal = true, RenderType renderType = RenderType::LR_OPAQUE);
+		RenderCommand(VertexArray* vertexArray, const Ref<Material>& material, const Ref<const Scene>& scene, const glm::mat4& transform, bool drawIndexed = true, RenderType renderType = RenderType::LR_OPAQUE);
+		RenderCommand();
 		~RenderCommand() = default;
 
 		void Execute();
@@ -41,12 +46,13 @@ namespace Lyra
 		inline static void Clear() { s_RendererAPI->Clear(); }
 
 	private:
-		void SetSceneUniforms();
-		void SetMaterialUniforms();
-		void SetEntityUniforms();
+		void UploadSceneUniforms();
+		void UploadMaterialUniforms();
+		void UploadEntityUniforms();
 
 	private:
 		RenderCommandData m_CommandData;
+		size_t m_LastSceneShaderBound = 0;
 
 		static RendererAPI* s_RendererAPI;
 	};

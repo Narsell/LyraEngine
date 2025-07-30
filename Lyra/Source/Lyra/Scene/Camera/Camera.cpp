@@ -123,7 +123,13 @@ namespace Lyra
 		RecalculateProjectionMatrix();
 	}
 
-	void PerspectiveCamera::SetAspectRatio(float newAspectRatio)
+    void PerspectiveCamera::SetRenderDistance(float newZFar)
+    {
+		m_ZFar = newZFar;
+		RecalculateProjectionMatrix();
+    }
+
+    void PerspectiveCamera::SetAspectRatio(float newAspectRatio)
 	{
 		m_AspectRatio = newAspectRatio;
 		RecalculateProjectionMatrix();

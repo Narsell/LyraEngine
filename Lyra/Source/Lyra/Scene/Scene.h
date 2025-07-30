@@ -40,27 +40,8 @@ namespace Lyra
 		inline const SpotLight& GetSpotLight() const { return m_Data.spotLight; }
 		inline const Ref<const Camera>& GetCamera() const { return m_Data.camera; }
 
-		/* 
-			Checks if the scene uniforms have already been uploaded this frame by the given shader.
-			This is meant to be used before calling UploadUniforms to avoid unnecessary uniform uploads.
-		*/
-		inline bool AreUniformsCached(const Ref<Shader>& shader) const { return shader->GetHash() == m_LastShaderHashUploaded; }
-		/*
-			Clears the uniform cache, meaning the next AreUniformsCached will return false against any shader.
-			It's important to call this at the end of each frame, otherwise scene uniforms won't get updated at the beginig of each frame.
-		*/
-		inline void ClearUniformCache() const { m_LastShaderHashUploaded = 0; }
-
-		/*
-			Uploads scene uniforms to the given shader.
-			This DOES NOT verify if uniforms have been cached by the shader.
-			Use 'AreUniformsCached' in conjunction with 'ClearUniformCache' when calling this.
-		*/
-		void UploadUniforms(const Ref<Shader>& shader) const;
-
 	private:
 		SceneProps m_Data;
 
-		mutable size_t m_LastShaderHashUploaded = 0;
 	};
 }

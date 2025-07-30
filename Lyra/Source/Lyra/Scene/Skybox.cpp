@@ -14,50 +14,50 @@ namespace Lyra
     Skybox::Skybox(const std::vector<std::filesystem::path>& paths)
         : m_VertexArray(VertexArray::Create())
     {
-        // TODO: Separate into different private methods
-        // Vertex array creation
+        // TODO: Use mesh API to load vertex and material instead
+        // Also so we can draw this indexed
         float vertices[] = {
-            -10.0f,  10.0f, -10.0f,
-            -10.0f, -10.0f, -10.0f,
-             10.0f, -10.0f, -10.0f,
-             10.0f, -10.0f, -10.0f,
-             10.0f,  10.0f, -10.0f,
-            -10.0f,  10.0f, -10.0f,
+            -1.0f,  1.0f, -1.0f,
+            -1.0f, -1.0f, -1.0f,
+             1.0f, -1.0f, -1.0f,
+             1.0f, -1.0f, -1.0f,
+             1.0f,  1.0f, -1.0f,
+            -1.0f,  1.0f, -1.0f,
 
-            -10.0f, -10.0f,  10.0f,
-            -10.0f, -10.0f, -10.0f,
-            -10.0f,  10.0f, -10.0f,
-            -10.0f,  10.0f, -10.0f,
-            -10.0f,  10.0f,  10.0f,
-            -10.0f, -10.0f,  10.0f,
+            -1.0f, -1.0f,  1.0f,
+            -1.0f, -1.0f, -1.0f,
+            -1.0f,  1.0f, -1.0f,
+            -1.0f,  1.0f, -1.0f,
+            -1.0f,  1.0f,  1.0f,
+            -1.0f, -1.0f,  1.0f,
  
-             10.0f, -10.0f, -10.0f,
-             10.0f, -10.0f,  10.0f,
-             10.0f,  10.0f,  10.0f,
-             10.0f,  10.0f,  10.0f,
-             10.0f,  10.0f, -10.0f,
-             10.0f, -10.0f, -10.0f,
+             1.0f, -1.0f, -1.0f,
+             1.0f, -1.0f,  1.0f,
+             1.0f,  1.0f,  1.0f,
+             1.0f,  1.0f,  1.0f,
+             1.0f,  1.0f, -1.0f,
+             1.0f, -1.0f, -1.0f,
 
-            -10.0f, -10.0f,  10.0f,
-            -10.0f,  10.0f,  10.0f,
-             10.0f,  10.0f,  10.0f,
-             10.0f,  10.0f,  10.0f,
-             10.0f, -10.0f,  10.0f,
-            -10.0f, -10.0f,  10.0f,
+            -1.0f, -1.0f,  1.0f,
+            -1.0f,  1.0f,  1.0f,
+             1.0f,  1.0f,  1.0f,
+             1.0f,  1.0f,  1.0f,
+             1.0f, -1.0f,  1.0f,
+            -1.0f, -1.0f,  1.0f,
 
-            -10.0f,  10.0f, -10.0f,
-             10.0f,  10.0f, -10.0f,
-             10.0f,  10.0f,  10.0f,
-             10.0f,  10.0f,  10.0f,
-            -10.0f,  10.0f,  10.0f,
-            -10.0f,  10.0f, -10.0f,
+            -1.0f,  1.0f, -1.0f,
+             1.0f,  1.0f, -1.0f,
+             1.0f,  1.0f,  1.0f,
+             1.0f,  1.0f,  1.0f,
+            -1.0f,  1.0f,  1.0f,
+            -1.0f,  1.0f, -1.0f,
 
-            -10.0f, -10.0f, -10.0f,
-            -10.0f, -10.0f,  10.0f,
-             10.0f, -10.0f, -10.0f,
-             10.0f, -10.0f, -10.0f,
-            -10.0f, -10.0f,  10.0f,
-             10.0f, -10.0f,  10.0f
+            -1.0f, -1.0f, -1.0f,
+            -1.0f, -1.0f,  1.0f,
+             1.0f, -1.0f, -1.0f,
+             1.0f, -1.0f, -1.0f,
+            -1.0f, -1.0f,  1.0f,
+             1.0f, -1.0f,  1.0f
         };
         
         VertexLayout vertexLayout
@@ -86,6 +86,9 @@ namespace Lyra
 
     void Skybox::Draw() const
     {
-	    Renderer::Submit(m_Material, m_VertexArray, glm::mat4(1.0), false, false);
+        // Note that the transform submitted here does nothing.
+        // Skybox's transform is calculated during runtime to adjust for the camera's clipping bounds.
+        // This is done so it's always at the 'edge of the world'.
+	    Renderer::Submit(m_Material, m_VertexArray, glm::mat4(1.0), false, RenderType::LR_SKYBOX);
     }
 }
