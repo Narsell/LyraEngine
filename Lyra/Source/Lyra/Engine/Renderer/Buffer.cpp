@@ -6,7 +6,7 @@
 
 namespace Lyra
 {
-	VertexBuffer* VertexBuffer::Create(float* vertices, size_t size, const VertexLayout& layout)
+	VertexBuffer* VertexBuffer::Create(const float* vertices, size_t size, const VertexLayout& layout)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -27,7 +27,7 @@ namespace Lyra
 		}
 	}
 
-	IndexBuffer* IndexBuffer::Create(uint32_t* indices, size_t count)
+	IndexBuffer* IndexBuffer::Create(const uint32_t* indices, size_t count)
 	{
 		switch (Renderer::GetAPI())
 		{

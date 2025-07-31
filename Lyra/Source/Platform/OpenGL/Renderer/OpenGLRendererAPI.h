@@ -13,11 +13,11 @@ namespace Lyra
 		virtual void SetClearColor(const glm::vec4& color) override;
 		virtual void Clear() override;
 
-		virtual void DrawVertices(VertexArray* vertexArray, bool drawIndexed = true) override;
+		virtual void DrawVertices(const VertexArray* vertexArray, bool drawIndexed = true) override;
 
 	private:
-		virtual void DrawUnindexed(VertexArray* vertexArray);
-		virtual void DrawIndexed(VertexArray* vertexArray);
+		virtual void DrawUnindexed(const VertexArray* vertexArray);
+		virtual void DrawIndexed(const VertexArray* vertexArray);
 
 	};
 }

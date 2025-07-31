@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 
 #include "Core.h"
+#include "Renderer/RenderCommand.h"
 #include "Renderer/Shader.h"
 #include "Renderer/Buffer.h"
 #include "Assets/Material.h"
@@ -20,8 +21,8 @@ namespace Lyra
 
     class LYRA_API Mesh {
     public:
-        Mesh(const std::string& name, std::vector<Vertex>& vertices, std::vector<uint32_t>& indices, const Ref<Material>& material = std::make_shared<Material>());
-        void Draw(const glm::mat4& transform) const;
+        Mesh(const std::string& name, const VertexArray* vertexArray, const Ref<Material>& material = std::make_shared<Material>());
+        void Draw(const glm::mat4& transform, RenderType renderType = RenderType::LR_OPAQUE) const;
 
         const Ref<Material>& GetMaterial() const { return m_Material; }
         uint64_t GetVertexCount() const { return m_VertexCount; }
@@ -29,7 +30,7 @@ namespace Lyra
         size_t GetHash() const { return m_Hash; }
     private:
 
-        Scope<VertexArray> m_VertexArray;
+        Scope<const VertexArray> m_VertexArray;
         Ref<Material> m_Material;
 
         const std::string m_Name;

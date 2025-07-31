@@ -3,12 +3,21 @@
 #include <glm/glm.hpp>
 
 #include "Core/Ref.h"
-#include "Core/Utils.h"
 
 /* TEXTURE TYPE ENUM AND UTILS */
 
 namespace Lyra
 {
+	/// @brief Enum used to set the shader's texture slot. 
+	enum class TextureSlot : int8_t
+	{
+		NONE = -1,
+		DIFFUSE,
+		SPECULAR,
+		
+		COUNT = SPECULAR + 1
+	};
+
 	enum class TextureWrap : uint8_t
 	{
 		REPEAT,

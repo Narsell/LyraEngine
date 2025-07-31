@@ -120,7 +120,7 @@ namespace Lyra
 			float currentFOV = m_Camera->GetFOV();
 			m_Camera->SetFOV(currentFOV - (float)e.GetYOffset());
 			m_LookAtSensitivity = m_ZoomSpeedFactor * currentFOV;
-			LR_CORE_INFO("Sensitivity: {0} | FOV: {1}", m_LookAtSensitivity, currentFOV);
+			//LR_CORE_INFO("Sensitivity: {0} | FOV: {1}", m_LookAtSensitivity, currentFOV);
 		}
 		else
 		{
@@ -129,8 +129,6 @@ namespace Lyra
 				m_CameraMinSpeed,
 				m_CameraMaxSpeed
 			);
-			LR_CORE_INFO("Cam Speed: {0}", m_CameraSpeed);
-
 		}
 		return false;
 	}

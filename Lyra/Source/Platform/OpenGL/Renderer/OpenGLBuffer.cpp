@@ -27,7 +27,7 @@ namespace Lyra
 	/* ### OPENGL VERTEX BUFFER #### */
 	/* ############################# */
 
-	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, size_t size, const VertexLayout& layout)
+	OpenGLVertexBuffer::OpenGLVertexBuffer(const float* vertices, size_t size, const VertexLayout& layout)
 		:	m_VertexLayout(layout),
 			m_VertexCount(size/layout.GetStride())
 	{
@@ -58,7 +58,7 @@ namespace Lyra
 	/* #### OPENGL INDEX BUFFER #### */
 	/* ############################# */
 
-	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32_t* indices, size_t count)
+	OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* indices, size_t count)
 		: m_Count(count)
 	{
 		//Create, bind and set indices to GL_ELEMENT_ARRAY_BUFFER which is the index buffer

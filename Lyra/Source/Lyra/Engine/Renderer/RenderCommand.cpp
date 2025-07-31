@@ -12,7 +12,7 @@ namespace Lyra
 	RenderCommand::RenderCommand(const RenderCommandData& commandData)
 		: m_CommandData(commandData) {}
 
-	RenderCommand::RenderCommand(VertexArray* vertexArray, const Ref<Material>& material, const Ref<const Scene>& scene, const glm::mat4& transform, bool drawIndexed, RenderType renderType)
+	RenderCommand::RenderCommand(const VertexArray* vertexArray, const Ref<Material>& material, const Ref<const Scene>& scene, const glm::mat4& transform, bool drawIndexed, RenderType renderType)
 	{
 		m_CommandData.vertexArray = vertexArray;
 		m_CommandData.material = material;

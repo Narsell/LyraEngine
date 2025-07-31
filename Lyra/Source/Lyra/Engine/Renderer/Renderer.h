@@ -21,7 +21,7 @@ namespace Lyra
 
 		static void BeginFrame(const Ref<const Scene>& scene);
 		static void EndFrame();
-		static void Submit(const Ref<Material>& material, const Scope<VertexArray>& vertexArray, const glm::mat4& modelMatrix = glm::mat4(1.0f), bool drawIndexed = true, RenderType renderType = RenderType::LR_OPAQUE);
+		static void Submit(const Ref<Material>& material, const Scope<const VertexArray>& vertexArray, const glm::mat4& modelMatrix = glm::mat4(1.0f), bool drawIndexed = true, RenderType renderType = RenderType::LR_OPAQUE);
 		
 		static void OnWindowResize(uint32_t width, uint32_t height);
 

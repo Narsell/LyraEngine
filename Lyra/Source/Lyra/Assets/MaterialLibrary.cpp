@@ -12,14 +12,10 @@ namespace Lyra
 
 	Ref<Material>& MaterialLibrary::Create(const Ref<Shader>& shader, const std::vector<Ref<Texture>>& textures, const MaterialProps& matProps)
 	{
-		size_t textureListHash = 0;
-		for (const Ref<Texture>& texture : textures)
-		{
-			Utils::Hash::HashCombine(textureListHash, texture->GetHash());
-		}
-		size_t materialHash = Utils::Material::CalculateHash(shader->GetHash(), textureListHash, matProps.shininess);
+		size_t materialHash = Utils::Material::CalculateHash(shader->GetHash(), textures, matProps.shininess);
 		if (s_LoadedMaterials.find(materialHash) == s_LoadedMaterials.end())
 		{
+			LR_CORE_TRACE("Loading new material with hash {0}", materialHash);
 			s_LoadedMaterials.emplace(materialHash, std::make_shared<Material>(shader, textures, matProps));
 		}
 		return s_LoadedMaterials.at(materialHash);

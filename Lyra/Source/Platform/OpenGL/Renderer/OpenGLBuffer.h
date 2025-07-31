@@ -8,7 +8,7 @@ namespace Lyra
 	class OpenGLVertexBuffer final : public VertexBuffer
 	{
 	public:
-		OpenGLVertexBuffer(float* vertices, size_t size, const VertexLayout& layout);
+		OpenGLVertexBuffer(const float* vertices, size_t size, const VertexLayout& layout);
 
 		~OpenGLVertexBuffer();
 
@@ -30,7 +30,7 @@ namespace Lyra
 	class OpenGLIndexBuffer final : public IndexBuffer
 	{
 	public:
-		OpenGLIndexBuffer(uint32_t* vertices, size_t count);
+		OpenGLIndexBuffer(const uint32_t* vertices, size_t count);
 
 		~OpenGLIndexBuffer();
 

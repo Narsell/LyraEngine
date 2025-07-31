@@ -56,13 +56,13 @@ namespace Lyra
 				-0.5f,  0.5f, -0.5f
 			};
 
-			VertexLayout cubeVertexLayout
-			{
-				{"a_Position", ShaderData::Float3}
-			};
-
-			VertexBuffer* cubeVertexBuffer = VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout);
-			m_LightSourceCubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
+//			VertexLayout cubeVertexLayout
+//			{
+//				{"a_Position", ShaderData::Float3}
+//			};
+//
+//			VertexBuffer* cubeVertexBuffer = VertexBuffer::Create(cubeVertices, sizeof(cubeVertices), cubeVertexLayout);
+//			m_LightSourceCubeVertexArray->AddVertexBuffer(cubeVertexBuffer);
 
 		}
 

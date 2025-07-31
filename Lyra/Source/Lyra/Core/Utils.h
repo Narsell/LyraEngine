@@ -4,20 +4,10 @@
 #include <filesystem>
 
 #include "Core/Log.h"
+#include "Assets/Texture.h"
 
 namespace Lyra
 {
-
-	/// @brief Enum used to set the shader's texture slot. 
-	enum class TextureSlot : int8_t
-	{
-		NONE = -1,
-		DIFFUSE,
-		SPECULAR,
-		
-		COUNT = SPECULAR + 1
-	};
-
 	namespace Utils
 	{
 		namespace Hash
@@ -95,10 +85,14 @@ namespace Lyra
 		namespace Material
 		{
 			// TODO: Gotta figure out a better way to integrate props into hash calculation!
-			inline size_t CalculateHash(size_t shaderHash, size_t materialListHash, float shininess)
+			inline size_t CalculateHash(size_t shaderHash, const std::vector<Ref<Lyra::Texture>>& textures, float shininess)
 			{
 				size_t materialHash = 0;
-				Hash::HashCombine(materialHash, shaderHash, materialListHash, shininess);
+				for (const Ref<Lyra::Texture>& texture : textures)
+				{
+					Utils::Hash::HashCombine(materialHash, texture->GetHash());
+				}
+				Utils::Hash::HashCombine(materialHash, shaderHash, shininess);
 				return materialHash;
 			}
 		}

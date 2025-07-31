@@ -49,12 +49,7 @@ namespace Lyra
 
 	void Material::SetCalculatedHash()
 	{
-		// TODO: Make Utils::Hash more useful by inclusing texture, material, etc.. hash creation functions.
 		size_t textureListHash = 0;
-		for (const Ref<Texture>& texture : m_Textures)
-		{
-			Utils::Hash::HashCombine(textureListHash, texture->GetHash());
-		}
-		m_Hash = Utils::Material::CalculateHash(m_Shader->GetHash(), textureListHash, m_Props.shininess);
+		m_Hash = Utils::Material::CalculateHash(m_Shader->GetHash(), m_Textures, m_Props.shininess);
 	}
 }

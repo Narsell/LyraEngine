@@ -11,6 +11,7 @@ namespace Lyra
 	{
 		// TODO: Make log string args work :(
 		LR_CORE_ASSERT(!Exists(name), "Shader '{0}' already exists", name);
+		LR_CORE_TRACE("Loading shader {0}", name.c_str());
 		s_Shaders[name] = shader;
 	}
 

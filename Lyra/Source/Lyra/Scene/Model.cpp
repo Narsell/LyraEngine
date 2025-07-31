@@ -84,6 +84,19 @@ namespace Lyra
 
 	void Model::ProcessMesh(aiMesh* assimpMesh, const aiScene* scene)
 	{
+		/* Vertex layout configuration */
+		VertexLayout layout = 
+		{
+			{ "a_Position", ShaderData::Float3 },
+			{ "a_Normal", ShaderData::Float3 },
+		};
+
+		const bool hasTextureCoordsData = assimpMesh->mTextureCoords[0];
+		if (hasTextureCoordsData)
+		{
+			layout.AddElements({{ "a_TexCoord", ShaderData::Float2 }});
+		}
+
 		/* Process vertices */
 		std::vector<Vertex> vertices;
 		for (uint32_t i = 0; i < assimpMesh->mNumVertices; i++)
@@ -91,7 +104,7 @@ namespace Lyra
 			Vertex vertex;
 			vertex.Position = glm::vec3(assimpMesh->mVertices[i].x, assimpMesh->mVertices[i].y, assimpMesh->mVertices[i].z);
 			vertex.Normal = glm::vec3(assimpMesh->mNormals[i].x, assimpMesh->mNormals[i].y, assimpMesh->mNormals[i].z);
-			if (assimpMesh->mTextureCoords[0])
+			if (hasTextureCoordsData)
 			{
 				vertex.TexCoord = glm::vec2(assimpMesh->mTextureCoords[0][i].x, assimpMesh->mTextureCoords[0][i].y);
 			}
@@ -110,7 +123,16 @@ namespace Lyra
 		}
 
 		/* Process materials */
-		
+
+		// TODO: Continue here
+		// Need to to cleanup here, in Mesh, figure out where Vertex belongs, and create 
+		// vertices and indices for default box.
+		VertexArray* vertexArray = VertexArray::Create();
+		VertexBuffer* vertexBuffer = VertexBuffer::Create(&vertices.at(0).Position.x, vertices.size() * sizeof(Vertex) , layout);
+		vertexArray->AddVertexBuffer(vertexBuffer);
+		IndexBuffer* indexBuffer = IndexBuffer::Create(indices.data(), indices.size());
+		vertexArray->AddIndexBuffer(indexBuffer);
+
 		if (assimpMesh->mMaterialIndex >= 0)
 		{
 			// Get textures from assimp material
@@ -118,11 +140,11 @@ namespace Lyra
 			const std::vector<Ref<Texture>> textures = LoadMaterialTextures(assimpMaterial, assimpMesh);
 
 			Ref<Material> material = MaterialLibrary::Create(textures);
-			m_Meshes.emplace_back(std::make_unique<Mesh>(assimpMesh->mName.C_Str(), vertices, indices, material));
+			m_Meshes.emplace_back(std::make_unique<Mesh>(assimpMesh->mName.C_Str(), vertexArray, material));
 		}
 		else
 		{
-			m_Meshes.emplace_back(std::make_unique<Mesh>(assimpMesh->mName.C_Str(), vertices, indices));
+			m_Meshes.emplace_back(std::make_unique<Mesh>(assimpMesh->mName.C_Str(), vertexArray));
 		}
 	}
 

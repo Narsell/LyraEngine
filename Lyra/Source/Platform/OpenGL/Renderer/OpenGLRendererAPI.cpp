@@ -35,7 +35,7 @@ namespace Lyra
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void OpenGLRendererAPI::DrawVertices(VertexArray* vertexArray, bool drawIndexed)
+	void OpenGLRendererAPI::DrawVertices(const VertexArray* vertexArray, bool drawIndexed)
 	{
 		vertexArray->Bind();
 
@@ -49,12 +49,12 @@ namespace Lyra
 		}
 	}
 
-	void OpenGLRendererAPI::DrawIndexed(VertexArray* vertexArray)
+	void OpenGLRendererAPI::DrawIndexed(const VertexArray* vertexArray)
 	{
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(vertexArray->GetIndexBuffer()->GetCount()), GL_UNSIGNED_INT, nullptr);
 	}
 
-	void OpenGLRendererAPI::DrawUnindexed(VertexArray* vertexArray)
+	void OpenGLRendererAPI::DrawUnindexed(const VertexArray* vertexArray)
 	{
 		for (const auto& vertexBuffer : vertexArray->GetVertexBuffers())
 		{

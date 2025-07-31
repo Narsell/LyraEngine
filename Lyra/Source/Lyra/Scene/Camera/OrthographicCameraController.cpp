@@ -100,7 +100,6 @@ namespace Lyra
 				m_CameraMinSpeed,
 				m_CameraMaxSpeed
 			);
-			LR_CORE_INFO("Cam Speed: {0}", m_CameraSpeed);
 		}
 		return false;
 	}

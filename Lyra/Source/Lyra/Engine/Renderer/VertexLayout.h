@@ -53,7 +53,7 @@ namespace Lyra
 
 	struct VertexElement
 	{
-		const std::string name;
+		std::string name;
 		ShaderData::TypeInfo typeInfo;
 		bool normalized;
 		size_t offset;
@@ -79,6 +79,7 @@ namespace Lyra
 		size_t GetStride() const { return m_Stride; }
 		const std::vector<VertexElement>& GetElements() const { return m_Elements; }
 
+		void AddElements(const std::initializer_list<VertexElement>& elements);
 		void DebugPrint(const std::string& layoutName);
 
 	private:

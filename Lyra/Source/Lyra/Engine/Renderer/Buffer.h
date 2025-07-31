@@ -17,7 +17,7 @@ namespace Lyra
 		virtual size_t GetVertexCount() const = 0;
 
 		/* Returns pointer to heap allocated VertexBuffer. Assign this to a VertexArray instance to avoid leaks. */
-		static VertexBuffer* Create(float* vertices, size_t size, const VertexLayout& layout);
+		static VertexBuffer* Create(const float* vertices, size_t size, const VertexLayout& layout);
 	};
 
 
@@ -33,7 +33,7 @@ namespace Lyra
 		virtual size_t GetCount() const = 0;
 
 		/* Returns pointer to heap allocated IndexBuffer. Assign this to a VertexArray instance to avoid leaks. */
-		static IndexBuffer* Create(uint32_t* indices, size_t count);
+		static IndexBuffer* Create(const uint32_t* indices, size_t count);
 	};
 
 
