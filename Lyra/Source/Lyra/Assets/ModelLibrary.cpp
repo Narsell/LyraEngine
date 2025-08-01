@@ -15,9 +15,10 @@ namespace Lyra
 
 	Ref<Model>& ModelLibrary::Load(const std::filesystem::path& path, const ModelProps& props)
 	{
-		size_t modelHash = Utils::Model::CalculateHash(path.string(), props.textureFlipOverride);
+		size_t modelHash = Utils::Model::CalculateHash(path.string(), props);
 		if (s_LoadedModels.find(modelHash) == s_LoadedModels.end())
 		{
+			LR_CORE_TRACE("Loading model at {0}", path.c_str());
 			s_LoadedModels.emplace(modelHash, std::make_shared<Model>(path, props));
 		}
 		else

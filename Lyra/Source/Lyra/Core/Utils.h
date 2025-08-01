@@ -5,6 +5,8 @@
 
 #include "Core/Log.h"
 #include "Assets/Texture.h"
+#include "Assets/Material.h"
+#include "Scene/Model.h"
 
 namespace Lyra
 {
@@ -30,19 +32,19 @@ namespace Lyra
 
 		namespace Texture
 		{
-			inline size_t CalculateHash(const std::filesystem::path& path)
+			inline size_t CalculateHash(const std::filesystem::path& path, const TextureProps& props)
 			{
 				size_t textureHash = 0;
-				Hash::HashCombine(textureHash, path.string());
+				Hash::HashCombine(textureHash, path.string(), props);
 				return textureHash;
 			}
 
-			inline size_t CalculateListHash(const std::vector<std::filesystem::path>& paths)
+			inline size_t CalculateListHash(const std::vector<std::filesystem::path>& paths, const TextureProps& props)
 			{
 				size_t combinedHash = 0;
 				for (const auto& path : paths)
 				{
-					Hash::HashCombine(combinedHash, path.string());
+					Hash::HashCombine(combinedHash, path.string(), props);
 				}
 				return combinedHash;
 			}
@@ -84,15 +86,14 @@ namespace Lyra
 
 		namespace Material
 		{
-			// TODO: Gotta figure out a better way to integrate props into hash calculation!
-			inline size_t CalculateHash(size_t shaderHash, const std::vector<Ref<Lyra::Texture>>& textures, float shininess)
+			inline size_t CalculateHash(size_t shaderHash, const std::vector<Ref<Lyra::Texture>>& textures, const MaterialProps& props) 
 			{
 				size_t materialHash = 0;
 				for (const Ref<Lyra::Texture>& texture : textures)
 				{
 					Utils::Hash::HashCombine(materialHash, texture->GetHash());
 				}
-				Utils::Hash::HashCombine(materialHash, shaderHash, shininess);
+				Utils::Hash::HashCombine(materialHash, shaderHash, props);
 				return materialHash;
 			}
 		}
@@ -109,13 +110,57 @@ namespace Lyra
 
 		namespace Model
 		{
-			inline size_t CalculateHash(const std::string& path, float textureFlipOverride)
+			inline size_t CalculateHash(const std::string& path, const Lyra::ModelProps& props) 
 			{
 				size_t modelHash = 0;
-				// TODO: Gotta figure out a better way to integrate props into hash calculation!
-				Hash::HashCombine(modelHash, path, textureFlipOverride);
+				Hash::HashCombine(modelHash, path, props);
 				return modelHash;
 			}
 		}
 	}
 }
+
+// Template specialization for custom types, it declares their hashing functions.
+// TODO: Use something like magic_get to implement simple static reflection
+// This would allow me to generate a hash on these types for all of their fields by iteraing over them. 
+template <>
+struct std::hash<Lyra::MaterialProps>
+{
+	std::size_t operator()(const Lyra::MaterialProps& data)
+	{
+		size_t hash;
+		Lyra::Utils::Hash::HashCombine(hash, data.shininess);
+		return hash;
+	}
+};
+
+template <>
+struct std::hash<Lyra::TextureProps>
+{
+	std::size_t operator()(const Lyra::TextureProps& data)
+	{
+		size_t hash;
+		Lyra::Utils::Hash::HashCombine(hash, 
+			data.FlipVertically,
+			data.MagFilter,
+			data.MinFilter,
+			data.Slot,
+			data.UseMipmaps,
+			data.WrapR,
+			data.WrapS,
+			data.WrapT
+		);
+		return hash;
+	}
+};
+
+template <>
+struct std::hash<Lyra::ModelProps>
+{
+	std::size_t operator()(const Lyra::ModelProps& data)
+	{
+		size_t hash;
+		Lyra::Utils::Hash::HashCombine(hash, data.textureFlipOverride);
+		return hash;
+	}
+};

@@ -5,12 +5,15 @@
 
 #include "OpenGLCubemap.h"
 #include "Platform/OpenGL/Utils/OpenGLUtils.h"
+#include "Core/Utils.h"
 
 namespace Lyra
 {
     OpenGLCubemap::OpenGLCubemap(const std::vector<std::filesystem::path>& texturePaths, const TextureProps& textureProps)
         : m_Paths(texturePaths), m_Props(textureProps), m_DirectoryPath(texturePaths.front().parent_path())
     {
+        m_Hash = Utils::Texture::CalculateListHash(texturePaths, textureProps);
+    
         glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_RendererId);
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_RendererId);
 

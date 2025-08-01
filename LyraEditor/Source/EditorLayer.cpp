@@ -72,7 +72,7 @@ namespace Lyra
 		propsInverted.textureFlipOverride = true;
 		m_BackpackModel = ModelLibrary::Load("Assets/Models/backpack/backpack.obj", propsInverted);
 		m_SponzaModel = ModelLibrary::Load("Assets/Models/sponza/sponza.obj");
-
+		
 		const std::vector<std::filesystem::path> skyboxTextures = 
 		{
 			"Assets/Textures/Skybox/right.jpg",

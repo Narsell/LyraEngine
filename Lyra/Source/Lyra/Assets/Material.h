@@ -31,11 +31,7 @@ namespace Lyra
 
 		void UploadUniforms() const;
 		void BindTextures() const;
-
-	private:
-
-		void SetCalculatedHash();
-
+	
 	private:
 		MaterialProps m_Props;
 		Ref<Shader> m_Shader;

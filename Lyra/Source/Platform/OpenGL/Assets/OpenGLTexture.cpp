@@ -11,13 +11,13 @@ namespace Lyra
 	OpenGLTexture2D::OpenGLTexture2D(const std::filesystem::path &texturePath, const TextureProps &textureProps)
 		: m_Path(texturePath), m_Props(textureProps)
 	{
+		m_Hash = Utils::Texture::CalculateHash(m_Path, textureProps);
+		
 		LoadTexture();
+	
 		// Caching texture slot as an int to avoid a conversion during binding.
 		m_CachedTexSlot = Utils::Texture::GetSlotAsInt(m_Props.Slot);
 		LR_CORE_ASSERT(Utils::Texture::IsValidTextureSlot(m_CachedTexSlot), "Invalid texture slot!")
-		
-		// TODO: Take texture props into consideration for this texture
-		m_Hash = Utils::Texture::CalculateHash(m_Path);
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()

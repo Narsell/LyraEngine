@@ -32,7 +32,7 @@ namespace Lyra
 		: m_Props(props), m_ModelPath(path), m_ContainingDir(path.parent_path())
 	{
 		LoadModel();
-		m_Hash = Utils::Model::CalculateHash(path.string(), props.textureFlipOverride);
+		m_Hash = Utils::Model::CalculateHash(path.string(), props);
 	}
 
 	void Model::Draw(const glm::mat4& transform)

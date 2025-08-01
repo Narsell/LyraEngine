@@ -11,17 +11,17 @@ namespace Lyra
 	size_t Material::s_LastBoundMatHash = 0;
 
 	Material::Material()
-		: m_Shader(ShaderLibrary::GetDefaultShader())
+		: m_Shader(ShaderLibrary::GetDefaultShader()),
+          m_Hash(Utils::Material::CalculateHash(m_Shader->GetHash(), m_Textures, m_Props))
 	{
-		SetCalculatedHash();
 	}
 
 	Material::Material(const Ref<Shader>& shader, const std::vector<Ref<Texture>>& textures, const MaterialProps& matProps)
 		 : m_Props(matProps),
 		   m_Shader(shader),
-		   m_Textures(textures)
+		   m_Textures(textures),
+		   m_Hash(Utils::Material::CalculateHash(m_Shader->GetHash(), m_Textures, m_Props))
 	{
-		SetCalculatedHash();
 	}
 
 	Material::Material(const std::vector<Ref<Texture>> textures)
@@ -45,11 +45,5 @@ namespace Lyra
 			texture->Bind();
 		}
 		s_LastBoundMatHash = m_Hash;
-	}
-
-	void Material::SetCalculatedHash()
-	{
-		size_t textureListHash = 0;
-		m_Hash = Utils::Material::CalculateHash(m_Shader->GetHash(), m_Textures, m_Props.shininess);
 	}
 }

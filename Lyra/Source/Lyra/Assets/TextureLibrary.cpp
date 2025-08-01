@@ -12,10 +12,10 @@ namespace Lyra
 
 	Ref<Texture2D> TextureLibrary::Load2DTexture(const std::filesystem::path& texturePath, const TextureProps& textureProps)
 	{
-		size_t textureHash = Utils::Texture::CalculateHash(texturePath);
+		size_t textureHash = Utils::Texture::CalculateHash(texturePath, textureProps);
 		if (s_TexturesLoaded.find(textureHash) == s_TexturesLoaded.end())
 		{
-			LR_CORE_TRACE("Loading new 2D textures at {0}", texturePath.c_str());
+			LR_CORE_TRACE("Loading 2D texture at {0}", texturePath.c_str());
 			s_TexturesLoaded.emplace(textureHash, Texture2D::Create(texturePath, textureProps));
 		}
 		// Performing a static downcast is safe here because the type is guaranteed!
@@ -24,10 +24,10 @@ namespace Lyra
 
 	Ref<CubemapTexture> TextureLibrary::LoadCubemapTexture(const std::vector<std::filesystem::path>& texturePaths, const TextureProps& textureProps)
 	{
-		size_t texturesHash = Utils::Texture::CalculateListHash(texturePaths);
+		size_t texturesHash = Utils::Texture::CalculateListHash(texturePaths, textureProps);
 		if (s_TexturesLoaded.find(texturesHash) == s_TexturesLoaded.end())
 		{
-			LR_CORE_TRACE("Loading new cubemap textures at {0}", texturePaths.front().parent_path().c_str());
+			LR_CORE_TRACE("Loading cubemap textures at {0}", texturePaths.front().parent_path().c_str());
 			s_TexturesLoaded.emplace(texturesHash, CubemapTexture::Create(texturePaths, textureProps));
 		}
 		// Performing a static downcast is safe here because the type is guaranteed!
