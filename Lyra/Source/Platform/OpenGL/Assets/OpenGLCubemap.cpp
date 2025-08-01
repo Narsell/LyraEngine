@@ -23,19 +23,19 @@ namespace Lyra
 
             if (!std::filesystem::exists(path))
             {
-                LR_CORE_FATAL("Path to texture doesn't exist... '{0}'", path.c_str());
+                LR_CORE_FATAL("Path to texture doesn't exist... '{0}'", path.string().c_str());
                 return;
             }
 
             int width, height, channels;
             stbi_set_flip_vertically_on_load(static_cast<int>(m_Props.FlipVertically));
-            stbi_uc *data = stbi_load(path.c_str(), &width, &height, &channels, 0);
+            stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
             if (!data)
             {
-                LR_CORE_FATAL("Failed to load image from path \"{0}\"", path.c_str());
+                LR_CORE_FATAL("Failed to load image from path \"{0}\"", path.string().c_str());
                 return;
             }
-            GLTextureFormat textureFormat = Utils::OpenGL::GetTextureFormat(channels, path.c_str());
+            GLTextureFormat textureFormat = Utils::OpenGL::GetTextureFormat(channels, path.string().c_str());
             const uint32_t textureTarget = GL_TEXTURE_CUBE_MAP_POSITIVE_X + i;
         
 			glTexImage2D(textureTarget, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);

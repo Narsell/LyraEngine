@@ -13,7 +13,7 @@ namespace Lyra
     public:
         OpenGLCubemap(const std::vector<std::filesystem::path>& texturePaths, const TextureProps& textureProps);
 
-        virtual u_int32_t GetRendererId() const override { return m_RendererId; }
+        virtual uint32_t GetRendererId() const override { return m_RendererId; }
         virtual uint32_t GetWidth() const override { return m_Width; }
         virtual uint32_t GetHeight() const override { return m_Height; }
         virtual const TextureProps& GetProps() const override { return m_Props; }

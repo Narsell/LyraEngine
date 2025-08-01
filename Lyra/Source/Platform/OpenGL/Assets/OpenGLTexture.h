@@ -15,7 +15,7 @@ namespace Lyra
 		OpenGLTexture2D(const std::filesystem::path& texturePath, const TextureProps& textureProps);
 		~OpenGLTexture2D();
 
-		virtual u_int32_t GetRendererId() const override { return m_RendererId; }
+		virtual uint32_t GetRendererId() const override { return m_RendererId; }
 		virtual uint32_t GetWidth() const override { return m_Width; }
 		virtual uint32_t GetHeight() const override { return m_Height; }
 		virtual const TextureProps& GetProps() const override { return m_Props; }

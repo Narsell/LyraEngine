@@ -53,7 +53,7 @@ namespace Lyra
 		m_Width = width;
 		m_Height = height;
 
-		GLTextureFormat textureFormat = Utils::OpenGL::GetTextureFormat(channels, m_Path.c_str());
+		GLTextureFormat textureFormat = Utils::OpenGL::GetTextureFormat(channels, m_Path.string().c_str());
 	
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererId);
 		glBindTexture(GL_TEXTURE_2D, m_RendererId);
