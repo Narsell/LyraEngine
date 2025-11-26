@@ -1,5 +1,8 @@
 # Lyra Engine
 
+## IMPORTANT NOTE
+This is a public snapshot of Lyra Engine as of July 31 2025, its only purpose is to serve as a portfolio piece.
+___
 A 3D game engine made for learning purposes.
 
 ![Lyra Demo](https://raw.githubusercontent.com/Narsell/LyraEngine/refs/heads/main/Lyrademo.png)
